@@ -63,7 +63,38 @@ async function vercelSenkronizeEt() {
     console.error("⚠️ Ağ hatası:", err.message);
   }
 }
+// --- InflowAI Vercel Sync Monitor ---
+async function checkVercelStatus() {
+  const statusEl = document.createElement('div');
+  statusEl.id = 'vercel-status';
+  statusEl.style.position = 'fixed';
+  statusEl.style.bottom = '10px';
+  statusEl.style.right = '15px';
+  statusEl.style.padding = '8px 14px';
+  statusEl.style.borderRadius = '8px';
+  statusEl.style.fontSize = '13px';
+  statusEl.style.background = '#121212';
+  statusEl.style.color = '#00ff95';
+  statusEl.style.fontFamily = 'monospace';
+  statusEl.innerText = '🔄 InflowAI Vercel Sync aktif...';
+  document.body.appendChild(statusEl);
 
+  try {
+    const res = await fetch('https://inflow-ai-vmat.vercel.app/api/health');
+    if (res.ok) {
+      statusEl.innerText = '✅ Vercel senkron: Aktif';
+      statusEl.style.color = '#00ff95';
+    } else {
+      statusEl.innerText = '⚠️ Senkron hatası algılandı';
+      statusEl.style.color = '#ff5050';
+    }
+  } catch (err) {
+    statusEl.innerText = '❌ Bağlantı yok';
+    statusEl.style.color = '#ff5050';
+  }
+}
+
+window.addEventListener('load', checkVercelStatus);
 InflowAI.syncToVercel = vercelSenkronizeEt;
 window.addEventListener("storage", vercelSenkronizeEt);
 InflowAI.log("Core motor başlatıldı 🚀");
