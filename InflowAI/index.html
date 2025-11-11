@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>InflowAI</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Üst bar -->
+  <header class="topbar">
+    <div></div>
+    <div class="top-actions">
+      <button id="openAuth" class="top-btn">Giriş</button>
+      <button id="langBtn" class="top-btn">TR</button>
+    </div>
+  </header>
+
+  <!-- Ana gövde -->
+  <main class="shell">
+    <!-- Logo + dünya -->
+    <div class="hero-block">
+      <div class="logo-row">
+        <div class="logo-icon"></div>
+        <h1 class="brand-name">InflowAI</h1>
+      </div>
+
+      <div class="globe-wrap">
+        <div class="globe"></div>
+      </div>
+
+      <!-- paylaşım alanı -->
+      <section class="card input-card">
+        <h2 class="card-title">Neler Düşünüyorsunuz?</h2>
+        <div class="input-box">
+          <input id="postInput" type="text" placeholder="Bir gönderi paylaş..." />
+          <button id="shareBtn" class="primary">Gönder</button>
+        </div>
+        <p class="input-hint" id="quotaInfo">Kalan hak: 3</p>
+      </section>
+
+      <!-- Eğlence alanı -->
+      <section class="card fun-card-list">
+        <h2 class="card-title">Eğlence Alanı</h2>
+        <p class="card-sub">Ziyaretçiyi tutmak için AI destekli mini modüller.</p>
+        <div class="fun-grid">
+          <button class="fun-item" data-fun="coffee">
+            <span class="fun-emoji">🫖</span>
+            <span class="fun-title">Kahve Falı</span>
+            <span class="fun-desc">AI yorumu</span>
+          </button>
+          <button class="fun-item" data-fun="horoscope">
+            <span class="fun-emoji">🔮</span>
+            <span class="fun-title">Burç / Tarot</span>
+            <span class="fun-desc">Günlük yorum</span>
+          </button>
+          <button class="fun-item" data-fun="advice">
+            <span class="fun-emoji">💡</span>
+            <span class="fun-title">Günün Tavsiyesi</span>
+            <span class="fun-desc">AI önerisi</span>
+          </button>
+          <button class="fun-item" data-fun="quiz">
+            <span class="fun-emoji">😄</span>
+            <span class="fun-title">Mini Testler</span>
+            <span class="fun-desc">Hızlı eğlence</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- AI akışı -->
+      <section class="card feed-card">
+        <h2 class="card-title">InflowAI Akış</h2>
+        <p class="card-sub">Sistem beyni otomatik içerik paylaşır.</p>
+        <div id="feedList" class="feed-list"></div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Auth Modal -->
+  <div class="modal hidden" id="authModal">
+    <div class="modal-body">
+      <div class="auth-tabs">
+        <button class="auth-tab active" data-tab="register">Kayıt ol</button>
+        <button class="auth-tab" data-tab="login">Giriş yap</button>
+      </div>
+
+      <!-- Kayıt formu -->
+      <div class="auth-panel" id="registerPanel">
+        <p class="auth-text">Kayıt olursan 3 hak sınırı kalkar, sınırsız kullanırsın.</p>
+        <input type="text" id="regName" placeholder="Ad / rumuz (isteğe bağlı)" />
+        <input type="email" id="regEmail" placeholder="E-posta" />
+        <input type="password" id="regPass" placeholder="Şifre" />
+        <button class="primary" id="doRegister">Kayıt ol</button>
+      </div>
+
+      <!-- Giriş formu -->
+      <div class="auth-panel hidden" id="loginPanel">
+        <p class="auth-text">Zaten hesabın var mı? Giriş yap.</p>
+        <input type="email" id="logEmail" placeholder="E-posta" />
+        <input type="password" id="logPass" placeholder="Şifre" />
+        <button class="primary" id="doLogin">Giriş yap</button>
+      </div>
+
+      <button class="ghost auth-close" id="closeModal">Kapat</button>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

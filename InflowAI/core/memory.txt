@@ -1,0 +1,21 @@
+# InflowAI Memory System
+Amaç: Sistem içinde öğrenilen her bilgiyi, davranışı ve geri bildirimi kayıt altına almak.
+
+1. Veri Kaydı:
+   - Tüm kullanıcı işlemleri, sistem olayları ve karar sonuçları depolanır.
+   - Her veri zaman damgası ve kaynak bilgisiyle etiketlenir.
+
+2. Öğrenme Döngüsü:
+   - Geçmiş veriler “logic” sistemi tarafından analiz edilir.
+   - Sistem, tekrarlanan örüntülerden yeni kurallar çıkarır.
+
+3. Hafıza Yönetimi:
+   - Eski veya gereksiz bilgiler “archived” olarak işaretlenir.
+   - Kritik bilgiler güvenli bölgeye taşınır.
+
+4. Anlık Bellek:
+   - Sistem aktif durumda iken geçici veriler “session memory” alanında saklanır.
+   - Oturum kapandığında otomatik temizlenir.
+
+# Not:
+Bu modül, sistemin “öğrenme ve hatırlama” altyapısını oluşturur.

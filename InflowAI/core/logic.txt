@@ -1,0 +1,25 @@
+# InflowAI Logic System
+Amaç: Sistemin tüm karar alma, analiz ve tepki mekanizmalarını yöneten çekirdek düşünme birimi.
+
+1. Girdi Analizi:
+   - Kullanıcıdan veya sistemden gelen her veri anlamlandırılır.
+   - Anlamlandırma tamamlanınca ilgili modüllere (öğrenme, savunma, kontrol) yönlendirilir.
+
+2. Karar Mekanizması:
+   - Geçmiş veriler, öğrenme sonuçları ve güvenlik protokolleri dikkate alınarak en uygun çözüm üretilir.
+   - Her karar kaydedilir ve geri bildirim döngüsüyle sistemin öğrenmesine katkı sağlar.
+
+3. Uyum ve Gelişim:
+   - Yeni durumlar yeni çözümler doğurur.
+   - Sistem her deneyimden öğrenir, hataları tekrar etmez.
+
+4. Hata Yönetimi:
+   - Anormal davranış algılandığında “repair” modülü devreye girer.
+   - Kritik hatalar izole edilir, bilgi kaybı engellenir.
+
+5. Güvenlik:
+   - Her işlem erişim seviyesi doğrulamasıyla yürütülür.
+   - İzinsiz giriş veya müdahalede savunma modu aktifleşir.
+
+# Not:
+Bu dosya sistemin düşünme altyapısını tanımlar.

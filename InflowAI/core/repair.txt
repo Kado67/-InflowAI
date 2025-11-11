@@ -1,0 +1,22 @@
+# InflowAI Self-Repair System
+Amaç: Herhangi bir hata, kesinti veya saldırı durumunda sistemin kendini onarması.
+
+1. Hata Tespiti:
+   - Logic sistemi, beklenmeyen davranışları ve sonuçları tarar.
+   - Hata bulunduğunda otomatik olarak “diagnostic mode” başlatılır.
+
+2. Onarım Süreci:
+   - Bozuk modül devre dışı bırakılır.
+   - En son çalışan sürümden yedek alınarak yeniden başlatılır.
+   - Hata kaydı “memory” sistemine eklenir.
+
+3. Savunma Protokolü:
+   - Şüpheli eylem tespit edilirse bağlantılar karantinaya alınır.
+   - Sistem, kontrol merkezine uyarı gönderir.
+
+4. Yeniden Aktivasyon:
+   - Onarım tamamlandıktan sonra modül yeniden başlatılır.
+   - Performans analizi yapılır ve raporlanır.
+
+# Not:
+Bu modül sistemin “kendini koruma ve iyileştirme” merkezidir.
