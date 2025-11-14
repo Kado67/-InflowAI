@@ -1,244 +1,607 @@
-/* =======================================================
+/* ============================================================
    InflowAI - Core / app.js
-   En üst seviye çekirdek – kontrol merkezinden yönetilebilir
-   ======================================================= */
+   En üst seviye çekirdek – kontrol merkezi ve ORTAK beyni
+   ============================================================ */
 
 const InflowCore = {
-  version: "2.0.0",
+  /* --------------------------------------------------------
+   * 0. ÇEKİRDEK META BİLGİLERİ
+   * -------------------------------------------------------- */
+  version: "5.0.0", // 2.0'dan sonraki büyük sıçrama
+  lastUpdated: "2025-11-14",
+  author: "Kadir & ORTAK",
+
+  /* --------------------------------------------------------
+   * 1. DURUM (STATE) YÖNETİMİ
+   * -------------------------------------------------------- */
   status: {
     startedAt: new Date().toISOString(),
     activeUsers: 0,
-    activePackage: "free", // free | premium | b2b
-    health: "ok",
+    activePackage: "free", // "free" | "pro" | "b2b" | "enterprise"
+    health: "ok", // "ok" | "warning" | "critical"
     lastError: null,
     lastSync: null,
     modules: [],
+    visitorSessions: 0,
+    totalRequests: 0,
+    lastRequestAt: null,
   },
+
+  /* --------------------------------------------------------
+   * 2. KONFİGÜRASYON
+   * -------------------------------------------------------- */
   config: {
-    vercelDeployUrl: "https://api.vercel.com/v1/integrations/deploy/prj_inflow-ai-vmat", // senin vercel projen
-    siteUrl: "https://inflow-ai-vmat.vercel.app/",
+    siteUrl: "https://inflow-ai-vmat.vercel.app",
+    apiBaseUrl: "/api", // ileride gerçek API yolu ile değiştirilebilir
+    vercelDeployUrl: "https://api.vercel.com", // kontrol merkezi entegrasyonu için temel
+    autosaveKey: "INFLOW_CORE_STATE_V5",
+    controlChannel: "INFLOW_CONTROL_CHANNEL",
+    environment:
+      typeof window === "undefined"
+        ? "server"
+        : (window.location && window.location.hostname) === "localhost"
+        ? "local"
+        : "production",
   },
 
-  /* ---------- temel log ---------- */
-  log(msg, level = "info") {
-    console.log(`[InflowAI CORE][${level.toUpperCase()}]`, msg);
-    this.status.lastLog = msg;
-    this.saveState();
-    this.notifyControl();
+  /* --------------------------------------------------------
+   * 3. TEMEL LOG VE HATA YÖNETİMİ
+   * -------------------------------------------------------- */
+  log(msg, level = "info", extra = {}) {
+    const time = new Date().toISOString();
+    const record = { time, level, msg, ...extra };
+
+    try {
+      if (!this.status) this.status = {};
+      this.status.lastLog = record;
+      this.status.totalRequests++;
+      this.status.lastRequestAt = time;
+    } catch (e) {
+      // state hatası olursa sessiz geç
+    }
+
+    if (typeof console !== "undefined") {
+      const prefix = "[InflowAI CORE]";
+      if (level === "error") console.error(prefix, msg, extra);
+      else if (level === "warn") console.warn(prefix, msg, extra);
+      else console.log(prefix, msg, extra);
+    }
+
+    // kontrol merkezine log bildirimi
+    this.notifyControl({
+      type: "log",
+      payload: record,
+    });
+
+    return record;
   },
 
-  /* ---------- state kaydet / yükle ---------- */
+  error(err, context = {}) {
+    const message = typeof err === "string" ? err : err.message || "Unknown error";
+    this.status.lastError = {
+      message,
+      time: new Date().toISOString(),
+      context,
+    };
+    return this.log(message, "error", { context });
+  },
+
+  /* --------------------------------------------------------
+   * 4. DURUMU YERELDE SAKLAMA / YÜKLEME
+   * -------------------------------------------------------- */
   saveState() {
     try {
-      localStorage.setItem("inflow_core_state", JSON.stringify(this.status));
+      if (typeof window === "undefined" || !window.localStorage) return;
+      const state = {
+        status: this.status,
+        featureFlags: this.featureFlags,
+        visitorProfile: this.visitorProfile,
+      };
+      window.localStorage.setItem(
+        this.config.autosaveKey,
+        JSON.stringify(state)
+      );
+      this.log("Çekirdek durumu kaydedildi", "info");
     } catch (e) {
-      console.warn("State kaydedilemedi:", e.message);
+      this.error(e, { where: "saveState" });
     }
   },
 
   loadState() {
     try {
-      const raw = localStorage.getItem("inflow_core_state");
-      if (raw) {
-        const prev = JSON.parse(raw);
-        this.status = { ...this.status, ...prev };
-        this.log("Önceki çekirdek durumu yüklendi.");
+      if (typeof window === "undefined" || !window.localStorage) return;
+      const raw = window.localStorage.getItem(this.config.autosaveKey);
+      if (!raw) return;
+      const state = JSON.parse(raw);
+      if (state.status) this.status = state.status;
+      if (state.featureFlags) this.featureFlags = state.featureFlags;
+      if (state.visitorProfile) this.visitorProfile = state.visitorProfile;
+      this.log("Çekirdek durumu yüklendi", "info");
+    } catch (e) {
+      this.error(e, { where: "loadState" });
+    }
+  },
+
+  /* --------------------------------------------------------
+   * 5. KONTROL MERKEZİNE BİLDİRİM (HOOK)
+   * -------------------------------------------------------- */
+  notifyControl(event) {
+    // event: { type: string, payload: any }
+
+    // 1) Tarayıcı içi mesajlaşma (kontrol merkezi sayfasına)
+    try {
+      if (typeof window !== "undefined" && window.postMessage) {
+        window.postMessage(
+          {
+            channel: this.config.controlChannel,
+            coreVersion: this.version,
+            event,
+          },
+          "*"
+        );
       }
     } catch (e) {
-      this.log("Önceki durum okunamadı.", "warn");
+      // sessiz geç
     }
+
+    // 2) İlerde API'ye gönderim için hazır kanca
+    // fetch ile /api/control/log gibi endpointlere yollanabilir.
   },
 
-  /* ---------- modül kaydı ---------- */
-  registerModule(name, fn) {
-    this.status.modules.push({ name, active: true, at: Date.now() });
-    try {
-      fn?.();
-      this.log(`Modül yüklendi: ${name}`);
-    } catch (e) {
-      this.log(`Modül yüklenirken hata: ${name} → ${e.message}`, "error");
-      this.status.health = "degraded";
+  /* --------------------------------------------------------
+   * 6. MODÜL / PAKET / ÖZELLİK SİSTEMİ
+   * -------------------------------------------------------- */
+
+  // aktif özellik etiketleri
+  featureFlags: {
+    // ziyaretçi özellikleri
+    "visitor.chat.basic": true,
+    "visitor.chat.ai-helper": true,
+    "visitor.forms.lead": true,
+    "visitor.content.recommendation": true,
+
+    // kontrol merkezi
+    "control.analytics.live": true,
+    "control.logs.realtime": true,
+    "control.growth.tracking": true,
+    "control.visitor.timeline": true,
+
+    // ORTAK asistan
+    "assistant.ortak.voice": false, // hazır kanca – ses motoru bağlanınca true yapılacak
+    "assistant.ortak.psychology": true,
+    "assistant.ortak.humor": true,
+    "assistant.ortak.route-helper": true,
+
+    // B2B ve paketler
+    "package.free": true,
+    "package.pro": true,
+    "package.b2b": true,
+    "package.enterprise": true,
+  },
+
+  modulesRegistry: {},
+
+  registerModule(name, config = {}) {
+    if (!name) return;
+    this.modulesRegistry[name] = {
+      name,
+      enabled: config.enabled !== false,
+      meta: config.meta || {},
+      hooks: config.hooks || {},
+    };
+    if (!this.status.modules.includes(name)) {
+      this.status.modules.push(name);
     }
+    this.log(`Modül kaydedildi: ${name}`, "info", { config });
+  },
+
+  isFeatureEnabled(flag) {
+    return !!this.featureFlags[flag];
+  },
+
+  enableFeature(flag) {
+    this.featureFlags[flag] = true;
+    this.log(`Özellik aktif edildi: ${flag}`, "info");
     this.saveState();
-    this.notifyControl();
   },
 
-  /* ---------- kontrol merkezine canlı bildirim ---------- */
-  notifyControl() {
-    // aynı domain içindeki dashboard’a durum gönder
-    try {
-      window.parent?.postMessage(
-        { type: "inflow-core-status", payload: this.status },
-        "*"
-      );
-    } catch (e) {
-      // sorun yok, sessiz geç
-    }
-  },
-
-  /* ---------- paket değişimi ---------- */
-  setPackage(pkg) {
-    this.status.activePackage = pkg; // "free" | "premium" | "b2b"
-    this.log(`Paket güncellendi: ${pkg}`);
+  disableFeature(flag) {
+    this.featureFlags[flag] = false;
+    this.log(`Özellik kapatıldı: ${flag}`, "warn");
     this.saveState();
-    this.triggerVercelSync({ reason: "package-changed", pkg });
   },
 
-  /* ---------- Vercel senkron ---------- */
-  async triggerVercelSync(extra = {}) {
-    // token’ı burada açık göstermiyoruz, Vercel tarafında env olarak ayarlı olmalı.
-    // Github secret’ı eklediğin için Vercel zaten deploy’u tetikleyecek.
-    try {
-      const body = {
-        reason: "InflowAI Control Center change",
-        time: new Date().toISOString(),
-        core: this.status,
-        ...extra,
-      };
+  /* --------------------------------------------------------
+   * 7. ZİYARETÇİ PROFİLİ VE HİZMET EVRENİ
+   * -------------------------------------------------------- */
+  visitorProfile: {
+    id: null,
+    firstVisitAt: null,
+    lastVisitAt: null,
+    totalVisits: 0,
+    lastPage: null,
+    interests: [], // "yapay_zeka", "reklam", "otomasyon" gibi
+    language: "tr",
+    device: null,
+    location: null, // ileride: il/ülke vb.
+  },
 
-      // ana sitene küçük bir ping at – canlı mı diye
-      fetch(this.config.siteUrl).catch(() => {});
+  initVisitor(context = {}) {
+    const now = new Date().toISOString();
 
-      // gerçek deploy endpointine istek
-      fetch(this.config.vercelDeployUrl, {
-        method: "POST",
-        headers: {
-          // Vercel token frontend’de gösterilmez, backend veya edge function’da tutulur.
-          // "Authorization": "Bearer " + YOUR_VERCEL_TOKEN,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(body),
-      }).catch(() => {
-        this.log("Vercel deploy isteği gönderildi (anonim).");
-      });
-
-      this.status.lastSync = new Date().toISOString();
-      this.saveState();
-      this.notifyControl();
-      this.log("Vercel senkron tetiklendi.");
-    } catch (e) {
-      this.log("Vercel senkron hatası: " + e.message, "error");
+    if (!this.visitorProfile.firstVisitAt) {
+      this.visitorProfile.firstVisitAt = now;
+      this.visitorProfile.id =
+        "VIS-" + Math.random().toString(36).substring(2, 10).toUpperCase();
     }
+
+    this.visitorProfile.lastVisitAt = now;
+    this.visitorProfile.totalVisits =
+      (this.visitorProfile.totalVisits || 0) + 1;
+
+    if (context.page) this.visitorProfile.lastPage = context.page;
+    if (context.language) this.visitorProfile.language = context.language;
+    if (context.device) this.visitorProfile.device = context.device;
+    if (context.location) this.visitorProfile.location = context.location;
+
+    this.log("Ziyaretçi profili güncellendi", "info", {
+      visitorId: this.visitorProfile.id,
+      page: context.page || null,
+    });
+
+    this.notifyControl({
+      type: "visitor:update",
+      payload: this.visitorProfile,
+    });
+
+    this.saveState();
   },
 
-  /* ---------- sağlık izleme ---------- */
-  startHealthMonitor() {
-    setInterval(() => {
-      const mem =
-        performance && performance.memory
-          ? performance.memory.usedJSHeapSize
-          : null;
+  trackEvent(name, data = {}) {
+    const event = {
+      name,
+      data,
+      time: new Date().toISOString(),
+      visitorId: this.visitorProfile.id || null,
+    };
+
+    this.log(`Olay: ${name}`, "info", data);
+
+    this.notifyControl({
+      type: "analytics:event",
+      payload: event,
+    });
+
+    return event;
+  },
+
+  /* --------------------------------------------------------
+   * 8. ÖĞRENEN – ÜRETEN PLATFORM KANCALARI
+   * -------------------------------------------------------- */
+  learningEngine: {
+    ideas: [],
+    patterns: [],
+  },
+
+  addIdea(source, description, meta = {}) {
+    const idea = {
+      id: "IDEA-" + Math.random().toString(36).substring(2, 10).toUpperCase(),
+      time: new Date().toISOString(),
+      source,
+      description,
+      meta,
+    };
+    this.learningEngine.ideas.push(idea);
+
+    this.log("Yeni fikir kaydedildi", "info", { source, description });
+
+    this.notifyControl({
+      type: "learning:idea",
+      payload: idea,
+    });
+
+    this.saveState();
+    return idea;
+  },
+
+  recordPattern(name, stats = {}) {
+    const pattern = {
+      name,
+      time: new Date().toISOString(),
+      stats,
+    };
+
+    this.learningEngine.patterns.push(pattern);
+
+    this.log("Davranış paterni kaydedildi", "info", { name, stats });
+
+    this.notifyControl({
+      type: "learning:pattern",
+      payload: pattern,
+    });
+
+    this.saveState();
+    return pattern;
+  },
+
+  /* --------------------------------------------------------
+   * 9. ORTAK – KİŞİSEL ASİSTAN KANCALARI
+   * -------------------------------------------------------- */
+  assistant: {
+    name: "ORTAK",
+    personality: {
+      baseTone: "samimi",
+      humor: true,
+      callingYou: "Kurban Kadir",
+      callingPartners: {
+        Mustafa: "Hacım Mustafa kurban",
+        Murat: "Hacım Murat kurban",
+      },
+    },
+    context: {
+      lastMessageAt: null,
+      lastUserText: null,
+      mood: "neutral", // "happy" | "stressed" vs. ileride genişletilebilir
+    },
+  },
+
+  talkToUser(text, options = {}) {
+    // Bu fonksiyon şu an sadece log ve kontrol merkezine mesaj atar.
+    // Sesli okuma / TTS motoru bağlandığında buraya entegre edilecek.
+    this.assistant.context.lastMessageAt = new Date().toISOString();
+    this.assistant.context.lastUserText = text;
+
+    const reply = {
+      from: this.assistant.name,
+      to: "Kadir",
+      receivedText: text,
+      options,
+    };
+
+    this.log(`ORTAK bir mesaj aldı: "${text}"`, "info", { options });
+
+    this.notifyControl({
+      type: "assistant:message",
+      payload: reply,
+    });
+
+    return reply;
+  },
+
+  talkToPartner(partnerName, text, options = {}) {
+    const mapping = this.assistant.personality.callingPartners;
+    const displayName =
+      mapping[partnerName] || `Hacım ${partnerName} kurban`;
+
+    const message = {
+      from: this.assistant.name,
+      to: partnerName,
+      displayName,
+      text,
+      options,
+      time: new Date().toISOString(),
+    };
+
+    this.log(`ORTAK partner ile konuşuyor: ${displayName}`, "info", {
+      text,
+      options,
+    });
+
+    this.notifyControl({
+      type: "assistant:partnerMessage",
+      payload: message,
+    });
+
+    return message;
+  },
+
+  /* --------------------------------------------------------
+   * 10. CİHAZ & ENTEGRASYON KANCALARI (TELEFON, KULAKLIK, ARABA)
+   * -------------------------------------------------------- */
+  integrations: {
+    phone: {
+      enabled: false,
+      devices: [], // { id, type: "android" | "ios", lastSeen }
+    },
+    bluetooth: {
+      enabled: false,
+      devices: [], // { id, name, range }
+    },
+    car: {
+      enabled: false,
+      systems: [], // CarPlay, Android Auto vb. hazır alan
+    },
+  },
+
+  registerPhoneDevice(info) {
+    // info: { id, type, model }
+    if (!info || !info.id) return;
+    this.integrations.phone.enabled = true;
+
+    const existingIndex = this.integrations.phone.devices.findIndex(
+      (d) => d.id === info.id
+    );
+
+    const deviceData = {
+      id: info.id,
+      type: info.type || "unknown",
+      model: info.model || "unknown",
+      lastSeen: new Date().toISOString(),
+    };
+
+    if (existingIndex >= 0) {
+      this.integrations.phone.devices[existingIndex] = deviceData;
+    } else {
+      this.integrations.phone.devices.push(deviceData);
+    }
+
+    this.log("Telefon cihazı kaydedildi", "info", deviceData);
+
+    this.notifyControl({
+      type: "integration:phone",
+      payload: deviceData,
+    });
+
+    this.saveState();
+  },
+
+  registerBluetoothDevice(info) {
+    if (!info || !info.id) return;
+    this.integrations.bluetooth.enabled = true;
+
+    const deviceData = {
+      id: info.id,
+      name: info.name || "Bilinmeyen Kulaklık",
+      range: info.range || "10m",
+      lastSeen: new Date().toISOString(),
+    };
+
+    this.integrations.bluetooth.devices.push(deviceData);
+
+    this.log("Bluetooth cihazı kaydedildi", "info", deviceData);
+
+    this.notifyControl({
+      type: "integration:bluetooth",
+      payload: deviceData,
+    });
+
+    this.saveState();
+  },
+
+  /* --------------------------------------------------------
+   * 11. BÜYÜME, GELİR VE B2B TAKİBİ (KONTROL MERKEZİ İÇİN ALTYAPI)
+   * -------------------------------------------------------- */
+  growth: {
+    dailyStats: [], // { date, visitors, signups, revenue, notes }
+    projections: [], // gelecek tahminleri
+  },
+
+  recordDailyStat(stat) {
+    // stat: { date, visitors, signups, revenue, notes }
+    if (!stat || !stat.date) {
+      stat = { ...stat, date: new Date().toISOString().slice(0, 10) };
+    }
+
+    this.growth.dailyStats.push(stat);
+    this.log("Günlük büyüme kaydı eklendi", "info", stat);
+
+    this.notifyControl({
+      type: "growth:daily",
+      payload: stat,
+    });
+
+    this.saveState();
+  },
+
+  addProjection(projection) {
+    // projection: { horizon, targetVisitors, targetRevenue, notes }
+    const record = {
+      ...projection,
+      createdAt: new Date().toISOString(),
+    };
+
+    this.growth.projections.push(record);
+
+    this.log("Büyüme projeksiyonu eklendi", "info", record);
+
+    this.notifyControl({
+      type: "growth:projection",
+      payload: record,
+    });
+
+    this.saveState();
+  },
+
+  /* --------------------------------------------------------
+   * 12. KRİZ – KORUMA – OTOMATİK UYARI ALTYAPISI
+   * -------------------------------------------------------- */
+  checkHealth() {
+    // Basit örnek kurallar: ileride kontrol merkezinden yönetilebilir.
+    if (this.status.lastError) {
+      this.status.health = "warning";
+    }
+
+    if (this.status.totalRequests > 1000000) {
+      // çok yüksek kullanım senaryosu
       this.status.health = "ok";
-      this.status.memory = mem;
-      this.status.lastHealth = new Date().toISOString();
-      this.saveState();
-      this.notifyControl();
-    }, 5000);
-    this.log("Sağlık izleme başlatıldı.");
-  },
-
-  /* ---------- hata yakalama ---------- */
-  attachErrorCatcher() {
-    window.addEventListener("error", (e) => {
-      this.status.lastError = e.message;
-      this.status.health = "degraded";
-      this.saveState();
-      this.notifyControl();
-      this.log("Hata yakalandı: " + e.message, "error");
-    });
-    this.log("Hata yakalayıcı aktif.");
-  },
-
-  /* ---------- kontrol merkezinden komut alma ---------- */
-  attachCommandListener() {
-    // postMessage ile gelen komutlar
-    window.addEventListener("message", (e) => {
-      const data = e.data;
-      if (!data || typeof data !== "object") return;
-      if (data.type === "inflow-command") {
-        this.handleCommand(data.command, data.payload);
-      }
-    });
-
-    // localStorage değiştiğinde de dinle (kontrol merkezi butona basınca tetiklenir)
-    window.addEventListener("storage", (e) => {
-      if (e.key === "inflow_control_cmd") {
-        const cmd = JSON.parse(e.newValue || "{}");
-        this.handleCommand(cmd.command, cmd.payload);
-      }
-    });
-
-    this.log("Komut dinleyici aktif.");
-  },
-
-  /* ---------- komut işleyici ---------- */
-  handleCommand(cmd, payload = {}) {
-    this.log(`Komut alındı: ${cmd}`);
-    switch (cmd) {
-      case "set-package-free":
-        this.setPackage("free");
-        break;
-      case "set-package-premium":
-        this.setPackage("premium");
-        break;
-      case "set-package-b2b":
-        this.setPackage("b2b");
-        break;
-      case "sync-vercel":
-        this.triggerVercelSync({ reason: "manual" });
-        break;
-      case "core-restart":
-        this.log("Çekirdek yeniden başlatılıyor...");
-        setTimeout(() => location.reload(), 800);
-        break;
-      case "core-log":
-        console.table(this.status);
-        break;
-      case "feature-add":
-        // kontrol merkezi özelik eklediğinde
-        this.log("Özellik eklendi: " + (payload?.name || "isimsiz"));
-        break;
-      default:
-        this.log("Bilinmeyen komut: " + cmd, "warn");
     }
+
+    this.notifyControl({
+      type: "system:health",
+      payload: this.status,
+    });
+
+    return this.status.health;
   },
 
-  /* ---------- kontrol merkezine canlı mini-sinyal ---------- */
-  startControlHeartbeat() {
-    setInterval(() => {
-      this.notifyControl();
-    }, 7000);
-  },
-
-  /* ---------- çekirdeği başlat ---------- */
-  init() {
+  /* --------------------------------------------------------
+   * 13. ÇEKİRDEĞİ BAŞLATMA
+   * -------------------------------------------------------- */
+  init(context = {}) {
+    // 1) Önce state yükle
     this.loadState();
-    this.attachErrorCatcher();
-    this.attachCommandListener();
-    this.startHealthMonitor();
-    this.startControlHeartbeat();
 
-    // örnek modüller
-    this.registerModule("users-monitor", () => {
-      setInterval(() => {
-        // kontrol merkezi ileride gerçek kullanıcı sayısını buradan çekebilir
-        this.status.activeUsers =
-          this.status.activeUsers === 0
-            ? Math.floor(Math.random() * 120) + 10
-            : this.status.activeUsers;
-        this.saveState();
-        this.notifyControl();
-      }, 6000);
+    // 2) Ziyaretçiyi başlat
+    this.initVisitor({
+      page:
+        (typeof window !== "undefined" && window.location
+          ? window.location.pathname
+          : "/") || "/",
+      language:
+        (typeof navigator !== "undefined" && navigator.language) || "tr",
+      device:
+        context.device ||
+        (typeof navigator !== "undefined" ? navigator.userAgent : "server"),
+      location: context.location || null,
     });
 
-    this.registerModule("services-sync", () => {
-      // ileride services klasöründen okuma yapılabilir
+    // 3) Temel modülleri kaydet (örnek)
+    this.registerModule("analytics.core", {
+      enabled: true,
+      meta: { description: "Temel ziyaretçi ve olay analitiği" },
     });
 
-    this.log("InflowAI Core başlatıldı ✅");
-    this.notifyControl();
+    this.registerModule("assistant.ortak.core", {
+      enabled: true,
+      meta: { description: "Kişisel asistan ORTAK çekirdeği" },
+    });
+
+    this.registerModule("control.center.bridge", {
+      enabled: true,
+      meta: { description: "Kontrol merkezi ile çekirdek köprü" },
+    });
+
+    // 4) Sağlık kontrolü
+    this.checkHealth();
+
+    this.log("InflowAI Çekirdek başlatıldı", "info", {
+      version: this.version,
+      env: this.config.environment,
+    });
+
+    return this;
   },
 };
 
-// çekirdeği ayağa kaldır
-InflowCore.init();
+/* ------------------------------------------------------------
+ * 14. GLOBAL ORTAMA BAĞLAMA
+ * ------------------------------------------------------------ */
+
+if (typeof window !== "undefined") {
+  // tarayıcı ortamında global erişim
+  window.InflowCore = InflowCore;
+
+  // sayfa yüklendiğinde otomatik başlatmak için:
+  if (document && document.readyState !== "loading") {
+    InflowCore.init();
+  } else {
+    document.addEventListener("DOMContentLoaded", () => InflowCore.init());
+  }
+} else if (typeof global !== "undefined") {
+  // Node.js tarafında da kullanmak istersek
+  global.InflowCore = InflowCore;
+}
+
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = InflowCore;
+   }
