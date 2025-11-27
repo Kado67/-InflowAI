@@ -1,646 +1,434 @@
-// ui.js
-// InflowAI – Tek Sayfa (SPA) Ön Yüz Beyni
-// Tüm butonları, akışları ve basit "yaşayan" davranışı yönetir.
+// ============================================
+// InflowAI – Tek Sayfa (SPA) Arayüz Mantığı
+// Tüm temel butonlar & formlar burada çalışır
+// Backend gerektirmez, localStorage + hafıza
+// ============================================
 
-document.addEventListener("DOMContentLoaded", () => {
-  // ==============================
-  // TEMEL STATE (GEÇİCİ / FRONTEND)
-  // ==============================
+const InflowUI = (() => {
+  // Basit durum
   const state = {
-    profession: null,
+    role: null,
     totalContent: 0,
     totalProducts: 0,
     todayIdeas: 0,
+    feedItems: [],
     products: [],
-    contents: [],
-    feed: [],
-    accRecords: [],
-    totalIncome: 0,
-    totalExpense: 0,
-    recentActions: []
   };
 
-  // ==============================
-  // YARDIMCI FONKSİYONLAR
-  // ==============================
+  // Yardımcı – güvenli seçiciler (element yoksa kırma)
   const $ = (sel) => document.querySelector(sel);
   const $$ = (sel) => Array.from(document.querySelectorAll(sel));
 
-  function addRecentAction(text) {
-    state.recentActions.unshift({
-      text,
-      time: new Date()
-    });
-    if (state.recentActions.length > 25) {
-      state.recentActions.pop();
-    }
-    renderProfile();
-  }
+  // ---------- EKRAN YÖNETİMİ (SPA) ----------
+  function initViews() {
+    const buttons = $$('[data-target]');
+    const screens = $$('[data-screen]');
 
-  function formatTime(date) {
-    return date.toLocaleTimeString("tr-TR", {
-      hour: "2-digit",
-      minute: "2-digit"
-    });
-  }
+    if (!buttons.length || !screens.length) return;
 
-  function updateStats() {
-    $("#statTotalContent").textContent = state.totalContent;
-    $("#statTotalProducts").textContent = state.totalProducts;
-    $("#statTodayIdeas").textContent = state.todayIdeas;
-
-    $("#profileTotalContent").textContent = state.totalContent;
-    $("#profileTotalProducts").textContent = state.totalProducts;
-  }
-
-  function renderProducts() {
-    const list = $("#productList");
-    const empty = $("#productEmpty");
-
-    list.innerHTML = "";
-    if (state.products.length === 0) {
-      empty.style.display = "block";
-      return;
-    }
-    empty.style.display = "none";
-
-    state.products.forEach((p) => {
-      const div = document.createElement("div");
-      div.className = "product-card";
-      div.innerHTML = `
-        <div class="product-card-title">${p.name}</div>
-        <div class="product-card-price">${p.price}</div>
-        <div class="product-card-meta">
-          Görünürlük: ${p.visibilityLabel}<br/>
-          Kısa açıklama: ${p.shortDesc}
-        </div>
-      `;
-      list.appendChild(div);
-    });
-  }
-
-  function renderFeed() {
-    const list = $("#feedList");
-    const empty = $("#feedEmpty");
-    list.innerHTML = "";
-
-    if (state.feed.length === 0) {
-      empty.style.display = "block";
-      return;
-    }
-    empty.style.display = "none";
-
-    const sorted = [...state.feed].sort((a, b) => b.time - a.time);
-
-    sorted.forEach((item) => {
-      const card = document.createElement("div");
-      card.className = "product-card";
-      const timeText = formatTime(new Date(item.time));
-
-      let icon = "✨";
-      if (item.kind === "content") icon = "⚡";
-      if (item.kind === "product") icon = "🛒";
-      if (item.kind === "fun") icon = "🤹";
-
-      card.innerHTML = `
-        <div class="product-card-title">${icon} ${item.title}</div>
-        <div class="product-card-meta">
-          ${item.detail}<br/>
-          <span style="font-size:0.75rem; opacity:0.8;">${timeText}</span>
-        </div>
-      `;
-      list.appendChild(card);
-    });
-  }
-
-  function renderHomeFeedPreview() {
-    const preview = $("#homeFeedPreview");
-    preview.innerHTML = "";
-
-    const sorted = [...state.feed].sort((a, b) => b.time - a.time).slice(0, 6);
-    if (sorted.length === 0) {
-      const emptyCard = document.createElement("div");
-      emptyCard.className = "product-card";
-      emptyCard.innerHTML =
-        "<div class='product-card-meta'>Henüz bir hareket yok. İçerik üret veya ürün ekle, akış burada canlansın. 🚀</div>";
-      preview.appendChild(emptyCard);
-      return;
-    }
-
-    sorted.forEach((item) => {
-      const card = document.createElement("div");
-      card.className = "product-card";
-      card.innerHTML = `
-        <div class="product-card-title">${item.title}</div>
-        <div class="product-card-meta">${item.detail}</div>
-      `;
-      preview.appendChild(card);
-    });
-  }
-
-  function renderAccounting() {
-    $("#accTotalIncome").textContent = `${state.totalIncome.toLocaleString("tr-TR")} ₺`;
-    $("#accTotalExpense").textContent = `${state.totalExpense.toLocaleString("tr-TR")} ₺`;
-    const balance = state.totalIncome - state.totalExpense;
-    $("#accBalance").textContent = `${balance.toLocaleString("tr-TR")} ₺`;
-
-    const list = $("#accList");
-    list.innerHTML = "";
-    state.accRecords
-      .slice()
-      .reverse()
-      .forEach((r) => {
-        const li = document.createElement("li");
-        li.textContent = `${formatTime(r.time)} – ${r.type === "income" ? "Gelir" : "Gider"}: ${
-          r.amount
-        } ₺ – ${r.note || "Not yok"}`;
-        list.appendChild(li);
+    const show = (id) => {
+      screens.forEach((s) => {
+        if (s.id === id) {
+          s.style.display = "block";
+        } else {
+          s.style.display = "none";
+        }
       });
-  }
 
-  function renderProfile() {
-    const ul = $("#profileRecentItems");
-    ul.innerHTML = "";
-    if (state.recentActions.length === 0) {
-      const li = document.createElement("li");
-      li.textContent = "Henüz bir hareket yok. İçerik üret, ürün ekle veya eğlence alanını kullan.";
-      ul.appendChild(li);
-      return;
-    }
+      buttons.forEach((b) => {
+        if (b.dataset.target === id) {
+          b.classList.add("active-pill");
+        } else {
+          b.classList.remove("active-pill");
+        }
+      });
+    };
 
-    state.recentActions.slice(0, 12).forEach((a) => {
-      const li = document.createElement("li");
-      li.textContent = `[${formatTime(a.time)}] ${a.text}`;
-      ul.appendChild(li);
+    // İlk açılış – ana ekran
+    show("screen-home");
+
+    buttons.forEach((btn) => {
+      btn.addEventListener("click", () => show(btn.dataset.target));
     });
-
-    if (state.profession) {
-      $("#profileInfo").textContent =
-        "Mesleğin: " +
-        state.professionLabel +
-        ". InflowAI ekranlarını buna göre kişiselleştiriyor.";
-    }
   }
 
-  function setAvatarMessage(msg) {
-    const bubble = $("#avatarBubble");
-    if (!bubble) return;
-    bubble.innerHTML = msg;
-  }
+  // ---------- ROL / MESLEK SEÇİMİ ----------
+  function initRoleBuilder() {
+    const select = $("#role-select");
+    const btn = $("#btn-build-role");
+    const msg = $("#role-message");
 
-  // ==============================
-  // SAYFA GEÇİŞLERİ
-  // ==============================
-  function showPage(key) {
-    $$(".page").forEach((page) => {
-      page.classList.remove("active");
-    });
-    const target = document.getElementById(`page-${key}`);
-    if (target) {
-      target.classList.add("active");
-    }
+    if (!select || !btn || !msg) return;
 
-    $$(".nav-btn").forEach((btn) => {
-      if (btn.dataset.go === key) {
-        btn.classList.add("active");
-      } else {
-        btn.classList.remove("active");
-      }
-    });
-
-    if (key === "home") {
-      renderHomeFeedPreview();
-    }
-  }
-
-  // Nav butonları
-  $$(".nav-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
-      const target = btn.dataset.go;
-      showPage(target);
-    });
-  });
-
-  // Hızlı chip butonları
-  $$(".chip-btn").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const target = btn.dataset.go;
-      showPage(target);
-    });
-  });
-
-  // Dil butonu (TR/EN basit toggle)
-  const btnLang = $("#btnLang");
-  if (btnLang) {
-    btnLang.addEventListener("click", () => {
-      btnLang.textContent = btnLang.textContent === "TR" ? "EN" : "TR";
-    });
-  }
-
-  // Giriş butonu (şimdilik gösterim amaçlı)
-  const btnLogin = $("#btnLogin");
-  if (btnLogin) {
-    btnLogin.addEventListener("click", () => {
-      alert(
-        "Giriş sistemi backend ile bağlandığında aktif olacak.\nŞimdilik platformu misafir olarak kullanmaya devam edebilirsin."
-      );
-    });
-  }
-
-  // ==============================
-  // MESLEK SEÇİMİ VE PLATFORMU HAZIRLAMA
-  // ==============================
-  const professionSelect = $("#professionSelect");
-  const btnStartFlow = $("#btnStartFlow");
-
-  if (btnStartFlow && professionSelect) {
-    btnStartFlow.addEventListener("click", () => {
-      const value = professionSelect.value;
+      const value = select.value;
       if (!value) {
-        setAvatarMessage(
-          "Önce mesleğini seç kurban 💜<br/>İçerikçi misin, esnaf mısın, muhasebeci mi, doktor mu?"
-        );
+        msg.textContent = "Lütfen mesleğini / rolünü seç.";
+        msg.style.opacity = "1";
         return;
       }
 
-      state.profession = value;
+      state.role = value;
+      msg.style.opacity = "1";
 
-      let label = "";
-      let target = "home";
-      switch (value) {
-        case "content":
-          label = "İçerik Üreticisi / Influencer";
-          target = "content";
-          break;
-        case "ecommerce":
-          label = "E-Ticaret / Esnaf / Mağaza Sahibi";
-          target = "commerce";
-          break;
-        case "b2b":
-          label = "İşletme Sahibi / Girişimci";
-          target = "b2b";
-          break;
-        case "accountant":
-          label = "Muhasebe / Finans";
-          target = "accounting";
-          break;
-        case "doctor":
-          label = "Doktor / Sağlık";
-          target = "content";
-          break;
-        case "teacher":
-          label = "Öğretmen / Öğrenci";
-          target = "content";
-          break;
-        case "engineer":
-          label = "İnşaat / Usta / Mühendis";
-          target = "b2b";
-          break;
-        case "chef":
-          label = "Aşçı / Kafe / Restoran";
-          target = "commerce";
-          break;
-        case "freelancer":
-          label = "Freelancer / Yazılımcı / Tasarımcı";
-          target = "content";
-          break;
-        default:
-          label = "Genel ziyaretçi";
-          target = "home";
-      }
+      const templates = {
+        "doktor": "Hasta bilgilendirme videoları, klinik randevu akışı ve muhasebe tek ekranda hazırlandı.",
+        "öğretmen": "Ders materyalleri, öğrenci ödev takibi ve veli bilgilendirmeleri için sınıf panelin kuruldu.",
+        "e-ticaret": "Ürün katalogları, kampanya içerikleri ve satış raporların InflowAI altında birleşti.",
+        "inşaat": "Şantiye raporları, iş güvenliği dokümanları ve teklif içerikleri için yönetim alanın açıldı.",
+        "sosyal-medya": "Reels / Shorts senaryoları, post takvimi ve yorum takibi için sosyal panelin aktif edildi.",
+      };
 
-      state.professionLabel = label;
+      const text =
+        templates[value] ||
+        "Seçtiğin alana göre e-ticaret, içerik, B2B ve muhasebe modülleri senin için hazırlandı.";
 
-      setAvatarMessage(
-        `Tamam kurban 💜<br/><strong>${label}</strong> olarak geldin.<br/>Senin için en uygun ekranları açıyorum.`
+      msg.textContent = text;
+
+      // Platform seni ciddiye alıyor – biraz da fikir üretelim:
+      addIdeaToFeed(
+        "InflowAI",
+        `${select.options[select.selectedIndex].text} için haftalık içerik planı oluşturuldu.`
       );
-      addRecentAction(`Meslek seçimi: ${label}`);
-      renderProfile();
-      showPage(target);
+      incrementIdeas();
     });
   }
 
-  // ==============================
-  // İÇERİK ÜRETİCİ
-  // ==============================
-  const btnGenerateContent = $("#btnGenerateContent");
-  if (btnGenerateContent) {
-    btnGenerateContent.addEventListener("click", () => {
-      const type = $("#contentType").value;
-      const input = $("#contentInput").value.trim();
-      const output = $("#contentResult");
+  // ---------- İÇERİK ÜRETİCİ ----------
+  function initContentProducer() {
+    const form = $("#content-form");
+    const input = $("#content-topic");
+    const out = $("#content-output");
+    const quickBtn = $("#btn-quick-content");
 
-      if (!input) {
-        output.textContent = "Önce içerik konusunu kısaca yaz kurban. 🙂";
+    if (quickBtn && form) {
+      quickBtn.addEventListener("click", () => {
+        // Ana ekrandaki buton içerik ekranına geçirsin
+        const contentTab = $('[data-target="screen-content"]');
+        if (contentTab) contentTab.click();
+        if (input) input.focus();
+      });
+    }
+
+    if (!form || !input || !out) return;
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const topic = input.value.trim();
+      if (!topic) {
+        out.textContent = "Önce bir cümle yaz; örnek: 'Moda butik açılışı için kampanya'.";
         return;
       }
 
-      let title = "";
-      let detail = "";
-
-      if (type === "short") {
-        title = "Kısa Video Fikri";
-        detail = `Reels/Shorts için fikir: ${input} konusuyla alakalı, hızlı giriş–orta–final içeren 10-15 saniyelik bir senaryo tasarla. Konu: "${input}".`;
-      } else if (type === "post") {
-        title = "Gönderi Metni";
-        detail = `Sosyal medya gönderisi için vurucu bir metin: "${input}" temalı, girişte dikkat çekici, sonda çağrı içeren 2–3 cümlelik text oluştur.`;
-      } else if (type === "product") {
-        title = "Ürün Açıklaması";
-        detail = `Ürün açıklaması: "${input}" için özellik, fayda ve duygusal vurgu içeren bir satış metni yaz.`;
-      } else if (type === "blog") {
-        title = "Blog Taslağı";
-        detail = `Blog taslağı: "${input}" konusunda başlıklar, alt başlıklar ve giriş–gelişme–sonuç akışını planla.`;
-      } else if (type === "story") {
-        title = "Hikâye Metni";
-        detail = `"${input}" için kısa ama etkileyici bir hikâye fikri: girişte merak uyandır, ortada olayları sıkıştır, finalde duygusal bir kapanış yap.`;
-      } else {
-        title = "İçerik Fikri";
-        detail = `"${input}" için genel bir içerik fikri üret.`;
-      }
-
-      // Ekrana yaz
-      output.innerHTML = `<strong>${title}</strong><br/>${detail}`;
-
-      // State güncelle
-      const now = Date.now();
-      state.totalContent += 1;
-      state.todayIdeas += 1;
-      state.contents.push({
-        type,
-        input,
-        title,
-        detail,
-        time: now
-      });
-      state.feed.push({
-        kind: "content",
-        title,
-        detail,
-        time: now
-      });
-
-      addRecentAction(`Yeni içerik üretildi: ${title}`);
+      // Basit ama etkili, 4 farklı platform için metin üretiyoruz
+      const ideaPack = generateMultiPlatformContent(topic);
+      out.innerHTML = ideaPack.html;
+      state.totalContent += 4; // 4 platform fikri
+      incrementIdeas();
       updateStats();
-      renderFeed();
-      renderHomeFeedPreview();
+
+      addIdeaToFeed("İçerik Üretici", `Yeni fikir seti üretildi: "${topic}"`);
     });
   }
 
-  // ==============================
-  // E-TİCARET / ÜRÜN EKLEME
-  // ==============================
-  const btnAddProduct = $("#btnAddProduct");
-  if (btnAddProduct) {
-    btnAddProduct.addEventListener("click", () => {
-      const nameEl = $("#productName");
-      const priceEl = $("#productPrice");
-      const descEl = $("#productDescription");
-      const visEl = $("#productVisibility");
-      const resultEl = $("#productAddResult");
+  function generateMultiPlatformContent(topic) {
+    const base = topic.replace(/\.$/, "");
+    const items = [
+      {
+        title: "TikTok / Reels Hook",
+        text: `“${base}” için 3 saniyede dikkat çeken açılış: Sesli soru sor → ekranda büyük yazı: "${base.toUpperCase()} gerçekten işe yarar mı?"`,
+      },
+      {
+        title: "Instagram Post Başlığı",
+        text: `“${base}” temalı karusel için 5 slayt fikri: 1) Sorun, 2) Neden, 3) Çözümün, 4) Örnek sonuç, 5) Aksiyon çağrısı.`,
+      },
+      {
+        title: "X (Twitter) Flood",
+        text: `${base} hakkında 5 tweetlik mini flood: giriş, problem, kişisel gözlem, hızlı çözüm, CTA linki.`,
+      },
+      {
+        title: "YouTube Kısa Senaryo",
+        text: `15–30 sn'lik kısa video: girişte büyük sorun cümlesi, ortada 2 maddelik çözüm, sonda kanalın için abonelik çağrısı.`,
+      },
+    ];
+
+    const html =
+      `<div class="tiles">` +
+      items
+        .map(
+          (i) => `
+        <div class="card">
+          <div class="section-chip">${i.title}</div>
+          <p style="margin-top:10px;font-size:14px;color:var(--fg2);">
+            ${i.text}
+          </p>
+        </div>
+      `
+        )
+        .join("") +
+      `</div>`;
+
+    return { html, items };
+  }
+
+  // ---------- ÜRÜN EKLEME ----------
+  function initProductForm() {
+    const form = $("#product-form");
+    const nameEl = $("#product-name");
+    const priceEl = $("#product-price");
+    const descEl = $("#product-desc");
+    const listEl = $("#product-list");
+
+    const quickBtn = $("#btn-quick-product");
+    if (quickBtn) {
+      quickBtn.addEventListener("click", () => {
+        const tab = $('[data-target="screen-commerce"]');
+        if (tab) tab.click();
+        if (nameEl) nameEl.focus();
+      });
+    }
+
+    if (!form || !nameEl || !priceEl || !descEl || !listEl) return;
+
+    // Eski ürünleri göster (varsa)
+    renderProductList(listEl);
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
 
       const name = nameEl.value.trim();
       const price = priceEl.value.trim();
       const desc = descEl.value.trim();
-      const visibility = visEl.value;
 
       if (!name || !price) {
-        resultEl.textContent = "Ürün adı ve fiyatını doldur kurban. 🛒";
+        alert("Ürün adı ve fiyat zorunlu.");
         return;
       }
-
-      let visibilityLabel = "Herkese açık";
-      if (visibility === "followers") visibilityLabel = "Takipçilere özel";
-      if (visibility === "vip") visibilityLabel = "VIP / özel satış";
-
-      const shortDesc = desc || "Bu ürünün açıklaması InflowAI tarafından zenginleştirilebilir.";
 
       const product = {
+        id: Date.now(),
         name,
         price,
-        desc: shortDesc,
-        visibility,
-        visibilityLabel,
-        time: Date.now()
+        desc,
       };
 
-      state.products.push(product);
+      state.products.unshift(product);
       state.totalProducts += 1;
-
-      state.feed.push({
-        kind: "product",
-        title: `Yeni ürün: ${name}`,
-        detail: `${price} – ${visibilityLabel}`,
-        time: product.time
-      });
-
-      addRecentAction(`Yeni ürün eklendi: ${name}`);
       updateStats();
-      renderProducts();
-      renderFeed();
-      renderHomeFeedPreview();
+      renderProductList(listEl);
 
-      nameEl.value = "";
-      priceEl.value = "";
-      descEl.value = "";
-      resultEl.textContent = "Ürün başarıyla eklendi. 🎉";
+      addIdeaToFeed("E-Ticaret", `Yeni ürün yayında: ${name} (${price} ₺)`);
+
+      form.reset();
     });
   }
 
-  // ==============================
-  // B2B / İŞLETME PANELİ
-  // ==============================
-  const btnB2BPlan = $("#btnB2BPlan");
-  if (btnB2BPlan) {
-    btnB2BPlan.addEventListener("click", () => {
-      const txt = $("#b2bAbout").value.trim();
-      const out = $("#b2bResult");
-      if (!txt) {
-        out.textContent = "Önce işletmeni kısaca anlat kurban. 😊";
-        return;
-      }
+  function renderProductList(container) {
+    if (!container) return;
+    if (!state.products.length) {
+      container.innerHTML =
+        '<p style="font-size:14px;color:var(--fg2);margin:0;">Henüz ürün yok. İlk ürünü eklediğinde burada görünecek.</p>';
+      return;
+    }
 
-      const plan = `
-<strong>InflowAI Haftalık Plan Özeti</strong><br/><br/>
-<strong>İşletme:</strong> ${txt}<br/><br/>
-<strong>1) İçerik Planı</strong><br/>
-- Haftada en az 3 kısa video (Reels/Shorts) – işletmeni sahneden anlat.<br/>
-- Haftada 2 ürün odaklı paylaşım – ürün özelliklerini göster.<br/>
-- Haftada 1 “sahne arkası” paylaşım – güven ve samimiyet için.<br/><br/>
-<strong>2) Satış Planı</strong><br/>
-- En çok satma potansiyeli olan 1–3 ürünü öne çıkar.<br/>
-- Haftalık mini kampanya (küçük indirim, ikinci ürüne avantaj vb.).<br/>
-- DM veya WhatsApp ile soruları hızlı cevapla.<br/><br/>
-<strong>3) Büyüme / B2B Öneriler</strong><br/>
-- En çok etkileşim alan içerikleri tekrar formatla ve yeniden paylaş.<br/>
-- Benzer işletmelerin içerik stilini incele, kendine göre güncelle.<br/>
-- InflowAI içerisindeki muhasebe özetinden kâr–zarar dengesini takip et.<br/><br/>
-Bu plan her hafta InflowAI tarafından güncellenebilir. 🧠
-`;
+    container.innerHTML = state.products
+      .map(
+        (p) => `
+      <div class="item">
+        <div>
+          <div style="font-weight:600;">${p.name}</div>
+          <div style="font-size:13px;color:var(--fg2);margin-top:2px;">
+            ${p.desc || "Açıklama eklenmedi."}
+          </div>
+        </div>
+        <div style="font-weight:700;">${p.price} ₺</div>
+      </div>
+    `
+      )
+      .join("");
+  }
 
-      out.innerHTML = plan;
-      addRecentAction("B2B haftalık plan oluşturuldu.");
+  // ---------- AKIŞ (FEED) ----------
+  function initFeed() {
+    const list = $("#feed-list");
+    if (!list) return;
+
+    // Varsayılan bir iki örnek ekle
+    addIdeaToFeed(
+      "InflowAI",
+      "Platform her meslek için ayrı panel hazırlamak üzere tasarlandı."
+    );
+    addIdeaToFeed(
+      "InflowAI",
+      "İlk içerik ve ürünlerini eklediğinde burada hareketleri göreceksin."
+    );
+    renderFeed(list);
+  }
+
+  function addIdeaToFeed(source, text) {
+    state.feedItems.unshift({
+      id: Date.now() + Math.random(),
+      source,
+      text,
+      time: new Date().toLocaleTimeString("tr-TR", {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
     });
+
+    const list = $("#feed-list");
+    if (list) renderFeed(list);
   }
 
-  // ==============================
-  // MUHASEBE / FİNANS
-  // ==============================
-  const btnAccAdd = $("#btnAccAdd");
-  if (btnAccAdd) {
-    btnAccAdd.addEventListener("click", () => {
-      const type = $("#accType").value;
-      const amountRaw = $("#accAmount").value;
-      const note = $("#accNote").value.trim();
+  function renderFeed(container) {
+    if (!container) return;
+    if (!state.feedItems.length) {
+      container.innerHTML =
+        '<p style="font-size:14px;color:var(--fg2);margin:0;">Henüz hareket yok.</p>';
+      return;
+    }
 
-      const amount = Number(amountRaw);
-      if (!amount || amount <= 0) {
-        alert("Tutarı pozitif bir sayı olarak gir kurban.");
-        return;
-      }
-
-      const rec = {
-        type,
-        amount,
-        note,
-        time: new Date()
-      };
-
-      state.accRecords.push(rec);
-      if (type === "income") {
-        state.totalIncome += amount;
-      } else {
-        state.totalExpense += amount;
-      }
-
-      renderAccounting();
-      addRecentAction(
-        `${type === "income" ? "Gelir" : "Gider"} kaydedildi: ${amount} ₺ (${note || "Not yok"})`
-      );
-
-      $("#accAmount").value = "";
-      $("#accNote").value = "";
-    });
+    container.innerHTML = state.feedItems
+      .map(
+        (f) => `
+      <div class="item">
+        <div>
+          <div style="font-size:13px;color:var(--fg2);">${f.source}</div>
+          <div style="font-size:14px;margin-top:4px;">${f.text}</div>
+        </div>
+        <div style="font-size:12px;color:var(--fg2);">${f.time}</div>
+      </div>
+    `
+      )
+      .join("");
   }
 
-  // ==============================
-  // EĞLENCE ALANI
-  // ==============================
-  const btnCoffee = $("#btnCoffee");
-  const btnHoroscope = $("#btnHoroscope");
-  const btnAdvice = $("#btnAdvice");
-  const btnQuiz = $("#btnQuiz");
-
-  function setFunResult(title, body) {
-    $("#funResultTitle").textContent = title;
-    $("#funResultBody").textContent = body;
+  // ---------- İSTATİSTİKLER ----------
+  function initStats() {
+    updateStats();
   }
 
-  if (btnCoffee) {
-    btnCoffee.addEventListener("click", () => {
-      setFunResult(
-        "Kahve Falı 🌙",
-        "Fincanında büyük bir yol görünüyor kurban. Bu yol yeni bir proje, yeni müşteriler veya hayatında açılacak yepyeni bir sayfa olabilir. İçine sinen ilk fikre doğru küçük bir adım at, InflowAI gerektiğinde yanında."
-      );
-      state.feed.push({
-        kind: "fun",
-        title: "Kahve falı bakıldı",
-        detail: "Yeni bir yol, yeni fırsatlar göründü.",
-        time: Date.now()
+  function incrementIdeas() {
+    state.todayIdeas += 1;
+    updateStats();
+  }
+
+  function updateStats() {
+    const c = $("#stat-total-content");
+    const p = $("#stat-total-products");
+    const i = $("#stat-today-ideas");
+
+    if (c) c.textContent = String(state.totalContent);
+    if (p) p.textContent = String(state.totalProducts);
+    if (i) i.textContent = String(state.todayIdeas);
+  }
+
+  // ---------- EĞLENCE ALANI ----------
+  function initFunArea() {
+    const coffee = $("#fun-coffee");
+    const astro = $("#fun-astro");
+    const tip = $("#fun-tip");
+    const quiz = "#fun-quiz";
+
+    if (coffee) {
+      coffee.addEventListener("click", () => {
+        alert("Kahve fotoğrafını yükleyebileceğin AI Fal modülü yakında geliyor. Şimdilik: Bugün sezgilerine güven, ertelediğin işi bitir. ☕");
       });
-      addRecentAction("Kahve falı modu kullanıldı.");
-      renderFeed();
-      renderHomeFeedPreview();
-    });
-  }
+    }
 
-  if (btnHoroscope) {
-    btnHoroscope.addEventListener("click", () => {
-      setFunResult(
-        "Burç / Tarot 🔮",
-        "Bugün sezgilerin normalden güçlü. Karar alırken biraz iç sesini, biraz da veriyi dinlersen çok dengeli hareket edersin. Üretmekten korkma, hatadan öğrenen kazanır."
-      );
-      state.feed.push({
-        kind: "fun",
-        title: "Burç / tarot yorumu",
-        detail: "Sezgilerin ve üretim gücün öne çıkıyor.",
-        time: Date.now()
+    if (astro) {
+      astro.addEventListener("click", () => {
+        alert("Burç & Tarot alanı: İlişkiler ve kariyer için günlük kart çekme özelliği planlandı. ♟️");
       });
-      addRecentAction("Burç / tarot modu kullanıldı.");
-      renderFeed();
-      renderHomeFeedPreview();
-    });
-  }
+    }
 
-  if (btnAdvice) {
-    btnAdvice.addEventListener("click", () => {
-      const advices = [
-        "Küçük de olsa bugün bir içerik üret, gelecekte sana büyük kapı açabilir.",
-        "Bugün bir ürününü ya da hizmetini, daha önce görmemiş birine göster.",
-        "Yorulduysan mola ver ama tamamen bırakma. Süreklilik, mükemmellikten güçlüdür.",
-        "En zayıf olduğunu düşündüğün yanına odaklan; oradaki gelişme seni şaşırtır.",
-        "Not al: Aklına gelen iyi fikirler saniyeler içinde uçup gider."
-      ];
-      const pick = advices[Math.floor(Math.random() * advices.length)];
-      setFunResult("Günün Tavsiyesi 💡", pick);
-      state.feed.push({
-        kind: "fun",
-        title: "Günün tavsiyesi",
-        detail: pick,
-        time: Date.now()
+    const tipBtn = $("#fun-tip");
+    if (tipBtn) {
+      tipBtn.addEventListener("click", () => {
+        const tips = [
+          "Bugün tek bir ürünü seç ve onun için 3 farklı içerik formatı üret.",
+          "Profiline mesleğini net yaz; InflowAI önerilerini buna göre genişletecek.",
+          "30 dakikalık mikro çalışma bloğu ayarla ve sadece üretime odaklan.",
+        ];
+        alert("Günün tavsiyesi: " + tips[Math.floor(Math.random() * tips.length)]);
       });
-      addRecentAction("Günün tavsiyesi alındı.");
-      renderFeed();
-      renderHomeFeedPreview();
-    });
-  }
+    }
 
-  if (btnQuiz) {
-    btnQuiz.addEventListener("click", () => {
-      setFunResult(
-        "Mini Test 😄",
-        "Soru: Önümüzdeki 7 gün içinde en az kaç içerik üretmek istiyorsun?\n\nA) 0 – Sadece izlerim\nB) 1–3 – Yavaş yavaş başlarım\nC) 4–10 – Ciddi deneme yaparım\nD) 10+ – Bu işi ciddiye alıyorum\n\nCevabın ne olursa olsun, InflowAI yanında."
-      );
-      state.feed.push({
-        kind: "fun",
-        title: "Mini test gösterildi",
-        detail: "Önümüzdeki 7 gün için içerik hedefini düşün.",
-        time: Date.now()
+    const quizBtn = $("#fun-quiz");
+    if (quizBtn) {
+      quizBtn.addEventListener("click", () => {
+        alert("Mini testler: 'Hangi içerik tipi sana daha uygun?' gibi quizler yakında aktif olacak. 😊");
       });
-      addRecentAction("Mini test görüntülendi.");
-      renderFeed();
-      renderHomeFeedPreview();
-    });
+    }
   }
 
-  // ==============================
-  // BASİT "YAŞAYAN" DAVRANIŞ
-  // ==============================
-  // Avatar balonunu ara ara güncelleyen hafif bir sistem
-  const avatarPhrases = [
-    "Bugün tek bir şey üretmen bile yarın hayatını değiştirebilir kurban. 💜",
-    "İstersen sadece gez, InflowAI her tıklamandan bir şey öğreniyor.",
-    "Bir ürün ekle, bir içerik üret; gerisini platforma bırak.",
-    "B2B paneli işletmeler için gizli silahın gibi düşünebilirsin.",
-    "Eğlence alanı moral depolamak için her zaman açık. 🤹"
-  ];
-  let avatarIndex = 0;
+  // ---------- MUHASEBE / B2B / SOSYAL ---------
+  function initSimpleSections() {
+    const accounting = $("#accounting-note");
+    if (accounting) {
+      accounting.textContent =
+        "Zirve / Logo tarzı temel ön muhasebe: gelir-gider, kasa, cari ve fatura özetlerini burada göreceksin. API bağlandığında grafikler otomatik dolar.";
+    }
 
-  setInterval(() => {
-    // Sadece ana sayfa görüldüğünde döndür
-    const homeActive = $("#page-home")?.classList.contains("active");
-    if (!homeActive) return;
+    const b2b = $("#b2b-note");
+    if (b2b) {
+      b2b.textContent =
+        "Burada onay verdiğin iş ortakları senin ürünlerini satabilecek. Komisyon ve raporlar B2B panelinde görünecek.";
+    }
 
-    avatarIndex = (avatarIndex + 1) % avatarPhrases.length;
-    setAvatarMessage(avatarPhrases[avatarIndex]);
-  }, 16000); // 16 saniyede bir hafif güncelleme
+    const social = $("#social-note");
+    if (social) {
+      social.textContent =
+        "Takip / mesajlaşma / arama gibi özellikler için altyapı hazırlanıyor. Şimdilik akışta içerik ve ürün hareketlerini görebilirsin.";
+    }
+  }
 
-  // Başlangıç görünümü
-  showPage("home");
-  updateStats();
-  renderProducts();
-  renderFeed();
-  renderHomeFeedPreview();
-  renderAccounting();
-  renderProfile();
+  // ---------- PROFİL ----------
+  function initProfile() {
+    const nameEl = $("#profile-name");
+    const badgeEl = $("#profile-badge");
+
+    if (nameEl) {
+      nameEl.textContent = "Misafir Kullanıcı";
+    }
+    if (badgeEl) {
+      badgeEl.textContent = "Tüm özellikler şu an misafir modunda açık.";
+    }
+  }
+
+  // ---------- MÜZİK & BORSA (PLACEHOLDER) ----------
+  function initMusicAndStocks() {
+    const musicNote = $("#music-note");
+    if (musicNote) {
+      musicNote.textContent =
+        "Çalma listelerin ve odak müzikleri burada. Spotify / YouTube Music entegrasyonu için hazırlık yapılıyor.";
+    }
+
+    const stockNote = $("#stock-note");
+    if (stockNote) {
+      stockNote.textContent =
+        "Borsa & kripto takip widget'ı burada görünecek. Gerçek zamanlı fiyatlar için harici API bağlanacak.";
+    }
+  }
+
+  // ---------- BAŞLAT ----------
+  function init() {
+    initViews();
+    initRoleBuilder();
+    initContentProducer();
+    initProductForm();
+    initFeed();
+    initStats();
+    initFunArea();
+    initSimpleSections();
+    initProfile();
+    initMusicAndStocks();
+  }
+
+  return { init };
+})();
+
+// DOM yüklendiğinde başlat
+document.addEventListener("DOMContentLoaded", () => {
+  InflowUI.init();
 });
-```0
