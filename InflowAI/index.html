@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>InflowAI - Sosyal Ticaret ve İçerik Beyni</title>
+  <title>InflowAI – Sosyal Ticaret ve Mega İçerik Platformu</title>
 
-  <!-- Google AdSense (Doğrulama KODU) -->
+  <!-- Google AdSense (Doğrulama Kodu) -->
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5803994489635087"
     crossorigin="anonymous"></script>
 
@@ -13,406 +13,114 @@
 </head>
 
 <body>
-  <!-- ARKA PLAN -->
-  <div class="bg"></div>
 
   <!-- ÜST BAR -->
-  <header class="top">
+  <header class="topbar">
     <div class="logo">
       <div class="dot"></div>
       <span>InflowAI</span>
     </div>
 
-    <nav class="main-nav">
-      <button class="nav-btn active" data-page="home">Ana Sayfa</button>
-      <button class="nav-btn" data-page="products">Ürün Ekle</button>
-      <button class="nav-btn" data-page="creator">Mega İçerik</button>
-      <button class="nav-btn" data-page="share">Paylaşım</button>
-      <button class="nav-btn" data-page="fun">Eğlence</button>
-      <button class="nav-btn" data-page="profile">Profil</button>
-    </nav>
-
-    <div class="actions">
-      <button class="btn-ghost" id="btnLang">TR</button>
-      <button class="btn-primary" id="btnLogin">Giriş</button>
+    <div class="right">
+      <button class="lang">TR</button>
+      <button class="login-btn" id="openLogin">Giriş</button>
     </div>
   </header>
 
-  <main class="container">
+  <!-- ANA SAHNE: HAREKETLİ AVATAR -->
+  <section class="hero">
+    <div class="hero-avatar">
+      <div class="avatar-glow"></div>
 
-    <!-- 1) ANA SAYFA / AKIŞ -->
-    <section id="page-home" class="page page-active">
-      <section class="hero">
-        <div class="avatar-wrap">
-          <div class="avatar-glow"></div>
-
-          <div class="avatar" id="avatar">
-            <div class="face">
-              <div class="eye eye-left"></div>
-              <div class="eye eye-right"></div>
-              <div class="mouth"></div>
-            </div>
-          </div>
-
-          <div class="bubble" id="avatarBubble">
-            Hoş geldin, bugün ne üretmek istiyorsun? 💜
-          </div>
+      <div class="avatar" id="liveAvatar">
+        <div class="face">
+          <div class="eye eye-left"></div>
+          <div class="eye eye-right"></div>
+          <div class="mouth"></div>
         </div>
+      </div>
 
-        <div class="hero-text">
-          <h1 class="hero-title">
-            TikTok, Instagram, X, YouTube ve Ticaret <br />
-            tek beyin altında birleşti.
-          </h1>
+      <div class="avatar-talk" id="avatarText">
+        Hoş geldin! Bugün senin için 8 farklı içerik üretmeye hazırım. 💜
+      </div>
+    </div>
 
-          <p class="hero-desc">
-            InflowAI, elindeki ürünü satman, içerik üretmen, eğlenmen ve büyümen için
-            tüm büyük platformların gücünü tek yerde toplayan yaşayan bir sistemdir.
-          </p>
+    <h1 class="hero-title">
+      TikTok, Instagram, X, YouTube ve Ticaret<br>
+      <strong>tek beyin altında birleşti.</strong>
+    </h1>
 
-          <div class="hero-btns">
-            <button class="btn-primary" id="btnQuickCreate">Hızlı İçerik Üret</button>
-            <button class="btn-ghost" id="btnQuickProduct">Hızlı Ürün Ekle</button>
-          </div>
+    <p class="hero-sub">
+      InflowAI, içerik üretmek, ürün satmak, eğlenmek ve büyümek için
+      tüm platformların gücünü tek bir yerde sunan yaşayan bir sistemdir.
+    </p>
 
-          <p class="note">
-            Premium &amp; Kurumsal paketler AdSense onayı sonrası açılacak.
-            Şu an tüm ücretsiz özellikler ve B2B herkese açık.
-          </p>
-        </div>
-      </section>
+    <div class="hero-buttons">
+      <button class="primary" id="goProducer">Hızlı İçerik Üret</button>
+      <button class="secondary" id="goAddProduct">Hızlı Ürün Ekle</button>
+    </div>
 
-      <section class="section" id="sectionHomeStats">
-        <h2>Canlı Platform Özeti</h2>
-        <div class="stats-grid">
-          <div class="stat-card">
-            <span class="label">Toplam içerik</span>
-            <span class="value" id="statContents">0</span>
-          </div>
-          <div class="stat-card">
-            <span class="label">Satışta ürün</span>
-            <span class="value" id="statProducts">0</span>
-          </div>
-          <div class="stat-card">
-            <span class="label">Aktif kullanıcı</span>
-            <span class="value" id="statUsers">0</span>
-          </div>
-          <div class="stat-card">
-            <span class="label">Bugün üretilen fikir</span>
-            <span class="value" id="statIdeas">0</span>
-          </div>
-        </div>
-      </section>
+    <p class="note">
+      Premium & Kurumsal paketler AdSense onayı sonrası açılacak.
+      Şu anda tüm ücretsiz özellikler ve B2B herkese açık.
+    </p>
+  </section>
 
-      <section class="section" id="sectionHomeFeed">
-        <h2>InflowAI Akışı</h2>
-        <p class="section-desc">
-          Takip ettiğin kullanıcıların paylaşımlarını, satıştaki ürünleri ve InflowAI beyninin ürettiği
-          önerileri tek akışta gör.
-        </p>
-        <div class="feed-tabs">
-          <button class="feed-tab active" data-feed="all">Tümü</button>
-          <button class="feed-tab" data-feed="content">İçerikler</button>
-          <button class="feed-tab" data-feed="products">Ürünler</button>
-          <button class="feed-tab" data-feed="ai">AI Önerileri</button>
-        </div>
+  <!-- CANLI PLATFORM ÖZETİ -->
+  <section class="stats">
+    <h2>Canlı Platform Özeti</h2>
 
-        <div class="feed" id="homeFeed">
-          <!-- JS ile kartlar eklenecek -->
-        </div>
-      </section>
-    </section>
+    <div class="stat-grid">
+      <div class="stat-box">
+        <label>Toplam İçerik</label>
+        <span id="totalContent">0</span>
+      </div>
 
-    <!-- 2) ÜRÜN EKLE SAYFASI -->
-    <section id="page-products" class="page">
-      <section class="section">
-        <h2>Ürün Ekle ve Satışa Çık</h2>
-        <p class="section-desc">
-          Elindeki ürünü InflowAI’ye ekle; AI senin için başlık, açıklama, satış metni, video senaryosu ve
-          paylaşım paketini hazırlasın.
-        </p>
+      <div class="stat-box">
+        <label>Satışta Ürün</label>
+        <span id="totalProducts">0</span>
+      </div>
 
-        <form id="formAddProduct" class="form-grid">
-          <div class="form-group">
-            <label for="prodName">Ürün Adı</label>
-            <input type="text" id="prodName" placeholder="Örn: El yapımı zeytinyağı sabunu" required />
-          </div>
+      <div class="stat-box">
+        <label>Aktif Kullanıcı</label>
+        <span id="activeUsers">0</span>
+      </div>
 
-          <div class="form-group">
-            <label for="prodDesc">Kısa Açıklama</label>
-            <textarea id="prodDesc" rows="2" placeholder="Ürün ne işe yarıyor, kim kullanmalı?"></textarea>
-          </div>
+      <div class="stat-box">
+        <label>Bugün Üretilen Fikir</label>
+        <span id="todayIdeas">0</span>
+      </div>
+    </div>
+  </section>
 
-          <div class="form-group">
-            <label for="prodPrice">Fiyat</label>
-            <input type="number" step="0.01" id="prodPrice" placeholder="Örn: 199.90" />
-          </div>
+  <!-- AKIŞ -->
+  <section class="feed">
+    <h2>InflowAI Akışı</h2>
+    <p class="feed-desc">
+      Takip ettiğin kullanıcıların içeriklerini, ürünlerini ve
+      InflowAI beyninin senin için ürettiği önerileri tek akışta gör.
+    </p>
 
-          <div class="form-group">
-            <label for="prodCategory">Kategori</label>
-            <select id="prodCategory">
-              <option value="">Seçiniz</option>
-              <option value="kozmetik">Kozmetik / Bakım</option>
-              <option value="giyim">Giyim / Aksesuar</option>
-              <option value="elektronik">Elektronik</option>
-              <option value="gida">Gıda</option>
-              <option value="diger">Diğer</option>
-            </select>
-          </div>
+    <div class="feed-tabs">
+      <button class="feed-tab active">Tümü</button>
+      <button class="feed-tab">İçerikler</button>
+      <button class="feed-tab">Ürünler</button>
+      <button class="feed-tab">AI Önerileri</button>
+    </div>
 
-          <div class="form-group">
-            <label for="prodImage">Ürün Görseli (URL)</label>
-            <input type="url" id="prodImage" placeholder="Geçici olarak görsel linki kullanıyoruz." />
-          </div>
+    <div class="feed-list" id="feedList">
+      <!-- JS ile içerik dolacak -->
+    </div>
+  </section>
 
-          <div class="form-group">
-            <label for="prodVideo">Ürün Videosu (URL - opsiyonel)</label>
-            <input type="url" id="prodVideo" placeholder="Tanıtım videosu linki (varsa)" />
-          </div>
+  <!-- ALT MENÜ -->
+  <footer class="footer">
+    <button class="f-btn" id="fHome">🏠</button>
+    <button class="f-btn" id="fProduce">⚡</button>
+    <button class="f-btn" id="fAdd">➕</button>
+    <button class="f-btn" id="fProfile">👤</button>
+  </footer>
 
-          <div class="form-actions">
-            <button type="button" class="btn-ghost" id="btnGenerateProductAI">
-              AI ile Başlık &amp; Açıklama Üret
-            </button>
-            <button type="submit" class="btn-primary">
-              Ürünü Kaydet ve Yayına Al
-            </button>
-          </div>
-        </form>
-      </section>
-
-      <section class="section">
-        <h2>AI Ürün Paketi</h2>
-        <p class="section-desc">
-          Ürünün için AI tarafından hazırlanan başlık, açıklama, satış metni, video senaryosu ve paylaşım fikirleri.
-        </p>
-        <div id="productAiOutput" class="output-box">
-          Henüz ürün bilgisi girmedin. Yukarıya ürününü ekle, ben sana tam satış paketi hazırlayayım.
-        </div>
-      </section>
-    </section>
-
-    <!-- 3) MEGA İÇERİK ÜRETİCİ SAYFASI -->
-    <section id="page-creator" class="page">
-      <section class="section">
-        <h2>Mega İçerik Üretici</h2>
-        <p class="section-desc">
-          Tek cümle yaz, TikTok, Instagram, X, YouTube ve ticaret için tam içerik paketi üretilsin.
-        </p>
-
-        <div class="form-grid">
-          <div class="form-group">
-            <label for="megaTopic">Ne için içerik üretmek istiyorsun?</label>
-            <input
-              type="text"
-              id="megaTopic"
-              placeholder="Örn: El yapımı bileklik satıyorum, TikTok ve Instagram için içerik istiyorum."
-            />
-          </div>
-
-          <div class="form-group">
-            <label>Platformlar</label>
-            <div class="checkbox-grid">
-              <label><input type="checkbox" value="tiktok" checked /> TikTok</label>
-              <label><input type="checkbox" value="instagram" checked /> Instagram</label>
-              <label><input type="checkbox" value="x" checked /> X</label>
-              <label><input type="checkbox" value="youtube" checked /> YouTube</label>
-              <label><input type="checkbox" value="facebook" /> Facebook</label>
-              <label><input type="checkbox" value="marketplace" checked /> Ticaret / Ürün Satışı</label>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label for="megaTone">Tarz</label>
-            <select id="megaTone">
-              <option value="normal">Standart</option>
-              <option value="eglencli">Eğlenceli</option>
-              <option value="ciddi">Ciddi / Kurumsal</option>
-              <option value="sert">Sert / Racon</option>
-            </select>
-          </div>
-
-          <div class="form-actions">
-            <button class="btn-primary" id="btnMegaGenerate">Tam Paket İçerik Üret</button>
-          </div>
-        </div>
-      </section>
-
-      <section class="section">
-        <h2>Çıktı: Platformlara Göre Tam İçerik Paketi</h2>
-        <div id="megaOutput" class="output-box">
-          Önce yukarıya hedefini yaz ve platformları seç. Sonra tek tıkla tam içerik paketin oluşsun.
-        </div>
-      </section>
-
-      <section class="section">
-        <h2>B2B İşletme Paneli (Ücretsiz)</h2>
-        <p class="section-desc">
-          Küçük işletmeler için günlük / haftalık içerik ve satış planı. Sektörünü seçmen yeterli.
-        </p>
-
-        <div class="form-grid">
-          <div class="form-group">
-            <label for="b2bSector">Sektör</label>
-            <select id="b2bSector">
-              <option value="">Seçiniz</option>
-              <option value="kuafor">Kuaför / Güzellik</option>
-              <option value="restoran">Restoran / Kafe</option>
-              <option value="eticaret">E-ticaret Mağazası</option>
-              <option value="egitim">Eğitim / Danışmanlık</option>
-              <option value="emlak">Emlak</option>
-              <option value="saglik">Sağlık / Klinik</option>
-            </select>
-          </div>
-          <div class="form-actions">
-            <button class="btn-ghost" id="btnB2BPlan">B2B Planı Oluştur</button>
-          </div>
-        </div>
-
-        <div id="b2bOutput" class="output-box">
-          Sektörünü seç, senin için bugün ve bu hafta ne paylaşman gerektiğini planlayayım.
-        </div>
-      </section>
-    </section>
-
-    <!-- 4) PAYLAŞIM OLUŞTUR SAYFASI -->
-    <section id="page-share" class="page">
-      <section class="section">
-        <h2>Paylaşım Oluştur</h2>
-        <p class="section-desc">
-          InflowAI içinde paylaşmak istediğin görsel / video / yazı için AI destekli açıklama ve etiket üret.
-        </p>
-
-        <form id="formCreatePost" class="form-grid">
-          <div class="form-group">
-            <label for="postType">Paylaşım Türü</label>
-            <select id="postType">
-              <option value="image">Fotoğraf</option>
-              <option value="video">Video</option>
-              <option value="text">Yazı</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label for="postCaption">Ne paylaşacaksın?</label>
-            <textarea
-              id="postCaption"
-              rows="3"
-              placeholder="Kısaca anlat: ne göstereceksin, ne hissettirmek istiyorsun?"
-            ></textarea>
-          </div>
-
-          <div class="form-group">
-            <label for="postPlatform">Hedef Platform</label>
-            <select id="postPlatform">
-              <option value="tiktok">TikTok</option>
-              <option value="instagram">Instagram</option>
-              <option value="x">X</option>
-              <option value="youtube">YouTube</option>
-              <option value="facebook">Facebook</option>
-              <option value="inflow">Sadece InflowAI</option>
-            </select>
-          </div>
-
-          <div class="form-actions">
-            <button type="button" class="btn-ghost" id="btnPostAI">
-              Açıklama &amp; Hashtag Üret
-            </button>
-            <button type="submit" class="btn-primary">
-              InflowAI’de Paylaş
-            </button>
-          </div>
-        </form>
-      </section>
-
-      <section class="section">
-        <h2>Hazırlanan Paylaşım Metni</h2>
-        <div id="postAiOutput" class="output-box">
-          Paylaşımını kısaca anlat, ben senin için açıklama ve etiketleri hazırlayayım.
-        </div>
-      </section>
-    </section>
-
-    <!-- 5) PROFİL SAYFASI -->
-    <section id="page-profile" class="page">
-      <section class="section">
-        <h2>Profilim</h2>
-        <div class="profile-header">
-          <div class="profile-avatar" id="profileAvatar">IN</div>
-          <div class="profile-info">
-            <h3 id="profileName">Misafir Kullanıcı</h3>
-            <p id="profileBio">
-              Giriş yapmadın; şu anda misafir modundasın. Ürettiğin içerikler geçici,
-              ama platformun tüm ücretsiz özelliklerini kullanabilirsin.
-            </p>
-            <div class="profile-stats">
-              <span><strong id="profilePosts">0</strong> içerik</span>
-              <span><strong id="profileProducts">0</strong> ürün</span>
-              <span><strong id="profileFollowers">0</strong> takipçi</span>
-              <span><strong id="profileFollowing">0</strong> takip</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="section">
-        <h2>İçeriklerim</h2>
-        <div id="profilePostsList" class="card-grid">
-          <!-- JS ile doldurulacak -->
-        </div>
-      </section>
-
-      <section class="section">
-        <h2>Ürünlerim</h2>
-        <div id="profileProductsList" class="card-grid">
-          <!-- JS ile doldurulacak -->
-        </div>
-      </section>
-    </section>
-
-    <!-- 6) ÜRÜN DETAY SAYFASI -->
-    <section id="page-product-detail" class="page">
-      <section class="section">
-        <button class="btn-ghost" id="btnBackFromProduct">&larr; Ana Sayfaya Dön</button>
-        <div id="productDetailBox" class="product-detail">
-          <!-- JS ile seçilen ürünün detayları gelecek -->
-          <p>
-            Henüz bir ürün seçmedin. Ana sayfadan veya profilden bir ürün kartına tıklayarak detayları görebilirsin.
-          </p>
-        </div>
-      </section>
-    </section>
-
-    <!-- 7) EĞLENCE ALANI SAYFASI -->
-    <section id="page-fun" class="page">
-      <section class="section">
-        <h2>Eğlence Alanı</h2>
-        <p class="section-desc">
-          Kahve falı, burç, tarot, mini test ve günün tavsiyesi ile hem eğlen hem de paylaşılabilir içerik üret.
-        </p>
-
-        <div class="fun-cards">
-          <button class="fun-item" data-fun="coffee"><span>☕</span> Kahve Falı</button>
-          <button class="fun-item" data-fun="zodiac"><span>🔮</span> Burç / Tarot</button>
-          <button class="fun-item" data-fun="advice"><span>💡</span> Günün Tavsiyesi</button>
-          <button class="fun-item" data-fun="quiz"><span>😄</span> Mini Testler</button>
-        </div>
-      </section>
-
-      <section class="section">
-        <h2>Eğlence Çıktısı / Story Metni</h2>
-        <div id="funOutput" class="output-box">
-          Bir eğlence modu seç; ben sana hem eğlence hem de paylaşılabilir bir story metni hazırlayayım.
-        </div>
-      </section>
-    </section>
-
-  </main>
-
-  <!-- TOAST / KÜÇÜK BİLDİRİM -->
-  <div id="toast" class="toast"></div>
-
-  <!-- ANA JS DOSYASI -->
   <script src="ui.js"></script>
 </body>
 </html>
