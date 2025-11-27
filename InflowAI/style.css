@@ -1,297 +1,708 @@
-/* =========================================
-   GENEL TASARIM – Neon Galactic UI
-========================================= */
-
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
-
+/* ============================
+   GENEL RESET & TEMEL STİL
+============================ */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "Inter", sans-serif;
+}
+
+:root {
+  --bg: #050816;
+  --bg-soft: #0b1020;
+  --card: #111827;
+  --card-soft: #151b2c;
+  --accent: #7c3aed;
+  --accent-soft: rgba(124, 58, 237, 0.18);
+  --accent-strong: #a855f7;
+  --text: #f9fafb;
+  --text-soft: #9ca3af;
+  --border: #1f2937;
+  --danger: #ef4444;
+  --success: #22c55e;
+  --radius-lg: 18px;
+  --radius-md: 12px;
+  --radius-sm: 999px;
+  --shadow-soft: 0 18px 45px rgba(0, 0, 0, 0.55);
+}
+
+html, body {
+  height: 100%;
 }
 
 body {
-  background: #070715;
-  color: white;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: radial-gradient(circle at top, #111827 0, #020617 55%, #020617 100%);
+  color: var(--text);
   overflow-x: hidden;
 }
 
-/* =========================================
-   HEADER
-========================================= */
+/* Arka plan neon layer */
+.bg-layer {
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(circle at 10% 0%, rgba(124, 58, 237, 0.16), transparent 55%),
+    radial-gradient(circle at 90% 10%, rgba(14, 165, 233, 0.12), transparent 55%),
+    radial-gradient(circle at 50% 100%, rgba(236, 72, 153, 0.12), transparent 55%);
+  opacity: 0.9;
+  pointer-events: none;
+  z-index: -1;
+}
 
-.top {
+/* ============================
+   ÜST BAR
+============================ */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 18px 25px;
-  background: rgba(255,255,255,0.03);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(255,255,255,0.05);
+  justify-content: space-between;
+  padding: 14px 24px;
+  backdrop-filter: blur(18px);
+  background: linear-gradient(to right, rgba(15, 23, 42, 0.96), rgba(15, 23, 42, 0.7));
+  border-bottom: 1px solid rgba(31, 41, 55, 0.8);
 }
 
-.logo {
-  font-size: 22px;
-  font-weight: 700;
-  cursor: pointer;
-  color: #7aa8ff;
-}
-
-/* =========================================
-   BUTTONS
-========================================= */
-
-.btn-primary {
-  background: linear-gradient(90deg, #ff2bd4, #733dff);
-  padding: 12px 26px;
-  border-radius: 30px;
-  color: white;
-  border: none;
-  cursor: pointer;
-  font-size: 15px;
-  font-weight: 600;
-  transition: 0.25s;
-}
-
-.btn-primary:hover {
-  transform: scale(1.06);
-}
-
-.btn-secondary {
-  background: rgba(255,255,255,0.1);
-  padding: 12px 26px;
-  border-radius: 30px;
-  color: white;
-  border: 1px solid rgba(255,255,255,0.2);
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: 0.25s;
-}
-
-.btn-secondary:hover {
-  background: rgba(255,255,255,0.2);
-}
-
-.btn-ghost {
-  background: rgba(255,255,255,0.08);
-  border-radius: 12px;
-  padding: 8px 16px;
-  border: none;
-  color: white;
-  cursor: pointer;
-}
-
-button:active {
-  transform: scale(0.97);
-}
-
-
-/* =========================================
-   HERO
-========================================= */
-
-.hero {
-  text-align: center;
-  padding: 40px 20px;
-}
-
-.hero h1 {
-  margin-top: 25px;
-  font-size: 28px;
-  font-weight: 700;
-  line-height: 1.35;
-}
-
-.hero p {
-  margin: 15px 0;
-  font-size: 16px;
-  opacity: 0.8;
-}
-
-.hero-btns {
-  margin-top: 22px;
+/* Marka */
+.brand {
   display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.brand-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  background: radial-gradient(circle, var(--accent-strong), var(--accent));
+  box-shadow: 0 0 18px rgba(124, 58, 237, 0.9);
+}
+
+.brand-name {
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  font-size: 1.15rem;
+}
+
+.brand-tagline {
+  font-size: 0.8rem;
+  color: var(--text-soft);
+  margin-left: 6px;
+}
+
+/* Navigation */
+.top-nav {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.nav-btn {
+  border: none;
+  background: transparent;
+  color: var(--text-soft);
+  font-size: 0.85rem;
+  padding: 6px 10px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.15s ease-out;
+  border: 1px solid transparent;
+}
+
+.nav-btn:hover {
+  color: var(--text);
+  border-color: rgba(148, 163, 184, 0.5);
+  background: rgba(15, 23, 42, 0.9);
+}
+
+.nav-btn.active {
+  background: rgba(124, 58, 237, 0.18);
+  border-color: var(--accent);
+  color: var(--accent-strong);
+}
+
+/* Actions */
+.top-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.ghost-btn,
+.primary-btn {
+  font-size: 0.85rem;
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.15s ease-out;
+}
+
+.ghost-btn {
+  background: transparent;
+  color: var(--text-soft);
+  border-color: rgba(148, 163, 184, 0.35);
+}
+
+.ghost-btn:hover {
+  color: var(--text);
+  border-color: rgba(148, 163, 184, 0.9);
+  background: rgba(15, 23, 42, 0.9);
+}
+
+.primary-btn {
+  background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+  color: #f9fafb;
+  box-shadow: 0 8px 25px rgba(124, 58, 237, 0.6);
+}
+
+.primary-btn:hover {
+  filter: brightness(1.06);
+  transform: translateY(-1px);
+  box-shadow: 0 12px 32px rgba(124, 58, 237, 0.7);
+}
+
+.primary-btn.wide {
+  width: 100%;
   justify-content: center;
-  gap: 16px;
+}
+
+/* ============================
+   ANA KAPSAYICI & SAYFALAR
+============================ */
+#appRoot {
+  padding: 22px clamp(14px, 4vw, 28px) 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Sayfa göster/gizle */
+.page {
+  display: none;
+}
+
+.page.active {
+  display: block;
+}
+
+/* Genel grid/layout */
+.layout-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.4fr);
+  gap: 24px;
+  margin-bottom: 26px;
+}
+
+.layout-two {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1.2fr);
+  gap: 20px;
+}
+
+.section {
+  margin-top: 22px;
+  padding: 18px;
+  background: linear-gradient(145deg, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.85));
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(31, 41, 55, 0.9);
+  box-shadow: var(--shadow-soft);
+}
+
+.section-header {
+  margin-bottom: 16px;
+}
+
+.section-header h2 {
+  font-size: 1.2rem;
+  margin-bottom: 4px;
+}
+
+.section-header p {
+  font-size: 0.9rem;
+  color: var(--text-soft);
+}
+
+.section-desc {
+  font-size: 0.9rem;
+  color: var(--text-soft);
+}
+
+/* ============================
+   AVATAR SAHNESİ
+============================ */
+.hero-block {
+  padding: 18px;
+  background: radial-gradient(circle at top, #1f2937, #020617);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(31, 41, 55, 0.9);
+  box-shadow: var(--shadow-soft);
+  position: relative;
+  overflow: hidden;
+}
+
+.avatar-stage {
+  position: relative;
+  height: 260px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.avatar-glow {
+  position: absolute;
+  bottom: 38px;
+  width: 220px;
+  height: 220px;
+  border-radius: 999px;
+  background:
+    radial-gradient(circle, rgba(124, 58, 237, 0.75), transparent 60%),
+    radial-gradient(circle at 20% 10%, rgba(56, 189, 248, 0.6), transparent 55%);
+  filter: blur(4px);
+  opacity: 0.85;
+  animation: pulseGlow 4.2s ease-in-out infinite;
 }
 
 .avatar {
-  width: 170px;
-  height: 170px;
-  margin: auto;
-  margin-top: 10px;
-  border-radius: 50%;
-  background: radial-gradient(circle, #3911ff, #040211);
-  box-shadow: 0 0 45px #3a5eff;
-}
-
-
-/* =========================================
-   QUICK NAV
-========================================= */
-
-.quick-nav {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  border-radius: 36px;
+  background: linear-gradient(145deg, #020617, #111827);
+  border: 2px solid rgba(148, 163, 184, 0.4);
+  box-shadow:
+    0 18px 40px rgba(15, 23, 42, 0.9),
+    0 0 24px rgba(59, 130, 246, 0.5);
   display: flex;
-  justify-content: space-around;
-  padding: 25px;
-  margin-top: 20px;
+  align-items: center;
+  justify-content: center;
+  animation: floatAvatar 3.5s ease-in-out infinite;
 }
 
-.quick-nav button {
-  background: rgba(255,255,255,0.08);
-  border: none;
-  color: white;
-  padding: 10px 16px;
-  border-radius: 12px;
-  font-size: 14px;
-  cursor: pointer;
+.avatar-face {
+  width: 80%;
+  height: 65%;
+  border-radius: 22px;
+  background: radial-gradient(circle at 30% 20%, #f9fafb, #e5e7eb);
+  box-shadow: 0 10px 20px rgba(15, 23, 42, 0.25);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
 
-
-/* =========================================
-   TOOL PAGE (Mega içerik, Ürün ekle vb.)
-========================================= */
-
-.tool-page {
-  padding: 30px 20px;
+.eye {
+  width: 18px;
+  height: 18px;
+  background: #0f172a;
+  border-radius: 999px;
+  position: relative;
+  overflow: hidden;
 }
 
-.tool-page h1 {
-  font-size: 26px;
+.eye::after {
+  content: "";
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: #f9fafb;
+}
+
+.eye-left {
+  margin-right: 12px;
+}
+
+.eye-right {
+  margin-left: 12px;
+}
+
+.mouth {
+  width: 38px;
+  height: 16px;
+  border-radius: 0 0 999px 999px;
+  border-bottom: 4px solid #0f172a;
+  margin-top: 4px;
+}
+
+/* Avatar konuşma balonu */
+.avatar-bubble {
+  position: absolute;
+  bottom: 210px;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 260px;
+  background: rgba(15, 23, 42, 0.95);
+  border-radius: 18px;
+  padding: 10px 14px;
+  font-size: 0.85rem;
+  color: var(--text);
+  border: 1px solid rgba(148, 163, 184, 0.5);
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.9);
+}
+
+.avatar-bubble::after {
+  content: "";
+  position: absolute;
+  bottom: -9px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 10px 10px 0 10px;
+  border-style: solid;
+  border-color: rgba(15, 23, 42, 0.95) transparent transparent transparent;
+}
+
+/* Avatar animasyonları */
+@keyframes floatAvatar {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.85;
+  }
+  50% {
+    transform: scale(1.07);
+    opacity: 1;
+  }
+}
+
+/* ============================
+   HERO PANEL
+============================ */
+.hero-panel {
+  padding: 18px;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(145deg, rgba(15, 23, 42, 0.96), rgba(15, 23, 42, 0.9));
+  border: 1px solid rgba(31, 41, 55, 0.95);
+  box-shadow: var(--shadow-soft);
+}
+
+.hero-title {
+  font-size: 1.4rem;
+  margin-bottom: 8px;
+}
+
+.hero-title .accent {
+  color: var(--accent-strong);
+}
+
+.hero-text {
+  font-size: 0.95rem;
+  color: var(--text-soft);
   margin-bottom: 12px;
+}
+
+/* Meslek bloğu */
+.block {
+  margin-bottom: 14px;
+}
+
+/* Quick actions */
+.quick-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.chip-btn {
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  background: rgba(15, 23, 42, 0.9);
+  font-size: 0.8rem;
+  color: var(--text-soft);
+  cursor: pointer;
+  transition: all 0.15s ease-out;
+}
+
+.chip-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent-strong);
+  background: rgba(15, 23, 42, 0.95);
+}
+
+/* Stats row */
+.stats-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.stat-card {
+  flex: 1;
+  min-width: 110px;
+  padding: 10px 10px;
+  border-radius: 12px;
+  background: radial-gradient(circle at top left, rgba(124, 58, 237, 0.16), rgba(15, 23, 42, 0.96));
+  border: 1px solid rgba(55, 65, 81, 0.9);
+}
+
+.stat-label {
+  font-size: 0.7rem;
+  color: var(--text-soft);
+  margin-bottom: 2px;
+}
+
+.stat-value {
+  font-size: 1rem;
   font-weight: 700;
 }
 
-.tool-page p {
-  opacity: 0.75;
-  font-size: 15px;
+/* ============================
+   FORM ELEMANLARI
+============================ */
+.label {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--text-soft);
+  margin-bottom: 4px;
 }
 
-.tool-page input,
-.tool-page textarea {
+.input,
+.select,
+.textarea {
   width: 100%;
-  padding: 14px;
-  margin-top: 15px;
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.15);
-  border-radius: 14px;
-  color: white;
-  font-size: 15px;
+  padding: 9px 11px;
+  border-radius: 10px;
+  border: 1px solid rgba(55, 65, 81, 0.95);
+  background: rgba(15, 23, 42, 0.95);
+  color: var(--text);
+  font-size: 0.85rem;
+  outline: none;
+  transition: border-color 0.15s ease-out, box-shadow 0.15s ease-out, background 0.15s ease-out;
 }
 
-.tool-page button {
-  margin-top: 20px;
-  width: 100%;
+.input:focus,
+.select:focus,
+.textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px rgba(124, 58, 237, 0.4);
+  background: rgba(15, 23, 42, 1);
 }
 
-#resultBox, #addResult {
-  margin-top: 20px;
-  padding: 20px;
-  background: rgba(255,255,255,0.05);
-  border-radius: 14px;
-  min-height: 60px;
+.textarea {
+  resize: vertical;
 }
 
-
-/* =========================================
-   FEED SAYFASI
-========================================= */
-
-.feed-page {
-  padding: 30px 20px;
+/* ============================
+   KARTLAR VE ÇIKTI ALANLARI
+============================ */
+.card {
+  background: linear-gradient(145deg, rgba(15, 23, 42, 0.98), rgba(15, 23, 42, 0.92));
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(31, 41, 55, 0.95);
+  box-shadow: var(--shadow-soft);
+  padding: 14px 16px;
 }
 
-#feedList {
-  margin-top: 20px;
+.card h3 {
+  font-size: 1rem;
+  margin-bottom: 8px;
+}
+
+.card.output {
+  min-height: 180px;
+}
+
+.output-box {
+  min-height: 140px;
+  border-radius: 12px;
+  border: 1px dashed rgba(55, 65, 81, 0.9);
+  padding: 10px 12px;
+  font-size: 0.9rem;
+  color: var(--text-soft);
+}
+
+/* Feed & ürün listeleri */
+.feed-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.feed-column {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 10px;
+  max-height: 400px;
+  overflow-y: auto;
 }
 
-.feed-item {
-  padding: 18px;
-  background: rgba(255,255,255,0.05);
-  border-radius: 14px;
-  font-size: 15px;
-}
-
-
-/* =========================================
-   PROFIL PAGE
-========================================= */
-
-.profile-page {
-  padding: 30px 20px;
-  text-align: center;
-}
-
-.profile-pic {
-  width: 110px;
-  height: 110px;
-  border-radius: 50%;
-  margin: 15px auto;
-  box-shadow: 0 0 25px #684bff;
-}
-
-.profile-menu {
-  margin-top: 25px;
+.product-grid {
   display: grid;
-  gap: 15px;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 8px;
 }
 
-.profile-menu button {
-  padding: 14px;
-  border-radius: 14px;
-  background: rgba(255,255,255,0.08);
-  border: none;
-  color: white;
+.product-card {
+  padding: 10px;
+  border-radius: 12px;
+  background: var(--card-soft);
+  border: 1px solid rgba(55, 65, 81, 0.95);
+  font-size: 0.8rem;
 }
 
+.product-card-title {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
 
-/* =========================================
+.product-card-price {
+  color: var(--accent-strong);
+  font-size: 0.85rem;
+  margin-bottom: 4px;
+}
+
+.product-card-meta {
+  font-size: 0.75rem;
+  color: var(--text-soft);
+}
+
+/* Mini list */
+.mini-list {
+  margin-top: 10px;
+  list-style: none;
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.mini-list li {
+  padding: 7px 9px;
+  border-radius: 10px;
+  background: var(--card-soft);
+  border: 1px solid rgba(55, 65, 81, 0.9);
+  font-size: 0.8rem;
+  color: var(--text-soft);
+  margin-bottom: 5px;
+}
+
+/* Boş metin */
+.empty-text {
+  margin-top: 8px;
+  font-size: 0.8rem;
+  color: var(--text-soft);
+  font-style: italic;
+}
+
+/* Küçük yazı ve notlar */
+.small-text {
+  font-size: 0.8rem;
+  color: var(--text-soft);
+}
+
+.note {
+  margin-top: 6px;
+  font-size: 0.8rem;
+  color: var(--accent-strong);
+}
+
+/* Bullet list */
+.bullet-list {
+  margin-top: 8px;
+  padding-left: 18px;
+  font-size: 0.85rem;
+  color: var(--text-soft);
+}
+
+.bullet-list li {
+  margin-bottom: 4px;
+}
+
+/* ============================
    EĞLENCE ALANI
-========================================= */
-
-.fun-page {
-  padding: 30px 20px;
+============================ */
+.fun-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.3fr);
+  gap: 20px;
 }
 
 .fun-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 15px;
-  margin-top: 20px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
 }
 
-.fun-grid button {
-  padding: 16px;
-  font-size: 16px;
-  border-radius: 14px;
-  background: rgba(255,255,255,0.08);
-  border: none;
-  color: white;
+.fun-btn {
+  padding: 10px 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(55, 65, 81, 0.95);
+  background: var(--card-soft);
+  color: var(--text);
+  font-size: 0.85rem;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s ease-out;
 }
 
-
-/* =========================================
-   ÜRÜN DETAY
-========================================= */
-
-.product-detail {
-  padding: 30px 20px;
-  text-align: center;
+.fun-btn:hover {
+  border-color: var(--accent);
+  background: rgba(15, 23, 42, 0.98);
 }
 
-.product-detail img {
-  width: 100%;
-  border-radius: 20px;
-  margin-bottom: 20px;
+/* ============================
+   RESPONSIVE
+============================ */
+@media (max-width: 960px) {
+  .layout-grid,
+  .layout-two,
+  .fun-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .topbar {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .brand-tagline {
+    display: none;
+  }
+
+  .top-nav {
+    order: 3;
+    width: 100%;
+    justify-content: center;
+  }
+
+  #appRoot {
+    padding-inline: 10px;
+  }
 }
 
-.price {
-  font-size: 22px;
-  margin: 20px 0;
-  color: #77a2ff;
+@media (max-width: 600px) {
+  .topbar {
+    padding-inline: 10px;
+  }
+
+  .hero-title {
+    font-size: 1.1rem;
+  }
+
+  .avatar-stage {
+    height: 220px;
+  }
+
+  .avatar {
+    width: 130px;
+    height: 130px;
+  }
 }
+```0
