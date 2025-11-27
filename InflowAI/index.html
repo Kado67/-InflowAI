@@ -1,125 +1,39 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>InflowAI – Sosyal Ticaret ve Mega İçerik Platformu</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>InflowAI - Sosyal Ticaret ve İçerik Beyni</title>
 
-  <!-- Google AdSense (Doğrulama Kodu) -->
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5803994489635087"
-    crossorigin="anonymous"></script>
-
-  <link rel="stylesheet" href="style.css" />
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5803994489635087" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-
-  <!-- ÜST BAR -->
-  <header class="topbar">
-    <div class="logo">
-      <div class="dot"></div>
-      <span>InflowAI</span>
-    </div>
-
-    <div class="right">
-      <button class="lang">TR</button>
-      <button class="login-btn" id="openLogin">Giriş</button>
+  <header class="top">
+    <div class="logo">InflowAI</div>
+    <div class="actions">
+      <button class="btn-ghost">TR</button>
+      <button class="btn-primary" onclick="window.location='profile.html'">Giriş</button>
     </div>
   </header>
 
-  <!-- ANA SAHNE: HAREKETLİ AVATAR -->
   <section class="hero">
-    <div class="hero-avatar">
-      <div class="avatar-glow"></div>
+    <div class="avatar"></div>
+    <h1>TikTok, Instagram, X, YouTube ve Ticaret tek beyin altında birleşti.</h1>
+    <p>İçerik üret, ürün sat, eğlen ve büyü — hepsi tek platformda.</p>
 
-      <div class="avatar" id="liveAvatar">
-        <div class="face">
-          <div class="eye eye-left"></div>
-          <div class="eye eye-right"></div>
-          <div class="mouth"></div>
-        </div>
-      </div>
-
-      <div class="avatar-talk" id="avatarText">
-        Hoş geldin! Bugün senin için 8 farklı içerik üretmeye hazırım. 💜
-      </div>
-    </div>
-
-    <h1 class="hero-title">
-      TikTok, Instagram, X, YouTube ve Ticaret<br>
-      <strong>tek beyin altında birleşti.</strong>
-    </h1>
-
-    <p class="hero-sub">
-      InflowAI, içerik üretmek, ürün satmak, eğlenmek ve büyümek için
-      tüm platformların gücünü tek bir yerde sunan yaşayan bir sistemdir.
-    </p>
-
-    <div class="hero-buttons">
-      <button class="primary" id="goProducer">Hızlı İçerik Üret</button>
-      <button class="secondary" id="goAddProduct">Hızlı Ürün Ekle</button>
-    </div>
-
-    <p class="note">
-      Premium & Kurumsal paketler AdSense onayı sonrası açılacak.
-      Şu anda tüm ücretsiz özellikler ve B2B herkese açık.
-    </p>
-  </section>
-
-  <!-- CANLI PLATFORM ÖZETİ -->
-  <section class="stats">
-    <h2>Canlı Platform Özeti</h2>
-
-    <div class="stat-grid">
-      <div class="stat-box">
-        <label>Toplam İçerik</label>
-        <span id="totalContent">0</span>
-      </div>
-
-      <div class="stat-box">
-        <label>Satışta Ürün</label>
-        <span id="totalProducts">0</span>
-      </div>
-
-      <div class="stat-box">
-        <label>Aktif Kullanıcı</label>
-        <span id="activeUsers">0</span>
-      </div>
-
-      <div class="stat-box">
-        <label>Bugün Üretilen Fikir</label>
-        <span id="todayIdeas">0</span>
-      </div>
+    <div class="hero-btns">
+      <button class="btn-primary" onclick="window.location='content.html'">Hızlı İçerik Üret</button>
+      <button class="btn-secondary" onclick="window.location='product-add.html'">Hızlı Ürün Ekle</button>
     </div>
   </section>
 
-  <!-- AKIŞ -->
-  <section class="feed">
-    <h2>InflowAI Akışı</h2>
-    <p class="feed-desc">
-      Takip ettiğin kullanıcıların içeriklerini, ürünlerini ve
-      InflowAI beyninin senin için ürettiği önerileri tek akışta gör.
-    </p>
-
-    <div class="feed-tabs">
-      <button class="feed-tab active">Tümü</button>
-      <button class="feed-tab">İçerikler</button>
-      <button class="feed-tab">Ürünler</button>
-      <button class="feed-tab">AI Önerileri</button>
-    </div>
-
-    <div class="feed-list" id="feedList">
-      <!-- JS ile içerik dolacak -->
-    </div>
+  <section class="quick-nav">
+    <button onclick="window.location='feed.html'">Akış</button>
+    <button onclick="window.location='fun.html'">Eğlence Alanı</button>
+    <button onclick="window.location='profile.html'">Profil</button>
   </section>
-
-  <!-- ALT MENÜ -->
-  <footer class="footer">
-    <button class="f-btn" id="fHome">🏠</button>
-    <button class="f-btn" id="fProduce">⚡</button>
-    <button class="f-btn" id="fAdd">➕</button>
-    <button class="f-btn" id="fProfile">👤</button>
-  </footer>
 
   <script src="ui.js"></script>
 </body>
