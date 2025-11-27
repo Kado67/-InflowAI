@@ -1,48 +1,205 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>InflowAI - Yaşayan Platform</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>InflowAI - Yaşayan Platform</title>
 
-    <!-- Google AdSense (sadece onay için, reklam alanı EKLEMEDİK) -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5803994489635087"
-        crossorigin="anonymous"></script>
+  <!-- Google AdSense (ONAY İÇİN ŞART) -->
+  <script async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5803994489635087"
+          crossorigin="anonymous"></script>
 
-    <!-- Stil dosyası -->
-    <link rel="stylesheet" href="style.css" />
+  <!-- Stil dosyası -->
+  <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
+  <!-- Arka Plan - Galaktik Evren -->
+  <div class="inflow-bg"></div>
 
-    <!-- Arka Plan Neon Evren -->
-    <div class="digital-bg"></div>
-
-    <!-- Ana Sahne -->
-    <div class="stage">
-
-        <!-- Tatlı Robot -->
-        <div id="cuteRobot" class="robot cute">
-            <img src="https://raw.githubusercontent.com/kado67/InflowAI/main/assets/cute.png" alt="Tatlı Robot" />
-            <div class="robot-dialog" id="cuteDialog">Hoş geldiiin 😄💙✨</div>
-        </div>
-
-        <!-- Polat-AI (Racon Robot) -->
-        <div id="polatRobot" class="robot polat">
-            <img src="https://raw.githubusercontent.com/kado67/InflowAI/main/assets/polat.png" alt="Polat AI" />
-            <div class="robot-dialog" id="polatDialog">Hoş geldin kardeşim. Biz buradayız.</div>
-        </div>
-
+  <!-- Üst Bar -->
+  <header class="top-bar">
+    <div class="logo-area">
+      <div class="logo-orb"></div>
+      <div class="logo-text">
+        <span class="logo-main">InflowAI</span>
+        <span class="logo-sub">Yaşayan içerik beyni</span>
+      </div>
     </div>
 
-    <!-- Kullanıcı Girdi Alanı -->
-    <div class="input-area">
-        <input type="text" id="userInput" placeholder="Bir şey yaz..." />
-        <button id="sendBtn">Gönder</button>
+    <div class="top-actions">
+      <button class="btn-ghost">TR</button>
+      <button class="btn-primary">Giriş</button>
     </div>
+  </header>
 
-    <!-- Arayüz JavaScript dosyası -->
-    <script src="ui.js"></script>
+  <!-- ANA SAHNE -->
+  <main class="page">
+    <!-- ORTAK AI AVATAR SAHNE -->
+    <section class="hero">
+      <div class="avatar-stage">
+        <!-- Galaktik Halo -->
+        <div class="avatar-halo"></div>
 
+        <!-- Ortak AI Avatar (hareketli) -->
+        <div class="avatar-core" id="inflowAvatar">
+          <div class="avatar-face">
+            <div class="eye eye-left"></div>
+            <div class="eye eye-right"></div>
+            <div class="mouth"></div>
+          </div>
+          <div class="avatar-body">
+            <div class="arm arm-left"></div>
+            <div class="arm arm-right"></div>
+          </div>
+        </div>
+
+        <!-- Avatar Konuşma Balonu -->
+        <div class="avatar-dialog" id="avatarDialog">
+          Hoş geldin, ben InflowAI.  
+          Bugün seninle birlikte içerik üretmeye hazırım. 🚀
+        </div>
+      </div>
+
+      <!-- HERO METİN -->
+      <div class="hero-content">
+        <h1>İçerik üret, eğlen, büyü.  
+          <span class="hero-highlight">Hepsi tek beyin altında.</span>
+        </h1>
+
+        <p class="hero-desc">
+          InflowAI, 7 katmanlı beyniyle sen yazsan da yazmasan da seninle konuşan,
+          içerik üreten ve ziyaretçiyi platformda tutan yaşayan bir sistemdir.
+        </p>
+
+        <div class="hero-tags">
+          <span class="tag">🎯 Anlık içerik üretimi</span>
+          <span class="tag">🧠 7 Katmanlı Yapay Zekâ</span>
+          <span class="tag">📈 B2B paneli şu an <strong>ücretsiz</strong></span>
+        </div>
+
+        <div class="hero-actions">
+          <button class="btn-primary hero-btn" id="btnStart">
+            Hemen bir içerik üret
+          </button>
+          <button class="btn-ghost hero-btn" id="btnTour">
+            Platformu bana anlat
+          </button>
+        </div>
+
+        <div class="hero-info">
+          Premium ve Kurumsal paketler <strong>yakında</strong>.  
+          Şu anda tüm temel özellikler ve B2B alanı herkese açık ve ücretsiz. 💜
+        </div>
+      </div>
+    </section>
+
+    <!-- HIZLI KARTLAR BÖLÜMÜ -->
+    <section class="quick-section">
+      <h2>InflowAI şu anda senin için neler yapıyor?</h2>
+
+      <div class="quick-grid">
+        <!-- İçerik Üretici -->
+        <article class="quick-card">
+          <div class="qc-icon">🧬</div>
+          <h3>Canlı İçerik Üretici</h3>
+          <p>Tek cümle yaz, geri kalanını InflowAI tamamlasın. Blog, post, başlık, açıklama…</p>
+          <button class="btn-mini" data-target="content">
+            İçerik üret
+          </button>
+        </article>
+
+        <!-- Eğlence Alanı -->
+        <article class="quick-card">
+          <div class="qc-icon">🎭</div>
+          <h3>Eğlence Alanı</h3>
+          <p>Kahve falı, burç yorumları, mini testler ve günün tavsiyesi ile ziyaretçiyi içeride tut.</p>
+          <button class="btn-mini" data-target="fun">
+            Eğlence alanına git
+          </button>
+        </article>
+
+        <!-- B2B / Kurumsal -->
+        <article class="quick-card quick-card-b2b">
+          <div class="qc-icon">🏢</div>
+          <h3>B2B Paneli (Şu an ücretsiz)</h3>
+          <p>
+            Küçük işletmeler ve girişimler için hazır şablonlar, rapor akışı ve
+            AI destekli içerik takvimi. Şimdilik tüm özellikler ücretsiz.
+          </p>
+          <button class="btn-mini" data-target="b2b">
+            B2B panelini keşfet
+          </button>
+          <div class="qc-badge">Aktif</div>
+        </article>
+      </div>
+    </section>
+
+    <!-- EĞLENCE ALANI -->
+    <section class="section-block">
+      <div class="section-head">
+        <h2>Eğlence Alanı</h2>
+        <p>Ziyaretçiyi platformda tutmak için AI destekli mini modüller.</p>
+      </div>
+
+      <div class="fun-grid">
+        <div class="fun-card">
+          <div class="fun-icon">☕</div>
+          <h3>Kahve Falı</h3>
+          <p>Fotoğraf olmadan, sadece hissiyatına göre AI yorumu.</p>
+        </div>
+        <div class="fun-card">
+          <div class="fun-icon">🔮</div>
+          <h3>Burç / Tarot</h3>
+          <p>Günlük yorum ve mini tarot açılımı.</p>
+        </div>
+        <div class="fun-card">
+          <div class="fun-icon">💡</div>
+          <h3>Günün Tavsiyesi</h3>
+          <p>Motivasyon, üretkenlik ve para odaklı öneriler.</p>
+        </div>
+        <div class="fun-card">
+          <div class="fun-icon">😄</div>
+          <h3>Mini Testler</h3>
+          <p>Hızlı eğlence, anket ve quiz soruları.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- AKIŞ / PLATFORM BEYNİ -->
+    <section class="section-block">
+      <div class="section-head">
+        <h2>InflowAI Akış</h2>
+        <p>Sistem beyni senin adına otomatik içerik üretip buraya bırakır.</p>
+      </div>
+
+      <div class="feed">
+        <div class="feed-item">
+          <span class="feed-tag">🔁 Otomatik fikir</span>
+          <p>“Bugün sadece 1 içerik bile paylaşsan, 1 yıl sonra 365 yeni kapı açmış olursun.”</p>
+        </div>
+        <div class="feed-item">
+          <span class="feed-tag">📌 Hatırlatma</span>
+          <p>“Platformun beyni 7 katmanlı; sen sadece yaz, gerisini InflowAI’na bırak.”</p>
+        </div>
+        <div class="feed-item">
+          <span class="feed-tag">🧠 Sonsuzluk Merkezinden Not</span>
+          <p>“Riskleri ben takip ediyorum. Sen sadece üretmeye odaklan.”</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ALT NOT -->
+    <footer class="footer">
+      <p>
+        InflowAI şu anda <strong>ücretsiz temel paket</strong> ile çalışıyor.  
+        Premium ve Kurumsal paketler onaylandığında otomatik olarak burada görünecek.
+      </p>
+    </footer>
+  </main>
+
+  <!-- UI Davranışları -->
+  <script src="ui.js"></script>
 </body>
 </html>
