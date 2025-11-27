@@ -1,156 +1,122 @@
-// ===============================================
-// InflowAI - Yaşayan Platform Arayüz Motoru
-// Avatar animasyonları + diyalog sistemi
-// ===============================================
+// -------------------------------
+// InflowAI UI Beyni
+// -------------------------------
 
-document.addEventListener("DOMContentLoaded", () => {
+// 3 HAK SİSTEMİ
+let guestRights = 3;
 
-    const avatar = document.getElementById("inflowAvatar");
-    const dialog = document.getElementById("avatarDialog");
-    const input = document.getElementById("userInput");
-    const sendBtn = document.getElementById("sendBtn");
-    const btnStart = document.getElementById("btnStart");
-    const btnTour = document.getElementById("btnTour");
+// Rastgele avatar cümleleri
+const avatarLines = [
+  "Hoş geldin! Bugün senin için çok şey hazırladım 💜",
+  "Bir şey yazmana da gerek yok, seni eğlendirebilirim 😄",
+  "Hazırsan içerik üretmeye başlayalım ⚡",
+  "Kahve falı ister misin? ☕✨",
+  "Bugün enerjin çok güzel görünüyor 🌟",
+  "İstersen B2B panelini açayım, tamamen ücretsiz 🏢"
+];
 
-    // -----------------------------
-    // 1) Avatar'a mini canlılık efekti
-    // -----------------------------
+// Avatar balonunu güncelle
+function updateAvatar(text) {
+  document.getElementById("avatarBubble").innerText = text;
+}
 
-    function avatarPulse() {
-        avatar.style.transition = "0.3s";
-        avatar.style.transform = "scale(1.05)";
-        setTimeout(() => {
-            avatar.style.transform = "scale(1)";
-        }, 300);
-    }
+// Avatar rastgele konuşma döngüsü
+setInterval(() => {
+  const random = avatarLines[Math.floor(Math.random() * avatarLines.length)];
+  updateAvatar(random);
+}, 5000);
 
-    function avatarShake() {
-        avatar.animate(
-            [
-                { transform: "translateX(0)" },
-                { transform: "translateX(-6px)" },
-                { transform: "translateX(6px)" },
-                { transform: "translateX(0)" }
-            ],
-            { duration: 300 }
-        );
-    }
+// -------------------------------
+// Hak kontrol sistemi
+// -------------------------------
+function useRight() {
+  if (guestRights <= 0) {
+    updateAvatar("Kurban, 3 hakkın bitti. Devam etmek için kayıt olmalısın ❤️");
+    alert("3 hakkın bitti. Devam etmek için kayıt ol.");
+    return false;
+  }
+  guestRights--;
+  return true;
+}
 
-    function avatarDance() {
-        avatar.animate(
-            [
-                { transform: "rotate(-4deg) scale(1.04)" },
-                { transform: "rotate(4deg) scale(1.07)" },
-                { transform: "rotate(-4deg) scale(1.04)" }
-            ],
-            { duration: 700 }
-        );
-    }
+// -------------------------------
+// Canlı içerik üretici
+// -------------------------------
+document.getElementById("sendBtn").addEventListener("click", () => {
+  const text = document.getElementById("userInput").value.trim();
 
-    // -----------------------------
-    // 2) Avatar konuşma fonksiyonu
-    // -----------------------------
+  if (!text) {
+    updateAvatar("Ne üreteyim tatlım? Bir şey yazman yeterli 💜");
+    return;
+  }
 
-    function speak(text) {
-        dialog.innerHTML = text;
-        avatarPulse();
-    }
+  if (!useRight()) return;
 
-    // -----------------------------
-    // 3) Otomatik mini animasyon döngüsü
-    // -----------------------------
+  updateAvatar(`Senin için içerik üretiyorum… ⚡`);
 
-    const randomMoves = [
-        () => speak("Buradayım kurban 😄 Hazır bekliyorum."),
-        () => speak("Hadi bir şey yaz, ben buradayım 💜"),
-        () => { speak("Kendimi güncelliyorum... 🧠✨"); avatarShake(); },
-        () => { speak("Dans modunu açıyorum 💃😎"); avatarDance(); }
-    ];
-
-    setInterval(() => {
-        const move = randomMoves[Math.floor(Math.random() * randomMoves.length)];
-        move();
-    }, 14000);
-
-    // -----------------------------
-    // 4) Kullanıcı mesaj gönderdiğinde
-    // -----------------------------
-
-    function handleUserMessage() {
-        const msg = input.value.trim();
-        if (!msg) {
-            avatarShake();
-            speak("Boş gönderme kurban 😊 Bir şey yaz ki konuşalım.");
-            return;
-        }
-
-        speak(`"${msg}" alındı! Şimdi bunu işliyorum… ⚡`);
-        avatarDance();
-
-        input.value = "";
-
-        setTimeout(() => {
-            speak("Hazır! İstersen bu fikri içerik olarak büyütebilirim. 🚀");
-        }, 2500);
-    }
-
-    sendBtn?.addEventListener("click", handleUserMessage);
-
-    input?.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") handleUserMessage();
-    });
-
-    // -----------------------------
-    // 5) Buton: "Hemen içerik üret"
-    // -----------------------------
-
-    btnStart?.addEventListener("click", () => {
-        avatarDance();
-        speak("Tamam kurban! İçerik üretmek için bana bir cümle yaz. ✍️");
-        input.focus();
-    });
-
-    // -----------------------------
-    // 6) Buton: "Platformu bana anlat"
-    // -----------------------------
-
-    btnTour?.addEventListener("click", () => {
-        avatarPulse();
-        speak(`
-            InflowAI 7 katmanlı yaşayan bir platformdur.<br>
-            • İçerik üretir<br>
-            • Eğlendirir<br>
-            • Ziyaretçiyi tutar<br>
-            • B2B paneli şu an ücretsiz<br>
-            • Premium & Kurumsal yakında<br><br>
-            Ne istersen beraber yaparız kurban. 💜
-        `);
-    });
-
-    // -----------------------------
-    // 7) Hızlı Kartlar (mini router)
-    // -----------------------------
-
-    document.querySelectorAll(".btn-mini").forEach((btn) => {
-        btn.addEventListener("click", () => {
-            const target = btn.dataset.target;
-
-            if (target === "content") {
-                speak("Tamamdır! İçerik üretmek için bir cümle yaz bana. ✍️🚀");
-                avatarPulse();
-                input.focus();
-            }
-
-            if (target === "fun") {
-                speak("Eğlence alanı açık! Kahve falı, burç, tarot, mini testler… Hepsi aktif 😄");
-                avatarDance();
-            }
-
-            if (target === "b2b") {
-                speak("B2B paneli şuan ücretsiz! İşletmeler için içerik takvimi ve AI şablonlar aktif. 🏢⚡");
-                avatarPulse();
-            }
-        });
-    });
-
+  setTimeout(() => {
+    updateAvatar(`Hazır! İşte yeni içeriğin: "${text}" için güçlü bir fikir 💡`);
+    alert("İçerik üretildi: Harika bir fikir oluşturuldu!");
+  }, 800);
 });
+
+// -------------------------------
+// İçerik üret — kısa yol
+// -------------------------------
+document.getElementById("btnProduce").addEventListener("click", () => {
+  if (!useRight()) return;
+
+  updateAvatar("Tamamdır kurban, içerik üretme modunu açıyorum ⚡");
+  scrollToSection("userInput");
+});
+
+// -------------------------------
+// Platform bana ne yapıyor?
+// -------------------------------
+document.getElementById("btnExplain").addEventListener("click", () => {
+  updateAvatar("Şu an seni eğlendiriyor, içerik üretiyor ve B2B hizmeti veriyorum 💜");
+  scrollToSection("sectionFeatures");
+});
+
+// -------------------------------
+// Eğlence butonları
+// -------------------------------
+document.querySelector("[data-target='fun']").addEventListener("click", () => {
+  if (!useRight()) return;
+  updateAvatar("Eğlence alanını açtım! Kahve falı ister misin? ☕✨");
+  scrollToSection("sectionFun");
+});
+
+// -------------------------------
+// İçerik üretici kartı
+// -------------------------------
+document.querySelector("[data-target='content']").addEventListener("click", () => {
+  if (!useRight()) return;
+  updateAvatar("Hadi bir içerik üretelim ⚡");
+  scrollToSection("userInput");
+});
+
+// -------------------------------
+// B2B Paneli
+// -------------------------------
+document.querySelector("[data-target='b2b']").addEventListener("click", () => {
+  if (!useRight()) return;
+  updateAvatar("B2B panelini açtım! Şirket fikri üretelim 🏢✨");
+  alert("B2B Paneli: İşletmen için içerik planı, takvimi ve öneriler üretilecek.");
+});
+
+// -------------------------------
+// Login butonu
+// -------------------------------
+document.getElementById("btnLogin").addEventListener("click", () => {
+  alert("Giriş bölümü yakında aktif olacak. Şu an ücretsiz misafir modundasın.");
+});
+
+// -------------------------------
+// KAYDIRMA FONKSİYONU
+// -------------------------------
+function scrollToSection(id) {
+  document.getElementById(id).scrollIntoView({
+    behavior: "smooth"
+  });
+}
