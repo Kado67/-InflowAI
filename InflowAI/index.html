@@ -5,201 +5,140 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>InflowAI - Yaşayan Platform</title>
 
-  <!-- Google AdSense (ONAY İÇİN ŞART) -->
-  <script async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5803994489635087"
-          crossorigin="anonymous"></script>
+  <!-- Google AdSense (Doğrulama KODU) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5803994489635087"
+    crossorigin="anonymous"></script>
 
-  <!-- Stil dosyası -->
   <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
-  <!-- Arka Plan - Galaktik Evren -->
-  <div class="inflow-bg"></div>
+  <!-- ARKA PLAN GALAKTİK -->
+  <div class="bg"></div>
 
-  <!-- Üst Bar -->
-  <header class="top-bar">
-    <div class="logo-area">
-      <div class="logo-orb"></div>
-      <div class="logo-text">
-        <span class="logo-main">InflowAI</span>
-        <span class="logo-sub">Yaşayan içerik beyni</span>
-      </div>
+  <!-- ANA SAHNE -->
+  <header class="top">
+    <div class="logo">
+      <div class="dot"></div>
+      <span>InflowAI</span>
     </div>
 
-    <div class="top-actions">
+    <div class="actions">
       <button class="btn-ghost">TR</button>
-      <button class="btn-primary">Giriş</button>
+      <button class="btn-primary" id="btnLogin">Giriş</button>
     </div>
   </header>
 
-  <!-- ANA SAHNE -->
-  <main class="page">
-    <!-- ORTAK AI AVATAR SAHNE -->
-    <section class="hero">
-      <div class="avatar-stage">
-        <!-- Galaktik Halo -->
-        <div class="avatar-halo"></div>
+  <main class="container">
 
-        <!-- Ortak AI Avatar (hareketli) -->
-        <div class="avatar-core" id="inflowAvatar">
-          <div class="avatar-face">
+    <!-- HAREKETLİ CANLI AVATAR -->
+    <section class="hero">
+      <div class="avatar-wrap">
+        <div class="avatar-glow"></div>
+
+        <div class="avatar" id="avatar">
+          <div class="face">
             <div class="eye eye-left"></div>
             <div class="eye eye-right"></div>
             <div class="mouth"></div>
           </div>
-          <div class="avatar-body">
-            <div class="arm arm-left"></div>
-            <div class="arm arm-right"></div>
-          </div>
         </div>
 
-        <!-- Avatar Konuşma Balonu -->
-        <div class="avatar-dialog" id="avatarDialog">
-          Hoş geldin, ben InflowAI.  
-          Bugün seninle birlikte içerik üretmeye hazırım. 🚀
+        <div class="bubble" id="avatarBubble">
+          Hoş geldin kurban, bugün ne üretmek istiyorsun? 💜
         </div>
       </div>
 
-      <!-- HERO METİN -->
-      <div class="hero-content">
-        <h1>İçerik üret, eğlen, büyü.  
-          <span class="hero-highlight">Hepsi tek beyin altında.</span>
-        </h1>
+      <h1 class="hero-title">
+        İçerik üret, eğlen, büyü. <br />
+        Hepsi **tek beyin** altında.
+      </h1>
 
-        <p class="hero-desc">
-          InflowAI, 7 katmanlı beyniyle sen yazsan da yazmasan da seninle konuşan,
-          içerik üreten ve ziyaretçiyi platformda tutan yaşayan bir sistemdir.
-        </p>
+      <p class="hero-desc">
+        Ziyaretçi olsan da kullanıcı olsan da InflowAI
+        sen yazmasan bile seninle konuşan, fikir üreten ve seni eğlendiren yaşayan bir platformdur.
+      </p>
 
-        <div class="hero-tags">
-          <span class="tag">🎯 Anlık içerik üretimi</span>
-          <span class="tag">🧠 7 Katmanlı Yapay Zekâ</span>
-          <span class="tag">📈 B2B paneli şu an <strong>ücretsiz</strong></span>
-        </div>
-
-        <div class="hero-actions">
-          <button class="btn-primary hero-btn" id="btnStart">
-            Hemen bir içerik üret
-          </button>
-          <button class="btn-ghost hero-btn" id="btnTour">
-            Platformu bana anlat
-          </button>
-        </div>
-
-        <div class="hero-info">
-          Premium ve Kurumsal paketler <strong>yakında</strong>.  
-          Şu anda tüm temel özellikler ve B2B alanı herkese açık ve ücretsiz. 💜
-        </div>
+      <div class="hero-btns">
+        <button class="btn-primary" id="btnProduce">Hemen içerik üret</button>
+        <button class="btn-ghost" id="btnExplain">Platform bana ne yapıyor?</button>
       </div>
+
+      <p class="note">
+        Premium & Kurumsal paketler AdSense onayı gelince aktif olacak.  
+        Şu anda tüm ücretsiz özellikler ve B2B açık.
+      </p>
     </section>
 
-    <!-- HIZLI KARTLAR BÖLÜMÜ -->
-    <section class="quick-section">
+    <!-- ÖZELLİKLER: HEPSİ AKTİF -->
+    <section class="section" id="sectionFeatures">
       <h2>InflowAI şu anda senin için neler yapıyor?</h2>
 
-      <div class="quick-grid">
-        <!-- İçerik Üretici -->
-        <article class="quick-card">
-          <div class="qc-icon">🧬</div>
+      <div class="cards">
+
+        <div class="card">
+          <div class="icon">⚡</div>
           <h3>Canlı İçerik Üretici</h3>
-          <p>Tek cümle yaz, geri kalanını InflowAI tamamlasın. Blog, post, başlık, açıklama…</p>
-          <button class="btn-mini" data-target="content">
-            İçerik üret
-          </button>
-        </article>
+          <p>Bir cümle yaz, platform saniyede içerik üretsin.</p>
+          <button class="btn-mini" data-target="content">İçerik üret</button>
+        </div>
 
-        <!-- Eğlence Alanı -->
-        <article class="quick-card">
-          <div class="qc-icon">🎭</div>
+        <div class="card">
+          <div class="icon">🤹‍♂️</div>
           <h3>Eğlence Alanı</h3>
-          <p>Kahve falı, burç yorumları, mini testler ve günün tavsiyesi ile ziyaretçiyi içeride tut.</p>
-          <button class="btn-mini" data-target="fun">
-            Eğlence alanına git
-          </button>
-        </article>
+          <p>Kahve falı, burç, tarot, mini test ve günün tavsiyesi.</p>
+          <button class="btn-mini" data-target="fun">Eğlence alanına git</button>
+        </div>
 
-        <!-- B2B / Kurumsal -->
-        <article class="quick-card quick-card-b2b">
-          <div class="qc-icon">🏢</div>
-          <h3>B2B Paneli (Şu an ücretsiz)</h3>
-          <p>
-            Küçük işletmeler ve girişimler için hazır şablonlar, rapor akışı ve
-            AI destekli içerik takvimi. Şimdilik tüm özellikler ücretsiz.
-          </p>
-          <button class="btn-mini" data-target="b2b">
-            B2B panelini keşfet
-          </button>
-          <div class="qc-badge">Aktif</div>
-        </article>
+        <div class="card highlight">
+          <div class="icon">🏢</div>
+          <h3>B2B Paneli (ÜCRETSİZ)</h3>
+          <p>Küçük işletmeler için içerik planı, rapor ve şablon üretimi.</p>
+          <button class="btn-mini" data-target="b2b">B2B Panelini Aç</button>
+        </div>
+
       </div>
     </section>
 
     <!-- EĞLENCE ALANI -->
-    <section class="section-block">
-      <div class="section-head">
-        <h2>Eğlence Alanı</h2>
-        <p>Ziyaretçiyi platformda tutmak için AI destekli mini modüller.</p>
-      </div>
+    <section class="section" id="sectionFun">
+      <h2>Eğlence Alanı</h2>
 
-      <div class="fun-grid">
-        <div class="fun-card">
-          <div class="fun-icon">☕</div>
-          <h3>Kahve Falı</h3>
-          <p>Fotoğraf olmadan, sadece hissiyatına göre AI yorumu.</p>
-        </div>
-        <div class="fun-card">
-          <div class="fun-icon">🔮</div>
-          <h3>Burç / Tarot</h3>
-          <p>Günlük yorum ve mini tarot açılımı.</p>
-        </div>
-        <div class="fun-card">
-          <div class="fun-icon">💡</div>
-          <h3>Günün Tavsiyesi</h3>
-          <p>Motivasyon, üretkenlik ve para odaklı öneriler.</p>
-        </div>
-        <div class="fun-card">
-          <div class="fun-icon">😄</div>
-          <h3>Mini Testler</h3>
-          <p>Hızlı eğlence, anket ve quiz soruları.</p>
-        </div>
+      <div class="fun-cards">
+        <div class="fun-item"><span>☕</span> Kahve Falı</div>
+        <div class="fun-item"><span>🔮</span> Burç / Tarot</div>
+        <div class="fun-item"><span>💡</span> Günün Tavsiyesi</div>
+        <div class="fun-item"><span>😄</span> Mini Testler</div>
       </div>
     </section>
 
-    <!-- AKIŞ / PLATFORM BEYNİ -->
-    <section class="section-block">
-      <div class="section-head">
-        <h2>InflowAI Akış</h2>
-        <p>Sistem beyni senin adına otomatik içerik üretip buraya bırakır.</p>
-      </div>
+    <!-- AKIŞ -->
+    <section class="section" id="sectionFeed">
+      <h2>InflowAI Akışı</h2>
 
       <div class="feed">
-        <div class="feed-item">
-          <span class="feed-tag">🔁 Otomatik fikir</span>
-          <p>“Bugün sadece 1 içerik bile paylaşsan, 1 yıl sonra 365 yeni kapı açmış olursun.”</p>
-        </div>
-        <div class="feed-item">
-          <span class="feed-tag">📌 Hatırlatma</span>
-          <p>“Platformun beyni 7 katmanlı; sen sadece yaz, gerisini InflowAI’na bırak.”</p>
-        </div>
-        <div class="feed-item">
-          <span class="feed-tag">🧠 Sonsuzluk Merkezinden Not</span>
-          <p>“Riskleri ben takip ediyorum. Sen sadece üretmeye odaklan.”</p>
-        </div>
+        <div class="feed-item">“Her gün 1 içerik paylaşırsan 1 yıl sonra 365 yeni kapı açarsın.”</div>
+        <div class="feed-item">“Bugün üret, yarın büyü.”</div>
+        <div class="feed-item">“Ziyaretçin için fikirler hazırladım, hazırsan başlayalım.”</div>
       </div>
     </section>
 
-    <!-- ALT NOT -->
-    <footer class="footer">
-      <p>
-        InflowAI şu anda <strong>ücretsiz temel paket</strong> ile çalışıyor.  
-        Premium ve Kurumsal paketler onaylandığında otomatik olarak burada görünecek.
+    <!-- KULLANICI GİRİŞ ALANI -->
+    <section class="section">
+      <h2>Bir şey yaz, hemen üretelim</h2>
+      <div class="input-row">
+        <input type="text" id="userInput" placeholder="Örn: Reels fikri, açıklama, blog..." />
+        <button class="btn-primary" id="sendBtn">Gönder</button>
+      </div>
+
+      <p class="note2">
+        Kayıt olmayanlara 3 hak verilir.  
+        Kayıt olan kullanıcı platformun tüm ücretsiz hizmetlerini sınırsız kullanır.
       </p>
-    </footer>
+    </section>
+
   </main>
 
-  <!-- UI Davranışları -->
   <script src="ui.js"></script>
 </body>
 </html>
