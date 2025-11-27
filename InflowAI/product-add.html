@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ürün Ekle - InflowAI</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <header class="top">
+    <div class="logo" onclick="window.location='index.html'">InflowAI</div>
+  </header>
+
+  <section class="tool-page">
+    <h1>🛒 Ürün Ekle</h1>
+
+    <input type="text" id="pname" placeholder="Ürün adı">
+    <input type="text" id="pprice" placeholder="Fiyat">
+    <textarea id="pdesc" placeholder="Açıklama"></textarea>
+    <input type="file" id="pimage">
+
+    <button class="btn-primary" id="addProductBtn">Ürünü Yayınla</button>
+
+    <div id="addResult"></div>
+  </section>
+
+  <script src="ui.js"></script>
+</body>
+</html>
