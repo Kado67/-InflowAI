@@ -1,343 +1,536 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="tr">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>InflowAI – Yaşayan Platform</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1"
+    />
+    <title>InflowAI — Yaşayan Platform</title>
+    <link rel="stylesheet" href="style.css" />
 
-  <!-- AdSense: Kendi yayıncı kimliğinizi girin -->
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"
-          crossorigin="anonymous"></script>
+    <!-- Google AdSense (KENDİ KODUNU BURAYA YAPIŞTIR) -->
+    <!--
+    <script async
+      src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=YOUR-CLIENT-ID"
+      crossorigin="anonymous"></script>
+    -->
 
-  <!-- Stiller -->
-  <link rel="stylesheet" href="style.css" />
-  <style>
-    /* Hızlı temel stiller (style.css zaten bağlandı; isterseniz oraya taşıyın) */
-    :root {--bg:#0b0b12;--card:#151522;--fg:#e8e8f4;--muted:#aeb1c7;--acc1:#a855f7;--acc2:#6ee7b7;}
-    *{box-sizing:border-box}
-    body{margin:0;background:var(--bg);color:var(--fg);font:500 16px/1.6 system-ui,Segoe UI,Roboto;}
-    a{color:inherit;text-decoration:none}
-    .shell{max-width:1120px;margin:0 auto;padding:20px}
-    .topbar{display:flex;align-items:center;gap:14px;padding:14px 0;position:sticky;top:0;background:linear-gradient(180deg,#0b0b12,rgba(11,11,18,.8));backdrop-filter:blur(8px);z-index:50}
-    .brand{font-weight:800;font-size:22px;display:flex;align-items:center;gap:10px}
-    .brand .dot{width:10px;height:10px;border-radius:999px;background:#7c3aed;box-shadow:0 0 8px #7c3aed}
-    .nav{margin-left:auto;display:flex;gap:10px;flex-wrap:wrap}
-    .pill{background:#1d1d2e;border:1px solid #2a2a3f;color:#fff;padding:10px 14px;border-radius:999px}
-    .grid{display:grid;gap:16px}
-    .hero{display:grid;grid-template-columns:1.2fr .8fr;gap:20px;align-items:center}
-    .card{background:var(--card);border:1px solid #24243a;border-radius:16px;padding:18px}
-    .card h3{margin:0 0 8px}
-    .cta{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
-    .btn{padding:12px 16px;border-radius:12px;border:1px solid #2a2a3f;background:#211f31}
-    .btn.p{background:linear-gradient(90deg,#d946ef,#7c3aed);border:none}
-    .muted{color:var(--muted)}
-    .kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-    .kpi .box{background:#141425;border:1px solid #24243a;border-radius:12px;padding:14px}
-    section{scroll-margin-top:90px}
-    .section-title{font-size:26px;margin:4px 0 14px}
-    .tiles{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
-    .row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-    .adwrap{background:#0f0f19;border:1px dashed #3b3b58;border-radius:12px;padding:10px;text-align:center}
-    .footer{padding:40px 0;color:var(--muted);text-align:center}
-    @media (max-width:960px){
-      .hero{grid-template-columns:1fr}
-      .kpi{grid-template-columns:repeat(2,1fr)}
-      .row{grid-template-columns:1fr}
-      .tiles{grid-template-columns:1fr}
-      .nav{justify-content:flex-start}
-    }
-    /* :target tab görünümü */
-    .tab{display:none}
-    .tab:target{display:block}
-    #home.tab{display:block}
-    .section-chip{font-size:12px;color:#9aa0bd;border:1px solid #2b2b42;padding:6px 10px;border-radius:999px;display:inline-block;margin-bottom:10px}
-    input,select,textarea{width:100%;padding:12px;border-radius:10px;border:1px solid #2a2a3f;background:#10101a;color:#dfe3ff}
-    .list{display:grid;gap:10px}
-    .item{display:flex;justify-content:space-between;align-items:center;border:1px solid #2a2a3f;background:#121225;border-radius:12px;padding:12px}
-  </style>
-</head>
-<body>
+  </head>
+  <body>
+    <div id="app">
+      <!-- ÜST BAR -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <div class="brand-dot"></div>
+          <div class="brand-name">InflowAI</div>
+          <div class="brand-tag">Yaşayan Platform</div>
+        </div>
 
-  <div class="shell">
-    <div class="topbar">
-      <div class="brand"><span class="dot"></span> InflowAI</div>
-      <nav class="nav">
-        <a class="pill" href="#home">Ana Ekran</a>
-        <a class="pill" href="#maker">İçerik Üret</a>
-        <a class="pill" href="#commerce">E-Ticaret</a>
-        <a class="pill" href="#social">Sosyal</a>
-        <a class="pill" href="#b2b">B2B</a>
-        <a class="pill" href="#accounting">Muhasebe</a>
-        <a class="pill" href="#fun">Eğlence</a>
-        <a class="pill" href="#music">Müzik</a>
-        <a class="pill" href="#stocks">Borsa</a>
-        <a class="pill" href="#profile">Profil</a>
+        <div class="topbar-right">
+          <button class="lang-pill">TR</button>
+          <button class="ghost-btn small">EN</button>
+          <button class="primary-btn">Giriş / Kayıt</button>
+        </div>
+      </header>
+
+      <!-- ANA NAV BUTONLARI -->
+      <nav class="main-nav">
+        <button class="nav-chip active" data-target="page-dashboard">Ana Ekran</button>
+        <button class="nav-chip" data-target="page-content">İçerik Üret</button>
+        <button class="nav-chip" data-target="page-commerce">E-Ticaret</button>
+        <button class="nav-chip" data-target="page-social">Sosyal</button>
+        <button class="nav-chip" data-target="page-b2b">B2B İşletme</button>
+        <button class="nav-chip" data-target="page-accounting">Muhasebe</button>
+        <button class="nav-chip" data-target="page-fun">Eğlence</button>
+        <button class="nav-chip" data-target="page-music">Müzik</button>
+        <button class="nav-chip" data-target="page-stocks">Borsa</button>
+        <button class="nav-chip" data-target="page-profile">Profil</button>
       </nav>
-    </div>
 
-    <!-- ============= ANA EKRAN ============= -->
-    <section id="home" class="tab">
-      <div class="hero">
-        <div class="card">
-          <div class="section-chip">Yaşayan Platform</div>
-          <h1 style="margin:.2rem 0 1rem;font-size:34px">
-            Tüm meslekler ve tüm alanlar<br/>tek beyin altında birleşti.
-          </h1>
-          <p class="muted">
-            İçerik üret, ürün sat, sosyalde büyü, işletmeni yönet. Hepsi tek platformda
-            saniye saniye öğrenen ve kendini güncelleyen yapay zekâ ile.
-          </p>
-          <div class="cta">
-            <a class="btn p" href="#maker">⚡ Hemen içerik üret</a>
-            <a class="btn" href="#commerce">🛒 Ürün ekle / sat</a>
-            <a class="btn" href="#b2b">🏢 İşletme paneli</a>
+      <!-- ANA İÇERİK -->
+      <main class="main-layout">
+
+        <!-- SOL: SAYFALAR -->
+        <section id="page-dashboard" class="page active">
+          <div class="grid-2">
+            <div class="hero-card">
+              <div class="hero-pill">Yaşayan Platform</div>
+              <h1>
+                Tüm meslekler ve tüm alanlar<br />
+                <span class="gradient-text">tek beyin altında birleşti.</span>
+              </h1>
+              <p class="hero-sub">
+                InflowAI; e-ticaret, sosyal medya, içerik üretme, proje, B2B,
+                muhasebe, eğlence, müzik ve onlarca alanı tek platformda toplar.
+                Her saniye öğrenen ve kendini güncelleyen yapay zekâ ile büyürsün.
+              </p>
+
+              <div class="hero-actions">
+                <button class="primary-btn" data-go="page-content">
+                  ⚡ Hemen içerik üret
+                </button>
+                <button class="outline-btn" data-go="page-commerce">
+                  🛒 Ürün ekle / sat
+                </button>
+              </div>
+
+              <div class="hero-quick">
+                <button class="chip-action" data-go="page-fun">
+                  🎉 Eğlence alanına git
+                </button>
+                <button class="chip-action" data-go="page-accounting">
+                  📊 İşletme panelini aç
+                </button>
+              </div>
+            </div>
+
+            <div class="avatar-card">
+              <div class="avatar-orbit">
+                <div class="avatar-core">
+                  <div class="avatar-eyes"></div>
+                  <div class="avatar-mouth"></div>
+                </div>
+                <div class="avatar-ring ring-1"></div>
+                <div class="avatar-ring ring-2"></div>
+              </div>
+              <div class="avatar-text">
+                <div class="avatar-label">InflowAI Beyni</div>
+                <p>
+                  Mesleğini seç, platform saniyeler içinde sana özel paneli hazırlasın.
+                  Tüm verilerin tek yerden yönetilsin.
+                </p>
+                <div class="avatar-select-row">
+                  <label for="role-select">Mesleğin / rolün nedir?</label>
+                  <select id="role-select" class="select-input">
+                    <option value="">Seçiniz...</option>
+                    <option value="eticaret">E-Ticaret Satıcısı</option>
+                    <option value="icerik">İçerik Üretici</option>
+                    <option value="ajans">Ajans / Danışman</option>
+                    <option value="doktor">Doktor / Sağlık</option>
+                    <option value="ogretmen">Öğretmen / Eğitmen</option>
+                    <option value="muhendis">Mühendis / İnşaat vb.</option>
+                    <option value="yatirimci">Yatırımcı / Trader</option>
+                    <option value="kurumsal">Kurumsal İşletme</option>
+                    <option value="bireysel">Bireysel Kullanıcı</option>
+                  </select>
+                  <button class="primary-btn full" id="btn-build-space">
+                    Benim için platformu hazırla
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
 
-        <!-- Üst Banner Ad -->
-        <div class="adwrap card">
-          <div class="muted" style="margin-bottom:8px">Reklam Alanı (Üst Banner)</div>
-          <!-- ÖRNEK AD BİRİMİ: kendi slot numaranızla değiştirin -->
-          <ins class="adsbygoogle"
-               style="display:block"
-               data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
-               data-ad-slot="0000000000"
-               data-ad-format="auto"
-               data-full-width-responsive="true"></ins>
-          <script>(adsbygoogle=window.adsbygoogle||[]).push({});</script>
-        </div>
-      </div>
-
-      <div class="kpi" style="margin-top:16px">
-        <div class="box"><div class="muted">Toplam içerik</div><h2>0</h2></div>
-        <div class="box"><div class="muted">Satışta ürün</div><h2>0</h2></div>
-        <div class="box"><div class="muted">Aktif kullanıcı</div><h2>0</h2></div>
-        <div class="box"><div class="muted">Bugün üretilen fikir</div><h2>0</h2></div>
-      </div>
-
-      <div class="card" style="margin-top:16px">
-        <h3>InflowAI Akış Özeti</h3>
-        <p class="muted">Takip ettiklerinin içerikleri, ürünler ve AI önerileri tek listede.</p>
-        <div class="list" id="feed-list">
-          <div class="item"><span>Akış henüz boş.</span><a class="pill" href="#maker">İçerik üret</a></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ============= İÇERİK ÜRET ============= -->
-    <section id="maker" class="tab">
-      <h2 class="section-title">⚡ Mega İçerik Üretici</h2>
-      <div class="row">
-        <div class="card">
-          <label>Konu / niyet</label>
-          <input placeholder="Örn: Moda – kış kombinleri ipuçları">
-          <label style="margin-top:10px">Hedef platformlar</label>
-          <select>
-            <option>Hepsi (kısa video + post + başlık + hashtag)</option>
-            <option>Kısa video (Reels/TikTok/Shorts)</option>
-            <option>Twitter/X gönderisi</option>
-            <option>YouTube açıklama</option>
-          </select>
-          <div class="cta"><a class="btn p">Üret</a><a class="btn">Kayıt et</a></div>
-        </div>
-        <div class="card">
-          <h3>Çıktılar</h3>
-          <div class="tiles">
-            <div class="card"><b>Kısa Video Senaryosu</b><p class="muted" id="out-script">Hazır olduğunda burada.</p></div>
-            <div class="card"><b>Başlık & Hashtag</b><p class="muted" id="out-caption">Hazır olduğunda burada.</p></div>
+          <div class="stats-row">
+            <div class="stat-card">
+              <span class="stat-label">Toplam üretilen içerik</span>
+              <span class="stat-value" id="stat-total-content">0</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-label">Yayınlanan ürün</span>
+              <span class="stat-value" id="stat-total-products">0</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-label">Bugün üretilen fikir</span>
+              <span class="stat-value" id="stat-today-ideas">0</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-label">Aktif kullanıcı</span>
+              <span class="stat-value" id="stat-active-users">0</span>
+            </div>
           </div>
-        </div>
-      </div>
 
-      <!-- İçerik sayfası içi reklam -->
-      <div class="adwrap card" style="margin-top:16px">
-        <div class="muted" style="margin-bottom:8px">Reklam Alanı (İçerik Üretici)</div>
-        <ins class="adsbygoogle"
-             style="display:block"
-             data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
-             data-ad-slot="1111111111"
-             data-ad-format="auto"
-             data-full-width-responsive="true"></ins>
-        <script>(adsbygoogle=window.adsbygoogle||[]).push({});</script>
-      </div>
-    </section>
+          <div class="content-row">
+            <section class="panel wide">
+              <header class="panel-header">
+                <div>
+                  <h2>InflowAI Akış Özeti</h2>
+                  <p class="panel-sub">
+                    İçerikler, ürünler, eğlence ve öneriler tek akışta birleşir.
+                  </p>
+                </div>
+              </header>
+              <div class="feed-empty" id="feed-empty">
+                İlk içerik ve ürünlerini eklediğinde burada hareketleri göreceksin.
+              </div>
+              <ul class="feed-list" id="feed-list"></ul>
+            </section>
 
-    <!-- ============= E-TİCARET ============= -->
-    <section id="commerce" class="tab">
-      <h2 class="section-title">🛒 E-Ticaret</h2>
-      <div class="row">
-        <div class="card">
-          <h3>Ürün Ekle</h3>
-          <label>Ürün adı</label><input placeholder="Örn: Akıllı saat">
-          <label style="margin-top:10px">Fiyat</label><input type="number" placeholder="₺">
-          <label style="margin-top:10px">Açıklama</label><textarea rows="4" placeholder="Kısa tanım..."></textarea>
-          <div class="cta"><a class="btn p">Yayınla</a><a class="btn">Taslak</a></div>
-        </div>
-        <div class="card">
-          <h3>Ürünler</h3>
-          <div class="list">
-            <div class="item"><span>Henüz ürün yok.</span><a class="pill" href="#commerce">Ekle</a></div>
+            <aside class="panel ads-panel">
+              <header class="panel-header">
+                <h2>Reklam Alanı</h2>
+                <p class="panel-sub">Google AdSense için hazır alan.</p>
+              </header>
+              <div class="ad-slot ad-slot-top">
+                Reklam Alanı (Üst Banner)
+              </div>
+              <div class="ad-slot ad-slot-middle">
+                Reklam Alanı (Yan Panel)
+              </div>
+            </aside>
           </div>
-        </div>
-      </div>
-    </section>
+        </section>
 
-    <!-- ============= SOSYAL ============= -->
-    <section id="social" class="tab">
-      <h2 class="section-title">💬 Sosyal Alan</h2>
-      <div class="row">
-        <div class="card">
-          <h3>Gönderi Paylaş</h3>
-          <textarea rows="4" placeholder="Ne düşünüyorsun?"></textarea>
-          <div class="cta"><a class="btn p">Yayınla</a><a class="btn">Medya ekle</a></div>
-        </div>
-        <div class="card">
-          <h3>Akış</h3>
-          <div class="list">
-            <div class="item"><span>Henüz paylaşım yok.</span><a class="pill" href="#maker">İçerik üret</a></div>
-          </div>
-        </div>
-      </div>
-    </section>
+        <!-- İÇERİK ÜRET SAYFASI -->
+        <section id="page-content" class="page">
+          <section class="panel">
+            <header class="panel-header">
+              <div>
+                <h2>⚡ Mega İçerik Üretici</h2>
+                <p class="panel-sub">
+                  Bir cümle yaz, InflowAI senin için kısa video, post, başlık ve hashtag
+                  önerileri üretsin. Ana API daha sonra bağlanacak — şu an demo modundasın.
+                </p>
+              </div>
+            </header>
 
-    <!-- ============= B2B ============= -->
-    <section id="b2b" class="tab">
-      <h2 class="section-title">🏢 B2B İşletme</h2>
-      <div class="row">
-        <div class="card">
-          <h3>Mağaza / Tedarikçi Onayı</h3>
-          <p class="muted">Ziyaretçi ürününü ekleyip sadece onay verdiği kişilerle satış yapabilir.</p>
-          <label>İşletme adı</label><input placeholder="Örn: Kadir Teknoloji">
-          <label style="margin-top:10px">Satış modeliniz</label>
-          <select>
-            <option>Herkese açık</option>
-            <option>İzinli satış (whitelist)</option>
-          </select>
-          <div class="cta"><a class="btn p">Başlat</a></div>
-        </div>
-        <div class="card">
-          <h3>Hızlı Paneller</h3>
-          <div class="tiles">
-            <div class="card"><b>Teklif & Fatura</b><p class="muted">Tek tık PDF.</p></div>
-            <div class="card"><b>Stok & Sipariş</b><p class="muted">Gerçek zamanlı.</p></div>
-          </div>
-        </div>
-      </div>
-    </section>
+            <div class="form-grid">
+              <div class="form-col">
+                <label for="content-topic">Konun nedir?</label>
+                <input
+                  id="content-topic"
+                  type="text"
+                  class="text-input"
+                  placeholder="Örn: Kadın giyim butik için bahar kampanyası"
+                />
 
-    <!-- ============= MUHASEBE ============= -->
-    <section id="accounting" class="tab">
-      <h2 class="section-title">📊 Muhasebe (Zirve tarzı hafif modül)</h2>
-      <div class="row">
-        <div class="card">
-          <h3>Gelir / Gider</h3>
-          <label>Tür</label>
-          <select><option>Gelir</option><option>Gider</option></select>
-          <label style="margin-top:10px">Tutar</label><input type="number" placeholder="₺">
-          <label style="margin-top:10px">Açıklama</label><input placeholder="Not">
-          <div class="cta"><a class="btn p">Kaydet</a></div>
-        </div>
-        <div class="card">
-          <h3>Özet</h3>
-          <div class="kpi">
-            <div class="box"><div class="muted">Toplam Gelir</div><h2>₺0</h2></div>
-            <div class="box"><div class="muted">Toplam Gider</div><h2>₺0</h2></div>
-            <div class="box"><div class="muted">Bakiye</div><h2>₺0</h2></div>
-            <div class="box"><div class="muted">Fatura</div><h2>0</h2></div>
-          </div>
-        </div>
-      </div>
-    </section>
+                <label for="content-tone">Tarz / ton</label>
+                <select id="content-tone" class="select-input">
+                  <option value="dostca">Dostça ve samimi</option>
+                  <option value="profesyonel">Profesyonel</option>
+                  <option value="agresif">Satış odaklı</option>
+                  <option value="eğlenceli">Eğlenceli</option>
+                </select>
 
-    <!-- ============= EĞLENCE ============= -->
-    <section id="fun" class="tab">
-      <h2 class="section-title">🎉 Eğlence Alanı</h2>
-      <div class="tiles">
-        <div class="card"><b>☕ Kahve Falı</b><p class="muted">Yakında fotoğraf yükleyip fal baktır.</p></div>
-        <div class="card"><b🔮>Burç / Tarot</b><p class="muted">Günlük yorumlar ve tarot.</p></div>
-        <div class="card"><b>💡 Günün Tavsiyesi</b><p class="muted">Anında öneri.</p></div>
-        <div class="card"><b>😊 Mini Testler</b><p class="muted">Hızlı eğlence.</p></div>
-      </div>
-    </section>
+                <label>Hedef platformlar</label>
+                <div class="pill-row">
+                  <label class="pill-check">
+                    <input type="checkbox" value="Tiktok" checked />
+                    <span>TikTok</span>
+                  </label>
+                  <label class="pill-check">
+                    <input type="checkbox" value="Reels" checked />
+                    <span>Reels</span>
+                  </label>
+                  <label class="pill-check">
+                    <input type="checkbox" value="YouTube" checked />
+                    <span>YouTube</span>
+                  </label>
+                  <label class="pill-check">
+                    <input type="checkbox" value="X" checked />
+                    <span>X</span>
+                  </label>
+                </div>
 
-    <!-- ============= MÜZİK ============= -->
-    <section id="music" class="tab">
-      <h2 class="section-title">🎵 Müzik</h2>
-      <div class="row">
-        <div class="card">
-          <h3>Çalma</h3>
-          <p class="muted">API bağlandığında şarkı dinleme ve çalma listeleri burada çalışacak.</p>
-          <div class="cta"><a class="btn p">Rastgele çal</a><a class="btn">Liste oluştur</a></div>
-        </div>
-        <div class="card">
-          <h3>Listelerim</h3>
-          <div class="list"><div class="item"><span>Henüz liste yok.</span><a class="pill">Oluştur</a></div></div>
-        </div>
-      </div>
-    </section>
+                <button class="primary-btn full" id="btn-generate-content">
+                  Üret
+                </button>
+                <button class="ghost-btn full" id="btn-save-preset">
+                  Şablon olarak kaydet
+                </button>
+              </div>
 
-    <!-- ============= BORSA ============= -->
-    <section id="stocks" class="tab">
-      <h2 class="section-title">📈 Borsa Takip</h2>
-      <div class="row">
-        <div class="card">
-          <h3>Semboller</h3>
-          <input placeholder="BIST, BTC, AAPL...">
-          <div class="cta"><a class="btn p">Ekle</a><a class="btn">Kaydet</a></div>
-        </div>
-        <div class="card">
-          <h3>Canlı Kartlar</h3>
-          <div class="tiles">
-            <div class="card"><b>BTC/USDT</b><p class="muted">Bağlanınca canlı fiyat.</p></div>
-            <div class="card"><b>BIST 100</b><p class="muted">Endeks kartı.</p></div>
-          </div>
-        </div>
-      </div>
-    </section>
+              <div class="form-col">
+                <div class="output-card">
+                  <h3>Kısa Video Senaryosu</h3>
+                  <p id="out-script" class="output-placeholder">
+                    Hazır olduğunda burada.
+                  </p>
+                </div>
+                <div class="output-card">
+                  <h3>Post Metni &amp; Hashtag</h3>
+                  <p id="out-caption" class="output-placeholder">
+                    Hazır olduğunda burada.
+                  </p>
+                </div>
+              </div>
+            </div>
 
-    <!-- ============= PROFİL ============= -->
-    <section id="profile" class="tab">
-      <h2 class="section-title">👤 Profil</h2>
-      <div class="row">
-        <div class="card">
-          <h3>Bilgiler</h3>
-          <label>Ad</label><input placeholder="Misafir">
-          <label style="margin-top:10px">Biyografi</label><textarea rows="3" placeholder="Kısa tanıtım..."></textarea>
-          <div class="cta"><a class="btn p">Kaydet</a></div>
-        </div>
-        <div class="card">
-          <h3>Kısayollar</h3>
-          <div class="tiles">
-            <a class="card" href="#maker"><b>İçerik Üret</b><p class="muted">Tek tık</p></a>
-            <a class="card" href="#commerce"><b>Ürün Ekle</b><p class="muted">Satışa başla</p></a>
-          </div>
-        </div>
-      </div>
+            <div class="ad-slot ad-slot-bottom">
+              Reklam Alanı (İçerik Üretici)
+            </div>
+          </section>
+        </section>
 
-      <!-- Alt Reklam Alanı -->
-      <div class="adwrap card" style="margin-top:16px">
-        <div class="muted" style="margin-bottom:8px">Reklam Alanı (Alt)</div>
-        <ins class="adsbygoogle"
-             style="display:block"
-             data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
-             data-ad-slot="2222222222"
-             data-ad-format="auto"
-             data-full-width-responsive="true"></ins>
-        <script>(adsbygoogle=window.adsbygoogle||[]).push({});</script>
-      </div>
-    </section>
+        <!-- E-TİCARET SAYFASI -->
+        <section id="page-commerce" class="page">
+          <section class="panel">
+            <header class="panel-header">
+              <div>
+                <h2>🛒 E-Ticaret Alanı</h2>
+                <p class="panel-sub">
+                  Ürün ekle, fiyatlandır, stok takibini yap. Ürünler hemen aşağıda listelenir.
+                </p>
+              </div>
+            </header>
 
-    <footer class="footer">
-      © <span id="y"></span> InflowAI — Yaşayan Platform
-    </footer>
-  </div>
+            <div class="form-grid">
+              <div class="form-col">
+                <label for="prod-name">Ürün adı</label>
+                <input id="prod-name" type="text" class="text-input" />
 
-  <!-- Basit yardımcı JS (slot: yıl güncelleme) -->
-  <script>
-    document.getElementById('y').textContent = new Date().getFullYear();
-  </script>
+                <label for="prod-price">Fiyat</label>
+                <input
+                  id="prod-price"
+                  type="number"
+                  class="text-input"
+                  min="0"
+                  step="0.01"
+                  placeholder="0.00"
+                />
 
-  <!-- Proje JS'iniz -->
-  <script src="ui.js"></script>
-</body>
-</html>
+                <label for="prod-desc">Açıklama</label>
+                <textarea
+                  id="prod-desc"
+                  class="text-input"
+                  rows="3"
+                  placeholder="Ürünü kısaca anlat"
+                ></textarea>
+
+                <label for="prod-image">Görsel URL</label>
+                <input
+                  id="prod-image"
+                  type="text"
+                  class="text-input"
+                  placeholder="İsteğe bağlı — görsel linki"
+                />
+
+                <button class="primary-btn full" id="btn-add-product">
+                  Ürünü listeye ekle
+                </button>
+              </div>
+
+              <div class="form-col">
+                <h3>Aktif Ürünler</h3>
+                <div id="product-list" class="product-list empty-state">
+                  Henüz ürün eklenmedi.
+                </div>
+              </div>
+            </div>
+          </section>
+        </section>
+
+        <!-- SOSYAL ALAN -->
+        <section id="page-social" class="page">
+          <section class="panel">
+            <header class="panel-header">
+              <div>
+                <h2>💬 Sosyal Alan</h2>
+                <p class="panel-sub">
+                  Takip, mesajlaşma ve topluluk paylaşımları için temel akış. Gerçek
+                  mesaj sistemi API bağlandığında aktif olacak, şu an demo modunda.
+                </p>
+              </div>
+            </header>
+
+            <div class="social-layout">
+              <div class="social-feed">
+                <div class="composer">
+                  <input
+                    id="social-message"
+                    class="text-input"
+                    placeholder="Topluluğa bir mesaj bırak..."
+                  />
+                  <button class="primary-btn" id="btn-post-social">Paylaş</button>
+                </div>
+                <ul id="social-feed-list" class="feed-list"></ul>
+              </div>
+
+              <aside class="social-sidebar">
+                <h3>Hızlı Kişiler</h3>
+                <ul class="people-list">
+                  <li>Mustafa • Online</li>
+                  <li>Murat • Meşgul</li>
+                  <li>Misafir • Çevrimdışı</li>
+                </ul>
+                <p class="small-note">
+                  Gerçek zamanlı sohbet ve arama daha sonra eklenecek.
+                </p>
+              </aside>
+            </div>
+          </section>
+        </section>
+
+        <!-- B2B İŞLETME -->
+        <section id="page-b2b" class="page">
+          <section class="panel">
+            <header class="panel-header">
+              <div>
+                <h2>🏢 B2B İşletme Alanı</h2>
+                <p class="panel-sub">
+                  İşletmeler, bayiler ve ortaklar için özel alan. Ürünlerini sadece
+                  onay verdiğin kişilere aç.
+                </p>
+              </div>
+            </header>
+
+            <div class="form-grid">
+              <div class="form-col">
+                <label for="b2b-company">Firma adı</label>
+                <input id="b2b-company" type="text" class="text-input" />
+
+                <label for="b2b-note">Kime, ne sunmak istiyorsun?</label>
+                <textarea
+                  id="b2b-note"
+                  class="text-input"
+                  rows="3"
+                  placeholder="Örn: Sadece toptan müşterilere gösterilecek fiyat listesi"
+                ></textarea>
+
+                <button class="primary-btn full" id="btn-save-b2b">
+                  B2B panelini kaydet
+                </button>
+              </div>
+
+              <div class="form-col">
+                <h3>Son B2B Notun</h3>
+                <p id="b2b-last" class="output-placeholder">
+                  Henüz bir B2B kaydı yok.
+                </p>
+              </div>
+            </div>
+          </section>
+        </section>
+
+        <!-- MUHASEBE -->
+        <section id="page-accounting" class="page">
+          <section class="panel">
+            <header class="panel-header">
+              <div>
+                <h2>📊 Muhasebe Özeti</h2>
+                <p class="panel-sub">
+                  Basit gelir-gider takibi. Tam muhasebe entegrasyonu için temel alt yapı.
+                </p>
+              </div>
+            </header>
+
+            <div class="form-grid">
+              <div class="form-col">
+                <label>Tür</label>
+                <div class="pill-row">
+                  <label class="pill-check">
+                    <input type="radio" name="acc-type" value="gelir" checked />
+                    <span>Gelir</span>
+                  </label>
+                  <label class="pill-check">
+                    <input type="radio" name="acc-type" value="gider" />
+                    <span>Gider</span>
+                  </label>
+                </div>
+
+                <label for="acc-title">Başlık</label>
+                <input id="acc-title" type="text" class="text-input" />
+
+                <label for="acc-amount">Tutar</label>
+                <input
+                  id="acc-amount"
+                  type="number"
+                  class="text-input"
+                  step="0.01"
+                  min="0"
+                  placeholder="0.00"
+                />
+
+                <button class="primary-btn full" id="btn-add-acc">
+                  Kaydı ekle
+                </button>
+              </div>
+
+              <div class="form-col">
+                <div class="stat-row">
+                  <div class="stat-card small">
+                    <span class="stat-label">Toplam Gelir</span>
+                    <span class="stat-value" id="acc-income">0</span>
+                  </div>
+                  <div class="stat-card small">
+                    <span class="stat-label">Toplam Gider</span>
+                    <span class="stat-value" id="acc-expense">0</span>
+                  </div>
+                  <div class="stat-card small">
+                    <span class="stat-label">Bakiye</span>
+                    <span class="stat-value" id="acc-balance">0</span>
+                  </div>
+                </div>
+
+                <table class="table" id="acc-table">
+                  <thead>
+                    <tr>
+                      <th>Tarih</th>
+                      <th>Tür</th>
+                      <th>Başlık</th>
+                      <th>Tutar</th>
+                    </tr>
+                  </thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+        </section>
+
+        <!-- EĞLENCE -->
+        <section id="page-fun" class="page">
+          <section class="panel">
+            <header class="panel-header">
+              <div>
+                <h2>🎉 Eğlence Alanı</h2>
+                <p class="panel-sub">
+                  Kahve falı, burç, tarot, günün önerisi ve mini testler.
+                  Şimdilik hepsi hızlı demo cevapları üretiyor — boş kalmayacak.
+                </p>
+              </div>
+            </header>
+
+            <div class="fun-grid">
+              <button class="fun-card" data-fun="coffee">
+                ☕ Kahve Falı
+                <span>Kupanın fotoğrafını hayal et, yorum burada.</span>
+              </button>
+              <button class="fun-card" data-fun="zodiac">
+                🔮 Burç / Tarot
+                <span>Günün enerjisini keşfet.</span>
+              </button>
+              <button class="fun-card" data-fun="advice">
+                💡 Günün Tavsiyesi
+                <span>Kısa ama net bir öneri.</span>
+              </button>
+              <button class="fun-card" data-fun="quiz">
+                😄 Mini Testler
+                <span>1 dakikalık eğlenceli sorular.</span>
+              </button>
+            </div>
+
+            <div class="output-card">
+              <h3>Eğlence Sonucu</h3>
+              <p id="fun-output" class="output-placeholder">
+                Bir kart seç, sonuç burada görünsün.
+              </p>
+            </div>
+          </section>
+        </section>
+
+        <!-- MÜZİK -->
+        <section id="page-music" class="page">
+          <section class="panel">
+            <header class="panel-header">
+              <div>
+                <h2>🎵 Müzik Alanı</h2>
+                <p class="panel-sub">
+                  Çalma listeni tut, linklerini kaydet. Tam müzik API bağlantısı
+                  ileride eklenecek.
+                </p>
+              </div>
+            </header>
+
+            <div class="form-grid">
+              <div class="form-col">
+                <label for="music-title">Parça / liste adı</label>
+                <input id="music-title" type="text" class="text-input" />
+
+                <label for="music-link">Link (Spotify, YouTube vb.)</label>
+                <input
+                  id="music-link"
+                  type="text"
+                  class="text-input"
+                  placeholder="https://..
