@@ -1,297 +1,511 @@
-/* =========================================
-   GENEL TASARIM – Neon Galactic UI
-========================================= */
+// ui.js
+// =======================================================
+// InflowAI - Çok sayfalı (7 HTML) canlı frontend beyni
+// - İçerikler ve ürünler localStorage'da tutulur
+// - Eğlence alanı gerçek sonuçlar üretir (random)
+// - Akış sayfası içerik + ürünleri listeler
+// =======================================================
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+(function () {
+  // Küçük yardımcılar
+  function $(sel) {
+    return document.querySelector(sel);
+  }
+  function $all(sel) {
+    return Array.from(document.querySelectorAll(sel));
+  }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: "Inter", sans-serif;
-}
+  const STORAGE_KEYS = {
+    CONTENTS: "inflow_contents",
+    PRODUCTS: "inflow_products",
+  };
 
-body {
-  background: #070715;
-  color: white;
-  overflow-x: hidden;
-}
+  function load(key, fallback) {
+    try {
+      const raw = localStorage.getItem(key);
+      if (!raw) return fallback;
+      return JSON.parse(raw);
+    } catch (e) {
+      return fallback;
+    }
+  }
 
-/* =========================================
-   HEADER
-========================================= */
+  function save(key, value) {
+    localStorage.setItem(key, JSON.stringify(value));
+  }
 
-.top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 18px 25px;
-  background: rgba(255,255,255,0.03);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(255,255,255,0.05);
-}
+  // Tarih yardımcıları
+  function isToday(iso) {
+    const d = new Date(iso);
+    const now = new Date();
+    return (
+      d.getFullYear() === now.getFullYear() &&
+      d.getMonth() === now.getMonth() &&
+      d.getDate() === now.getDate()
+    );
+  }
 
-.logo {
-  font-size: 22px;
-  font-weight: 700;
-  cursor: pointer;
-  color: #7aa8ff;
-}
+  // -------------------------------------------------------
+  // GLOBAL NAV – üst logoya tıklayınca ana sayfaya git vs.
+  // -------------------------------------------------------
+  function initGlobalNav() {
+    const logo = document.querySelector(".nav-logo, header .logo, .brand");
+    if (logo) {
+      logo.style.cursor = "pointer";
+      logo.addEventListener("click", () => {
+        window.location.href = "index.html";
+      });
+    }
 
-/* =========================================
-   BUTTONS
-========================================= */
+    const loginBtn = document.getElementById("btnLogin");
+    if (loginBtn) {
+      loginBtn.addEventListener("click", () => {
+        alert(
+          "Giriş & kayıt sistemi çok yakında aktif olacak.\nŞu an tüm ücretsiz özellikler misafir olarak açık. 💜"
+        );
+      });
+    }
+  }
 
-.btn-primary {
-  background: linear-gradient(90deg, #ff2bd4, #733dff);
-  padding: 12px 26px;
-  border-radius: 30px;
-  color: white;
-  border: none;
-  cursor: pointer;
-  font-size: 15px;
-  font-weight: 600;
-  transition: 0.25s;
-}
+  // -------------------------------------------------------
+  // ANA SAYFA (index.html)
+  // -------------------------------------------------------
+  function initHome() {
+    if (!location.pathname.endsWith("index.html") && location.pathname !== "/" && location.pathname !== "/InflowAI/") {
+      return;
+    }
 
-.btn-primary:hover {
-  transform: scale(1.06);
-}
+    // Hızlı yönlendirme butonları
+    const btnFastContent =
+      $("#btnFastContent") || $("#btnQuickContent") || $("#btnProduce");
+    const btnFastProduct =
+      $("#btnFastProduct") || $("#btnQuickProduct") || $("#btnAddProduct");
 
-.btn-secondary {
-  background: rgba(255,255,255,0.1);
-  padding: 12px 26px;
-  border-radius: 30px;
-  color: white;
-  border: 1px solid rgba(255,255,255,0.2);
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: 0.25s;
-}
+    if (btnFastContent) {
+      btnFastContent.addEventListener("click", () => {
+        window.location.href = "content.html";
+      });
+    }
+    if (btnFastProduct) {
+      btnFastProduct.addEventListener("click", () => {
+        window.location.href = "product-add.html";
+      });
+    }
 
-.btn-secondary:hover {
-  background: rgba(255,255,255,0.2);
-}
+    // Canlı platform özeti
+    const contents = load(STORAGE_KEYS.CONTENTS, []);
+    const products = load(STORAGE_KEYS.PRODUCTS, []);
 
-.btn-ghost {
-  background: rgba(255,255,255,0.08);
-  border-radius: 12px;
-  padding: 8px 16px;
-  border: none;
-  color: white;
-  cursor: pointer;
-}
+    const elTotalContent =
+      $("#summaryTotalContent") || $("#summary-total-content");
+    const elTotalProducts =
+      $("#summaryTotalProducts") || $("#summary-total-products");
+    const elActiveUsers =
+      $("#summaryActiveUsers") || $("#summary-active-users");
+    const elTodayIdeas =
+      $("#summaryTodayIdeas") || $("#summary-today-ideas");
 
-button:active {
-  transform: scale(0.97);
-}
+    if (elTotalContent) elTotalContent.textContent = contents.length;
+    if (elTotalProducts) elTotalProducts.textContent = products.length;
 
+    // Şimdilik aktif kullanıcı = 1 (sen) + misafirler
+    if (elActiveUsers) elActiveUsers.textContent = 1;
 
-/* =========================================
-   HERO
-========================================= */
+    const todayIdeasCount = contents.filter((c) => isToday(c.createdAt)).length;
+    if (elTodayIdeas) elTodayIdeas.textContent = todayIdeasCount;
 
-.hero {
-  text-align: center;
-  padding: 40px 20px;
-}
+    // Ana sayfa akış ön izlemesi (son 5 şey)
+    const feedPreview =
+      $("#homeFeedPreview") || $("#inflowFeedPreview") || $(".home-feed");
+    if (feedPreview) {
+      const merged = [
+        ...contents.map((c) => ({ type: "content", ...c })),
+        ...products.map((p) => ({ type: "product", ...p })),
+      ]
+        .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0))
+        .slice(0, 5);
 
-.hero h1 {
-  margin-top: 25px;
-  font-size: 28px;
-  font-weight: 700;
-  line-height: 1.35;
-}
+      if (!merged.length) {
+        feedPreview.innerHTML =
+          '<p class="empty">Henüz içerik veya ürün yok. İlk paylaşımı sen yap! 🚀</p>';
+      } else {
+        feedPreview.innerHTML = merged
+          .map((item) => {
+            if (item.type === "product") {
+              return `
+              <div class="feed-card">
+                <div class="tag">Ürün</div>
+                <div class="title">${item.name}</div>
+                <div class="meta">${item.price || ""}</div>
+              </div>`;
+            } else {
+              return `
+              <div class="feed-card">
+                <div class="tag">İçerik</div>
+                <div class="title">${item.text}</div>
+              </div>`;
+            }
+          })
+          .join("");
+      }
+    }
+  }
 
-.hero p {
-  margin: 15px 0;
-  font-size: 16px;
-  opacity: 0.8;
-}
+  // -------------------------------------------------------
+  // İÇERİK ÜRETİCİ (content.html)
+  // -------------------------------------------------------
+  function initContentPage() {
+    if (!location.pathname.endsWith("content.html")) return;
 
-.hero-btns {
-  margin-top: 22px;
-  display: flex;
-  justify-content: center;
-  gap: 16px;
-}
+    const input = $("#contentInput") || $("#userInput");
+    const selectType = $("#contentType");
+    const btnGenerate = $("#btnGenerateContent") || $("#sendBtn");
+    const result = $("#contentResult");
 
-.avatar {
-  width: 170px;
-  height: 170px;
-  margin: auto;
-  margin-top: 10px;
-  border-radius: 50%;
-  background: radial-gradient(circle, #3911ff, #040211);
-  box-shadow: 0 0 45px #3a5eff;
-}
+    if (btnGenerate && input && result) {
+      btnGenerate.addEventListener("click", () => {
+        const text = (input.value || "").trim();
+        if (!text) {
+          alert("Önce ne üretmek istediğini yaz. ✍️");
+          return;
+        }
 
+        const type = selectType ? selectType.value : "genel";
 
-/* =========================================
-   QUICK NAV
-========================================= */
+        // Basit yapay içerik: başlık + 3 madde
+        const idea = {
+          title: `InflowAI fikri: ${text}`,
+          bullets: [
+            `${text} için dikkat çekici bir giriş cümlesi yaz.`,
+            `İnsanların paylaşmak isteyeceği 1 duygusal cümle ekle.`,
+            `Sonuna net bir çağrı ekle: yorum, kayıt ol, takip et vb.`,
+          ],
+        };
 
-.quick-nav {
-  display: flex;
-  justify-content: space-around;
-  padding: 25px;
-  margin-top: 20px;
-}
+        // LocalStorage'a kaydet
+        const list = load(STORAGE_KEYS.CONTENTS, []);
+        list.unshift({
+          id: Date.now(),
+          text: text,
+          type,
+          idea,
+          createdAt: new Date().toISOString(),
+        });
+        save(STORAGE_KEYS.CONTENTS, list);
 
-.quick-nav button {
-  background: rgba(255,255,255,0.08);
-  border: none;
-  color: white;
-  padding: 10px 16px;
-  border-radius: 12px;
-  font-size: 14px;
-  cursor: pointer;
-}
+        // Ekrana göster
+        result.innerHTML = `
+          <h3>${idea.title}</h3>
+          <ul>
+            ${idea.bullets.map((b) => `<li>${b}</li>`).join("")}
+          </ul>
+          <p class="note">Bu içerik InflowAI akışına ve özetlere eklendi. ✅</p>
+        `;
 
+        input.value = "";
+      });
+    }
+  }
 
-/* =========================================
-   TOOL PAGE (Mega içerik, Ürün ekle vb.)
-========================================= */
+  // -------------------------------------------------------
+  // ÜRÜN EKLE (product-add.html)
+  // -------------------------------------------------------
+  function initProductAddPage() {
+    if (!location.pathname.endsWith("product-add.html")) return;
 
-.tool-page {
-  padding: 30px 20px;
-}
+    const form = $("#productForm") || $("form");
+    const nameInput = $("#productName");
+    const priceInput = $("#productPrice");
+    const descInput = $("#productDescription");
+    const imageInput = $("#productImage");
 
-.tool-page h1 {
-  font-size: 26px;
-  margin-bottom: 12px;
-  font-weight: 700;
-}
+    if (!form) return;
 
-.tool-page p {
-  opacity: 0.75;
-  font-size: 15px;
-}
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
 
-.tool-page input,
-.tool-page textarea {
-  width: 100%;
-  padding: 14px;
-  margin-top: 15px;
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.15);
-  border-radius: 14px;
-  color: white;
-  font-size: 15px;
-}
+      const name = (nameInput && nameInput.value.trim()) || "";
+      const price = (priceInput && priceInput.value.trim()) || "";
+      const desc = (descInput && descInput.value.trim()) || "";
 
-.tool-page button {
-  margin-top: 20px;
-  width: 100%;
-}
+      if (!name || !price) {
+        alert("Ürün adı ve fiyat zorunlu. 💸");
+        return;
+      }
 
-#resultBox, #addResult {
-  margin-top: 20px;
-  padding: 20px;
-  background: rgba(255,255,255,0.05);
-  border-radius: 14px;
-  min-height: 60px;
-}
+      function finishSave(imageData) {
+        const list = load(STORAGE_KEYS.PRODUCTS, []);
+        list.unshift({
+          id: Date.now(),
+          name,
+          price,
+          description: desc,
+          imageData: imageData || null,
+          createdAt: new Date().toISOString(),
+        });
+        save(STORAGE_KEYS.PRODUCTS, list);
 
+        alert("Ürün yayınlandı! 🎉 Şimdi markete gidip görebilirsin.");
+        window.location.href = "product.html";
+      }
 
-/* =========================================
-   FEED SAYFASI
-========================================= */
+      const file = imageInput && imageInput.files && imageInput.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (evt) {
+          finishSave(evt.target.result);
+        };
+        reader.readAsDataURL(file);
+      } else {
+        finishSave(null);
+      }
+    });
+  }
 
-.feed-page {
-  padding: 30px 20px;
-}
+  // -------------------------------------------------------
+  // ÜRÜN LİSTESİ / MARKET (product.html)
+  // -------------------------------------------------------
+  function initProductListPage() {
+    if (!location.pathname.endsWith("product.html")) return;
 
-#feedList {
-  margin-top: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-}
+    const container = $("#productList") || $(".product-list");
+    const emptyEl = $("#productEmpty") || $(".product-empty");
 
-.feed-item {
-  padding: 18px;
-  background: rgba(255,255,255,0.05);
-  border-radius: 14px;
-  font-size: 15px;
-}
+    const list = load(STORAGE_KEYS.PRODUCTS, []);
 
+    if (!container) return;
 
-/* =========================================
-   PROFIL PAGE
-========================================= */
+    if (!list.length) {
+      if (emptyEl) {
+        emptyEl.textContent =
+          "Henüz satışta ürün yok. İlk ürünü sen ekle ve marketi aç. 🛒";
+      } else {
+        container.innerHTML =
+          '<p class="empty">Henüz satışta ürün yok. İlk ürünü sen ekle. 🛒</p>';
+      }
+      return;
+    }
 
-.profile-page {
-  padding: 30px 20px;
-  text-align: center;
-}
+    container.innerHTML = list
+      .map((p) => {
+        return `
+        <div class="product-card">
+          ${p.imageData ? `<img src="${p.imageData}" alt="${p.name}" />` : ""}
+          <h3>${p.name}</h3>
+          <p class="price">${p.price}</p>
+          ${
+            p.description
+              ? `<p class="desc">${p.description}</p>`
+              : "<p class='desc muted'>Açıklama eklenmedi.</p>"
+          }
+        </div>
+      `;
+      })
+      .join("");
+  }
 
-.profile-pic {
-  width: 110px;
-  height: 110px;
-  border-radius: 50%;
-  margin: 15px auto;
-  box-shadow: 0 0 25px #684bff;
-}
+  // -------------------------------------------------------
+  // EĞLENCE ALANI (fun.html)
+  // -------------------------------------------------------
+  function initFunPage() {
+    if (!location.pathname.endsWith("fun.html")) return;
 
-.profile-menu {
-  margin-top: 25px;
-  display: grid;
-  gap: 15px;
-}
+    const btnCoffee = $("#btnCoffee") || $("#funCoffee");
+    const btnHoroscope = $("#btnHoroscope") || $("#funHoroscope");
+    const btnAdvice = $("#btnAdvice") || $("#funAdvice");
+    const btnQuiz = $("#btnQuiz") || $("#funQuiz");
 
-.profile-menu button {
-  padding: 14px;
-  border-radius: 14px;
-  background: rgba(255,255,255,0.08);
-  border: none;
-  color: white;
-}
+    const titleEl = $("#funResultTitle");
+    const bodyEl = $("#funResultBody");
 
+    function showResult(title, text) {
+      if (titleEl) titleEl.textContent = title;
+      if (bodyEl) bodyEl.textContent = text;
+      if (!titleEl && !bodyEl) {
+        alert(`${title}\n\n${text}`);
+      }
+    }
 
-/* =========================================
-   EĞLENCE ALANI
-========================================= */
+    // Kahve falı – basit random yorum
+    const coffeeFortunes = [
+      "Kalbinde tuttuğun bir dilek var, yakında güzel bir haber alacaksın.",
+      "Yeni tanışacağın biri hayatına hareket katacak.",
+      "Uzun zamandır beklediğin fırsat, hiç beklemediğin bir anda gelecek.",
+      "Yoldan haber var; kısa bir seyahat seni bekliyor.",
+    ];
 
-.fun-page {
-  padding: 30px 20px;
-}
+    if (btnCoffee) {
+      btnCoffee.addEventListener("click", () => {
+        const msg =
+          coffeeFortunes[Math.floor(Math.random() * coffeeFortunes.length)];
+        showResult("☕ Kahve Falın", msg);
+      });
+    }
 
-.fun-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 15px;
-  margin-top: 20px;
-}
+    // Burç / Tarot – burç seçimi varsa ona göre, yoksa random
+    const horoscopeTexts = [
+      "Bugün kendin için küçük ama önemli bir adım at.",
+      "Planlamadığın bir buluşma moralini yükseltebilir.",
+      "Madde değil, insanlara yatırım yaptığın bir gün olsun.",
+      "Uzun zamandır ertelediğin işi bugün bitirmeyi dene.",
+    ];
 
-.fun-grid button {
-  padding: 16px;
-  font-size: 16px;
-  border-radius: 14px;
-  background: rgba(255,255,255,0.08);
-  border: none;
-  color: white;
-}
+    if (btnHoroscope) {
+      btnHoroscope.addEventListener("click", () => {
+        const msg =
+          horoscopeTexts[Math.floor(Math.random() * horoscopeTexts.length)];
+        showResult("🔮 Tarot & Burç Mesajın", msg);
+      });
+    }
 
+    // Günün tavsiyesi
+    const advices = [
+      "Bugün en az 15 dakika hiçbir şey üretme, sadece düşün.",
+      "Beğendiğin 3 hesabı incele, ortak noktalarını not al.",
+      "Eski bir içeriğini tekrar paylaş, üzerine küçük bir güncelleme ekle.",
+      "Bugün sadece tek bir platforma odaklan, hepsine değil.",
+    ];
 
-/* =========================================
-   ÜRÜN DETAY
-========================================= */
+    if (btnAdvice) {
+      btnAdvice.addEventListener("click", () => {
+        const msg = advices[Math.floor(Math.random() * advices.length)];
+        showResult("💡 Günün Tavsiyesi", msg);
+      });
+    }
 
-.product-detail {
-  padding: 30px 20px;
-  text-align: center;
-}
+    // Mini test – çok basit 3 soruluk quiz
+    if (btnQuiz) {
+      btnQuiz.addEventListener("click", () => {
+        const q1 = confirm(
+          "Günde en az 1 içerik paylaşmanın uzun vadede büyüme getireceğine inanıyor musun?"
+        );
+        const q2 = confirm(
+          "Bugün en az 1 içerik veya 1 ürün eklemeye niyetli misin?"
+        );
+        const q3 = confirm(
+          "Takipçilerinle yorumlarda daha fazla sohbet etmeye hazır mısın?"
+        );
 
-.product-detail img {
-  width: 100%;
-  border-radius: 20px;
-  margin-bottom: 20px;
-}
+        const score = [q1, q2, q3].filter(Boolean).length;
+        let msg = "";
+        if (score === 3) {
+          msg =
+            "⚡ İçerik beyni modundasın! Bugün platform senin için hazır, sen de onun için hazırsın.";
+        } else if (score === 2) {
+          msg =
+            "🔥 Güzel! Küçük bir itişe ihtiyacın var, InflowAI fikir üretmek için seni bekliyor.";
+        } else {
+          msg =
+            "😄 Yavaştan ısınma turundasın. Sadece 1 küçük içerikle başla, gerisi gelir.";
+        }
+        showResult("😄 Mini Test Sonucu", msg);
+      });
+    }
+  }
 
-.price {
-  font-size: 22px;
-  margin: 20px 0;
-  color: #77a2ff;
-}
+  // -------------------------------------------------------
+  // AKIŞ SAYFASI (feed.html)
+  // -------------------------------------------------------
+  function initFeedPage() {
+    if (!location.pathname.endsWith("feed.html")) return;
+
+    const container = $("#feedList") || $(".feed-list");
+    const emptyEl = $("#feedEmpty") || $(".feed-empty");
+
+    const contents = load(STORAGE_KEYS.CONTENTS, []);
+    const products = load(STORAGE_KEYS.PRODUCTS, []);
+
+    if (!container) return;
+
+    const merged = [
+      ...contents.map((c) => ({ type: "content", ...c })),
+      ...products.map((p) => ({ type: "product", ...p })),
+    ].sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+
+    if (!merged.length) {
+      if (emptyEl) {
+        emptyEl.textContent =
+          "Henüz akışta gösterilecek içerik veya ürün yok. İlk adımı sen at. 🚀";
+      } else {
+        container.innerHTML =
+          "<p class='empty'>Akış boş. İçerik üret veya ürün ekle, hepsi burada görünecek.</p>";
+      }
+      return;
+    }
+
+    container.innerHTML = merged
+      .map((item) => {
+        if (item.type === "product") {
+          return `
+          <div class="feed-card">
+            <div class="tag product">Ürün</div>
+            <div class="title">${item.name}</div>
+            <div class="meta">${item.price}</div>
+          </div>`;
+        }
+        return `
+        <div class="feed-card">
+          <div class="tag content">İçerik</div>
+          <div class="title">${item.text}</div>
+        </div>`;
+      })
+      .join("");
+  }
+
+  // -------------------------------------------------------
+  // PROFİL / ÖZET (profile.html)
+  // -------------------------------------------------------
+  function initProfilePage() {
+    if (!location.pathname.endsWith("profile.html")) return;
+
+    const contents = load(STORAGE_KEYS.CONTENTS, []);
+    const products = load(STORAGE_KEYS.PRODUCTS, []);
+
+    const elTotalContent =
+      $("#profileTotalContent") || $("#summaryTotalContent");
+    const elTotalProducts =
+      $("#profileTotalProducts") || $("#summaryTotalProducts");
+
+    if (elTotalContent) elTotalContent.textContent = contents.length;
+    if (elTotalProducts) elTotalProducts.textContent = products.length;
+
+    const elRecent =
+      $("#profileRecentItems") || $(".profile-recent") || null;
+    if (elRecent) {
+      const merged = [
+        ...contents.map((c) => ({ type: "content", ...c })),
+        ...products.map((p) => ({ type: "product", ...p })),
+      ]
+        .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0))
+        .slice(0, 10);
+
+      if (!merged.length) {
+        elRecent.innerHTML =
+          "<p class='empty'>Henüz bir şey üretmedin. İlk içerik veya ürünü ekle, burada gözüksün.</p>";
+      } else {
+        elRecent.innerHTML = merged
+          .map((item) => {
+            if (item.type === "product") {
+              return `<li><strong>Ürün:</strong> ${item.name} (${item.price})</li>`;
+            }
+            return `<li><strong>İçerik:</strong> ${item.text}</li>`;
+          })
+          .join("");
+      }
+    }
+  }
+
+  // -------------------------------------------------------
+  // INIT
+  // -------------------------------------------------------
+  document.addEventListener("DOMContentLoaded", () => {
+    initGlobalNav();
+    initHome();
+    initContentPage();
+    initProductAddPage();
+    initProductListPage();
+    initFunPage();
+    initFeedPage();
+    initProfilePage();
+  });
+})();
