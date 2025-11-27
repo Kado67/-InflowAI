@@ -10,233 +10,828 @@
     src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5803994489635087"
     crossorigin="anonymous"></script>
 
-  <link rel="stylesheet" href="style.css" />
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    :root {
+      color-scheme: dark;
+      --bg-main: #020617;
+      --bg-elevated: #020617;
+      --bg-elevated-soft: #020617;
+      --border-soft: rgba(148, 163, 184, 0.2);
+      --text-primary: #ffffff;
+      --text-secondary: rgba(226, 232, 240, 0.72);
+      --accent-purple: #7c3aed;
+      --accent-cyan: #22d3ee;
+      --accent-orange: #f97316;
+      --radius-card: 26px;
+      --shadow-soft: 0 28px 80px rgba(0, 0, 0, 0.9);
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+        "Roboto", sans-serif;
+      background: radial-gradient(circle at top, #020617 0, #000 70%);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 12px;
+    }
+
+    .shell {
+      width: 100%;
+      max-width: 420px;
+      border-radius: 36px;
+      padding: 18px 16px 12px;
+      background: radial-gradient(circle at top left, #020617 0, #000 60%);
+      box-shadow: var(--shadow-soft);
+      border: 1px solid rgba(148, 163, 184, 0.28);
+    }
+
+    .glass {
+      border-radius: 32px;
+      padding: 16px 14px 10px;
+      background: radial-gradient(circle at top left, #020617 0, #020617 60%);
+      border: 1px solid rgba(148, 163, 184, 0.28);
+    }
+
+    /* HEADER */
+
+    .app-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .logo-row {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      font-size: 18px;
+      letter-spacing: 0.03em;
+    }
+
+    .status-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 999px;
+      background: radial-gradient(circle, #22c55e 0, #15803d 60%, #052e16 100%);
+      box-shadow: 0 0 12px rgba(34, 197, 94, 0.9);
+    }
+
+    .header-right {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .lang-pill {
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      padding: 4px 10px;
+      font-size: 11px;
+      background: rgba(15, 23, 42, 0.9);
+      color: var(--text-secondary);
+      cursor: pointer;
+    }
+
+    .avatar {
+      width: 26px;
+      height: 26px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      background: radial-gradient(circle at 30% 10%, #f97316, #7c3aed);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .avatar-inner {
+      width: 11px;
+      height: 11px;
+      border-radius: inherit;
+      border: 1px solid rgba(15, 23, 42, 0.9);
+      background: radial-gradient(circle at 30% 10%, #f9fafb, #d1d5db);
+    }
+
+    /* GRID */
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .tile {
+      border-radius: 26px;
+      padding: 14px 14px 12px;
+      border: none;
+      outline: none;
+      text-align: left;
+      color: var(--text-primary);
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.9);
+    }
+
+    .tile::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      opacity: 0.32;
+      background: radial-gradient(circle at 10% 0, rgba(255, 255, 255, 0.25), transparent 60%);
+      mix-blend-mode: screen;
+    }
+
+    .tile-title {
+      position: relative;
+      z-index: 1;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .tile-sub {
+      position: relative;
+      z-index: 1;
+      margin-top: 4px;
+      font-size: 11px;
+      color: var(--text-secondary);
+    }
+
+    .g-orange {
+      background: radial-gradient(circle at 0 0, #fed7aa 0, #fb923c 25%, #7c2d12 70%, #020617 100%);
+    }
+
+    .g-purple {
+      background: radial-gradient(circle at 0 0, #ddd6fe 0, #a855f7 25%, #4c1d95 70%, #020617 100%);
+    }
+
+    .g-blue {
+      background: radial-gradient(circle at 0 0, #bfdbfe 0, #2563eb 25%, #1d4ed8 70%, #020617 100%);
+    }
+
+    .g-indigo {
+      background: radial-gradient(circle at 0 0, #e0e7ff 0, #4f46e5 25%, #1e1b4b 70%, #020617 100%);
+    }
+
+    .g-green {
+      background: radial-gradient(circle at 0 0, #bbf7d0 0, #22c55e 25%, #14532d 70%, #020617 100%);
+    }
+
+    .g-gold {
+      background: radial-gradient(circle at 0 0, #fef9c3 0, #eab308 25%, #854d0e 70%, #020617 100%);
+    }
+
+    .g-deep {
+      background: radial-gradient(circle at 0 0, #ddd6fe 0, #6366f1 25%, #020617 80%);
+    }
+
+    .g-cyan {
+      background: radial-gradient(circle at 0 0, #a5f3fc 0, #22d3ee 25%, #0f172a 70%, #020617 100%);
+    }
+
+    /* PANEL */
+
+    .panel-shell {
+      border-radius: 28px;
+      background: radial-gradient(circle at top left, #020617 0, #020617 65%);
+      border: 1px solid rgba(148, 163, 184, 0.28);
+      padding: 12px 10px 8px;
+      overflow: hidden;
+      height: 270px;
+    }
+
+    .panel {
+      display: none;
+      height: 100%;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .panel.active {
+      display: block;
+    }
+
+    .panel-title {
+      margin: 0 0 6px;
+      font-size: 15px;
+    }
+
+    .panel-text {
+      margin: 0 0 10px;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .stat-row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .stat-card {
+      border-radius: 18px;
+      padding: 8px 10px;
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid var(--border-soft);
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: var(--text-secondary);
+    }
+
+    .stat-value {
+      display: block;
+      margin-top: 4px;
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .timeline-title {
+      margin: 4px 0 6px;
+      font-size: 13px;
+    }
+
+    .timeline-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 6px;
+      font-size: 11px;
+    }
+
+    .timeline-item {
+      border-radius: 14px;
+      padding: 7px 8px;
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid var(--border-soft);
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .timeline-meta {
+      color: var(--text-secondary);
+    }
+
+    /* E-TİCARET */
+
+    .hero {
+      margin-top: 2px;
+      padding: 10px;
+      border-radius: 20px;
+      border: 1px solid rgba(129, 140, 248, 0.6);
+      background: radial-gradient(circle at top left, #4f46e5, #020617 65%);
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .hero-text {
+      flex: 1;
+    }
+
+    .hero-kicker {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: rgba(226, 232, 240, 0.9);
+    }
+
+    .hero-title {
+      margin: 4px 0;
+      font-size: 15px;
+    }
+
+    .hero-price {
+      margin: 0 0 8px;
+      color: #a5b4fc;
+      font-weight: 600;
+    }
+
+    .hero-visual {
+      width: 78px;
+      height: 70px;
+      border-radius: 18px;
+      background: radial-gradient(circle at top left, #a855f7, #1e293b 65%);
+      box-shadow: 0 0 26px rgba(168, 85, 247, 0.8);
+    }
+
+    .btn-primary {
+      border-radius: 999px;
+      border: none;
+      padding: 6px 12px;
+      font-size: 11px;
+      font-weight: 600;
+      background: linear-gradient(135deg, #a855f7, #6366f1);
+      color: #f9fafb;
+      cursor: pointer;
+      box-shadow: 0 0 18px rgba(129, 140, 248, 0.9);
+    }
+
+    .section-subtitle {
+      font-size: 13px;
+      margin: 12px 0 6px;
+    }
+
+    .chip-row {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 8px;
+      overflow-x: auto;
+    }
+
+    .chip {
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      padding: 4px 10px;
+      font-size: 11px;
+      background: rgba(15, 23, 42, 0.95);
+      color: var(--text-secondary);
+      white-space: nowrap;
+      cursor: pointer;
+    }
+
+    .chip.active,
+    .chip:hover {
+      border-color: var(--accent-purple);
+      color: var(--text-primary);
+    }
+
+    .product-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      padding-bottom: 8px;
+    }
+
+    .product-card {
+      border-radius: 16px;
+      padding: 8px;
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid var(--border-soft);
+      font-size: 11px;
+    }
+
+    .product-title {
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+
+    .product-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .product-price {
+      color: #a5b4fc;
+      font-weight: 600;
+    }
+
+    .product-tag {
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: rgba(34, 197, 94, 0.15);
+      color: #bbf7d0;
+    }
+
+    /* SOSYAL */
+
+    .feed-list {
+      display: grid;
+      gap: 8px;
+      padding-bottom: 10px;
+    }
+
+    .feed-card {
+      border-radius: 18px;
+      padding: 8px 9px;
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid var(--border-soft);
+      font-size: 11px;
+    }
+
+    .feed-header {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+
+    .feed-avatar {
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 10%, #f97316, #7c3aed);
+    }
+
+    .feed-name {
+      font-weight: 500;
+    }
+
+    .feed-time {
+      margin-left: auto;
+      font-size: 10px;
+      color: var(--text-secondary);
+    }
+
+    .feed-text {
+      color: var(--text-secondary);
+    }
+
+    /* MESAJLAŞMA */
+
+    .chat-list {
+      list-style: none;
+      margin: 0 0 8px;
+      padding: 0;
+      display: grid;
+      gap: 6px;
+      font-size: 11px;
+    }
+
+    .chat-item {
+      border-radius: 18px;
+      padding: 8px;
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid var(--border-soft);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .chat-avatar {
+      width: 26px;
+      height: 26px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 10%, #fbbf24, #f97316);
+    }
+
+    .chat-main {
+      flex: 1;
+    }
+
+    .chat-name {
+      font-weight: 500;
+    }
+
+    .chat-preview {
+      color: var(--text-secondary);
+    }
+
+    .chat-meta {
+      font-size: 10px;
+      color: var(--text-secondary);
+    }
+
+    .chat-input-bar {
+      display: flex;
+      gap: 6px;
+      padding: 6px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.98);
+      border: 1px solid var(--border-soft);
+    }
+
+    .chat-input-bar input {
+      flex: 1;
+      border: none;
+      outline: none;
+      background: transparent;
+      color: var(--text-primary);
+      font-size: 12px;
+      padding: 4px 8px;
+    }
+
+    .chat-input-bar button {
+      border-radius: 999px;
+      border: none;
+      padding: 4px 10px;
+      font-size: 11px;
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      color: #ecfdf5;
+      cursor: pointer;
+    }
+
+    /* ARAMA */
+
+    .call-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 7px;
+      font-size: 11px;
+    }
+
+    .call-item {
+      border-radius: 18px;
+      padding: 8px 9px;
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid var(--border-soft);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .call-main {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .call-name {
+      font-weight: 500;
+    }
+
+    .call-sub {
+      color: var(--text-secondary);
+    }
+
+    .call-badge {
+      font-size: 10px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: rgba(34, 197, 94, 0.18);
+      color: #bbf7d0;
+    }
+
+    /* EĞLENCE */
+
+    .tarot-row {
+      display: flex;
+      gap: 8px;
+      margin: 10px 0 8px;
+    }
+
+    .tarot-card {
+      flex: 1;
+      border-radius: 18px;
+      padding: 8px;
+      text-align: center;
+      font-size: 11px;
+      cursor: pointer;
+      background: radial-gradient(circle at top, #22d3ee, #020617 80%);
+      border: 1px solid rgba(94, 234, 212, 0.6);
+    }
+
+    .tarot-card:nth-child(2) {
+      background: radial-gradient(circle at top, #f97316, #020617 80%);
+      border-color: rgba(251, 146, 60, 0.8);
+    }
+
+    .tarot-card:nth-child(3) {
+      background: radial-gradient(circle at top, #eab308, #020617 80%);
+      border-color: rgba(250, 204, 21, 0.8);
+    }
+
+    .tarot-result {
+      font-size: 11px;
+      color: var(--text-secondary);
+      border-radius: 16px;
+      padding: 8px;
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid var(--border-soft);
+    }
+
+    /* MUHASEBE */
+
+    .finance-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 10px;
+      margin-top: 4px;
+    }
+
+    .finance-table th,
+    .finance-table td {
+      padding: 4px 3px;
+      text-align: left;
+    }
+
+    .finance-table thead {
+      background: rgba(15, 23, 42, 0.9);
+    }
+
+    .finance-table tbody tr:nth-child(odd) {
+      background: rgba(15, 23, 42, 0.8);
+    }
+
+    .finance-table tbody tr:nth-child(even) {
+      background: rgba(15, 23, 42, 0.5);
+    }
+
+    /* B2B */
+
+    .b2b-layout {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .b2b-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 6px;
+      font-size: 11px;
+    }
+
+    .b2b-item {
+      border-radius: 14px;
+      padding: 6px 7px;
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid var(--border-soft);
+    }
+
+    /* BOTTOM NAV */
+
+    .bottom-nav {
+      margin-top: 10px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.98);
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .bottom-btn {
+      flex: 1;
+      border: none;
+      background: none;
+      color: var(--text-secondary);
+      font-size: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      cursor: pointer;
+    }
+
+    .bottom-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(148, 163, 184, 0.7);
+    }
+
+    .bottom-btn.active {
+      color: var(--text-primary);
+    }
+
+    .bottom-btn.active .bottom-dot {
+      background: var(--accent-purple);
+      box-shadow: 0 0 10px rgba(129, 140, 248, 0.9);
+    }
+
+    @media (max-width: 400px) {
+      .panel-shell {
+        height: 250px;
+      }
+    }
+  </style>
 </head>
 <body>
-  <div class="page-root">
-    <div class="phone-frame">
-      <!-- ÜST BAR -->
+  <div class="shell">
+    <div class="glass">
+      <!-- HEADER -->
       <header class="app-header">
-        <div class="app-title">
+        <div class="logo-row">
           <span class="status-dot"></span>
           <span>InflowAI</span>
         </div>
-        <div class="header-actions">
+        <div class="header-right">
           <button class="lang-pill" data-lang-toggle>TR</button>
-          <button class="profile-avatar">
-            <span class="avatar-dot"></span>
-          </button>
+          <div class="avatar">
+            <div class="avatar-inner"></div>
+          </div>
         </div>
       </header>
 
-      <!-- ANA KART GRIDİ -->
-      <main class="app-main">
-        <section class="tile-grid">
-          <button class="tile tile-lg gradient-orange" data-panel-target="panel-hub">
-            <span class="tile-title">Merkez Panel</span>
-            <span class="tile-sub">Tüm özetler</span>
-          </button>
-
-          <button class="tile tile-lg gradient-purple" data-panel-target="panel-ecommerce">
-            <span class="tile-title">E-Ticaret</span>
-            <span class="tile-sub">Ürün & satış</span>
-          </button>
-
-          <button class="tile gradient-blue" data-panel-target="panel-social">
-            <span class="tile-title">Sosyal Akış</span>
-            <span class="tile-sub">Paylaş & takip</span>
-          </button>
-
-          <button class="tile gradient-indigo" data-panel-target="panel-messaging">
-            <span class="tile-title">Mesajlaşma</span>
-            <span class="tile-sub">DM & grup</span>
-          </button>
-
-          <button class="tile gradient-green" data-panel-target="panel-calling">
-            <span class="tile-title">Arama</span>
-            <span class="tile-sub">Ses & görüntü</span>
-          </button>
-
-          <button class="tile gradient-gold" data-panel-target="panel-entertainment">
-            <span class="tile-title">Eğlence</span>
-            <span class="tile-sub">Fal & testler</span>
-          </button>
-
-          <button class="tile gradient-deep" data-panel-target="panel-finance">
-            <span class="tile-title">Muhasebe</span>
-            <span class="tile-sub">Gelir & gider</span>
-          </button>
-
-          <button class="tile gradient-cyan" data-panel-target="panel-b2b">
-            <span class="tile-title">B2B İşletme</span>
-            <span class="tile-sub">Müşteri & proje</span>
-          </button>
-        </section>
-
-        <!-- ALT PANEL: SEÇİLEN BÖLÜM -->
-        <section class="panel-wrapper">
-          <!-- 1) MERKEZ PANEL -->
-          <div class="panel active" id="panel-hub">
-            <h2 class="panel-title">Yaşayan Platform Özeti</h2>
-            <p class="panel-text">
-              Tüm alanlar tek beyinde birleşti. Aşağıda bugün için kısa bir özet görüyorsun.
-            </p>
-
-            <div class="stat-row">
-              <div class="stat-card">
-                <span class="stat-label">Aktif kullanıcı</span>
-                <span class="stat-value" id="stat-users">0</span>
-              </div>
-              <div class="stat-card">
-                <span class="stat-label">Bugünkü işlem</span>
-                <span class="stat-value" id="stat-actions">0</span>
-              </div>
-            </div>
-
-            <div class="timeline">
-              <h3 class="timeline-title">Son Hareketler</h3>
-              <ul class="timeline-list" id="timeline-list">
-                <!-- JS ile dolduruluyor -->
-              </ul>
-            </div>
-          </div>
-
-          <!-- 2) E-TİCARET -->
-          <div class="panel" id="panel-ecommerce">
-            <h2 class="panel-title">E-Ticaret</h2>
-            <div class="hero-banner">
-              <div class="hero-text">
-                <span class="hero-kicker">Öne Çıkan Ürün</span>
-                <h3 class="hero-title">InflowAI Ultrabook</h3>
-                <p class="hero-price">$999</p>
-                <button class="btn-primary">Şimdi Satın Al</button>
-              </div>
-              <div class="hero-visual"></div>
-            </div>
-
-            <h3 class="section-subtitle">Kategoriler</h3>
-            <div class="chip-row">
-              <button class="chip active" data-category="all">Hepsi</button>
-              <button class="chip" data-category="tech">Teknoloji</button>
-              <button class="chip" data-category="fashion">Moda</button>
-              <button class="chip" data-category="home">Ev & Dekor</button>
-            </div>
-
-            <div class="product-list" id="product-list">
-              <!-- JS ile dolduruluyor -->
-            </div>
-          </div>
-
-          <!-- 3) SOSYAL AKIŞ -->
-          <div class="panel" id="panel-social">
-            <h2 class="panel-title">Sosyal Akış</h2>
-            <div class="feed-list" id="feed-list">
-              <!-- JS ile dolduruluyor -->
-            </div>
-          </div>
-
-          <!-- 4) MESAJLAŞMA -->
-          <div class="panel" id="panel-messaging">
-            <h2 class="panel-title">Mesajlaşma</h2>
-            <ul class="chat-list" id="chat-list">
-              <!-- JS ile dolduruluyor -->
-            </ul>
-
-            <div class="chat-input-bar">
-              <input type="text" id="chat-input" placeholder="Bir mesaj yaz..." />
-              <button id="chat-send-btn">Gönder</button>
-            </div>
-          </div>
-
-          <!-- 5) ARAMA -->
-          <div class="panel" id="panel-calling">
-            <h2 class="panel-title">Aramalar</h2>
-            <ul class="call-list" id="call-list">
-              <!-- JS ile dolduruluyor -->
-            </ul>
-          </div>
-
-          <!-- 6) EĞLENCE -->
-          <div class="panel" id="panel-entertainment">
-            <h2 class="panel-title">Eğlence Alanı</h2>
-            <p class="panel-text">Bugünün kartını seç: kahve falı, tarot, burç ve mini testler.</p>
-            <div class="tarot-row" id="tarot-row">
-              <!-- JS ile dolduruluyor -->
-            </div>
-            <div class="tarot-result" id="tarot-result">
-              Kart seçmek için bir karta dokun.
-            </div>
-          </div>
-
-          <!-- 7) MUHASEBE -->
-          <div class="panel" id="panel-finance">
-            <h2 class="panel-title">Muhasebe / Finans</h2>
-            <div class="stat-row">
-              <div class="stat-card">
-                <span class="stat-label">Bu Ay Gelir</span>
-                <span class="stat-value" id="finance-income">0 ₺</span>
-              </div>
-              <div class="stat-card">
-                <span class="stat-label">Bu Ay Gider</span>
-                <span class="stat-value" id="finance-expense">0 ₺</span>
-              </div>
-            </div>
-
-            <table class="finance-table" id="finance-table">
-              <thead>
-                <tr>
-                  <th>Tarih</th>
-                  <th>Açıklama</th>
-                  <th>Tür</th>
-                  <th>Tutar</th>
-                </tr>
-              </thead>
-              <tbody>
-                <!-- JS ile dolduruluyor -->
-              </tbody>
-            </table>
-          </div>
-
-          <!-- 8) B2B -->
-          <div class="panel" id="panel-b2b">
-            <h2 class="panel-title">B2B İşletme Paneli</h2>
-            <p class="panel-text">Müşteri, teklif ve projelerini tek yerden yönet.</p>
-            <div class="b2b-layout">
-              <div>
-                <h3 class="section-subtitle">Aktif Müşteriler</h3>
-                <ul class="b2b-list" id="b2b-client-list"></ul>
-              </div>
-              <div>
-                <h3 class="section-subtitle">Açık Projeler</h3>
-                <ul class="b2b-list" id="b2b-project-list"></ul>
-              </div>
-            </div>
-          </div>
-        </section>
-      </main>
-
-      <!-- ALT NAV (sadece görsel, SPA tek sayfa) -->
-      <footer class="bottom-nav">
-        <button class="bottom-btn active" data-panel-target="panel-hub">
-          <span class="bottom-dot"></span>
-          <span>Özet</span>
+      <!-- GRID -->
+      <section class="grid">
+        <button class="tile g-orange" data-panel-target="panel-hub">
+          <span class="tile-title">Merkez Panel</span>
+          <span class="tile-sub">Tüm özetler</span>
         </button>
-        <button class="bottom-btn" data-panel-target="panel-ecommerce">
-          <span class="bottom-dot"></span>
-          <span>E-Ticaret</span>
+        <button class="tile g-purple" data-panel-target="panel-ecommerce">
+          <span class="tile-title">E-Ticaret</span>
+          <span class="tile-sub">Ürün & satış</span>
         </button>
-        <button class="bottom-btn" data-panel-target="panel-social">
-          <span class="bottom-dot"></span>
-          <span>Sosyal</span>
+        <button class="tile g-blue" data-panel-target="panel-social">
+          <span class="tile-title">Sosyal Akış</span>
+          <span class="tile-sub">Paylaş & takip</span>
         </button>
-        <button class="bottom-btn" data-panel-target="panel-messaging">
-          <span class="bottom-dot"></span>
-          <span>Mesaj</span>
+        <button class="tile g-indigo" data-panel-target="panel-messaging">
+          <span class="tile-title">Mesajlaşma</span>
+          <span class="tile-sub">DM & grup</span>
         </button>
-      </footer>
-    </div>
-  </div>
+        <button class="tile g-green" data-panel-target="panel-calling">
+          <span class="tile-title">Arama</span>
+          <span class="tile-sub">Ses & görüntü</span>
+        </button>
+        <button class="tile g-gold" data-panel-target="panel-entertainment">
+          <span class="tile-title">Eğlence</span>
+          <span class="tile-sub">Fal & testler</span>
+        </button>
+        <button class="tile g-deep" data-panel-target="panel-finance">
+          <span class="tile-title">Muhasebe</span>
+          <span class="tile-sub">Gelir & gider</span>
+        </button>
+        <button class="tile g-cyan" data-panel-target="panel-b2b">
+          <span class="tile-title">B2B İşletme</span>
+          <span class="tile-sub">Müşteri & proje</span>
+        </button>
+      </section>
 
-  <script src="app.js"></script>
-</body>
-  </html>
+      <!-- PANEL -->
+      <section class="panel-shell">
+        <!-- HUB -->
+        <div class="panel active" id="panel-hub">
+          <h2 class="panel-title">Yaşayan Platform Özeti</h2>
+          <p class="panel-text">
+            Tüm alanlar tek beyinde birleşti. Aşağıda bugün için kısa bir özet görüyorsun.
+          </p>
+
+          <div class="stat-row">
+            <div class="stat-card">
+              <span class="stat-label">Aktif kullanıcı</span>
+              <span class="stat-value" id="stat-users">0</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-label">Bugünkü işlem</span>
+              <span class="stat-value" id="stat-actions">0</span>
+            </div>
+          </div>
+
+          <h3 class="timeline-title">Son Hareketler</h3>
+          <ul class="timeline-list" id="timeline-list"></ul>
+        </div>
+
+        <!-- E-TİCARET -->
+        <div class="panel" id="panel-ecommerce">
+          <h2 class="panel-title">E-Ticaret</h2>
+          <div class="hero">
+            <div class="hero-text">
+              <span class="hero-kicker">Öne çıkan ürün</span>
+              <h3 class="hero-title">InflowAI Ultrabook</h3>
+              <p class="hero-price">$999</p>
+              <button class="btn-primary">Şimdi Satın Al</button>
+            </div>
+            <div class="hero-visual"></div>
+          </div>
+
+          <h3 class="section-subtitle">Kategoriler</h3>
+          <div class="chip-row">
+            <button class="chip active" data-category="all">Hepsi</button>
+            <button class="chip" data-category="tech">Teknoloji</button>
+            <button class="chip" data-category="fashion">Moda</button>
+            <button class="chip" data-category="home">Ev & Dekor</button>
+          </div>
+
+          <div class="product-list" id="product-list"></div>
+        </div>
+
+        <!-- SOSYAL -->
+        <div class="panel" id="panel-social">
+          <h2 class="panel-title">Sosyal Akış</h2>
+          <div class="feed-list" id="feed-list"></div>
+        </div>
+
+        <!-- MESAJ -->
+        <div class="panel" id="panel-messaging">
+          <h2 class="panel-title">Mesajlaşma</h2>
+          <ul class="chat-list" id="chat-list"></ul>
+          <div class="chat-input-bar">
+            <input type="text" id="chat-input" placeholder="Bir mesaj yaz..." />
+            <button id="chat-send-btn">Gönder</button>
+          </div>
+        </div>
+
+        <!-- ARAMA -->
+        <div class="panel" id="panel-calling">
+          <h2 class="panel-title">Aramalar</h2>
+          <ul class="call-list" id="call-list"></ul>
+        </div>
+
+        <!-- EĞLENCE -->
+        <div class="panel" id="panel-entertainment">
+          <h2 class="panel-title">Eğlence Alanı</h2>
+          <p class="panel-text">Bugünün kart
