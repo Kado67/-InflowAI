@@ -13,10 +13,10 @@
 </head>
 
 <body>
-  <!-- ARKA PLAN GALAKTİK -->
+  <!-- ARKA PLAN -->
   <div class="bg"></div>
 
-  <!-- ANA SAHNE -->
+  <!-- ÜST BAR -->
   <header class="top">
     <div class="logo">
       <div class="dot"></div>
@@ -30,8 +30,7 @@
   </header>
 
   <main class="container">
-
-    <!-- HAREKETLİ CANLI AVATAR -->
+    <!-- HAREKETLİ AVATAR SAHNESİ -->
     <section class="hero">
       <div class="avatar-wrap">
         <div class="avatar-glow"></div>
@@ -45,18 +44,18 @@
         </div>
 
         <div class="bubble" id="avatarBubble">
-          Hoş geldin kurban, bugün ne üretmek istiyorsun? 💜
+          Hoş geldin, bugün ne üretmek istiyorsun? 💜
         </div>
       </div>
 
       <h1 class="hero-title">
         İçerik üret, eğlen, büyü. <br />
-        Hepsi **tek beyin** altında.
+        Hepsi tek beyin altında.
       </h1>
 
       <p class="hero-desc">
-        Ziyaretçi olsan da kullanıcı olsan da InflowAI
-        sen yazmasan bile seninle konuşan, fikir üreten ve seni eğlendiren yaşayan bir platformdur.
+        Ziyaretçi olsan da kullanıcı olsan da InflowAI sen yazmasan bile
+        seninle konuşan, fikir üreten ve seni eğlendiren yaşayan bir platformdur.
       </p>
 
       <div class="hero-btns">
@@ -65,38 +64,68 @@
       </div>
 
       <p class="note">
-        Premium & Kurumsal paketler AdSense onayı gelince aktif olacak.  
-        Şu anda tüm ücretsiz özellikler ve B2B açık.
+        Premium &amp; Kurumsal paketler AdSense onayı gelince aktif olacak.
+        Şu anda tüm ücretsiz özellikler ve B2B herkese açık.
       </p>
     </section>
 
-    <!-- ÖZELLİKLER: HEPSİ AKTİF -->
+    <!-- ÖZELLİKLER -->
     <section class="section" id="sectionFeatures">
       <h2>InflowAI şu anda senin için neler yapıyor?</h2>
 
       <div class="cards">
-
         <div class="card">
           <div class="icon">⚡</div>
           <h3>Canlı İçerik Üretici</h3>
-          <p>Bir cümle yaz, platform saniyede içerik üretsin.</p>
-          <button class="btn-mini" data-target="content">İçerik üret</button>
+          <p>Bir cümle yaz, platform saniyede içerik üretsin. Blog, post, başlık, açıklama…</p>
+          <button class="btn-mini" data-target="produce">İçerik üret</button>
         </div>
 
         <div class="card">
           <div class="icon">🤹‍♂️</div>
           <h3>Eğlence Alanı</h3>
-          <p>Kahve falı, burç, tarot, mini test ve günün tavsiyesi.</p>
+          <p>Kahve falı, burç, tarot, mini test ve günün tavsiyesi ile ziyaretçiyi içeride tut.</p>
           <button class="btn-mini" data-target="fun">Eğlence alanına git</button>
         </div>
 
         <div class="card highlight">
           <div class="icon">🏢</div>
-          <h3>B2B Paneli (ÜCRETSİZ)</h3>
-          <p>Küçük işletmeler için içerik planı, rapor ve şablon üretimi.</p>
-          <button class="btn-mini" data-target="b2b">B2B Panelini Aç</button>
+          <h3>B2B Paneli (Şu an ücretsiz)</h3>
+          <p>Küçük işletmeler için hazır şablonlar, rapor akışı ve AI destekli içerik takvimi.</p>
+          <button class="btn-mini" data-target="b2b">B2B panelini keşfet</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- B2B PANEL -->
+    <section class="section" id="sectionB2B">
+      <h2>B2B Paneli - Hızlı Başlangıç</h2>
+
+      <div class="b2b-grid">
+        <div class="b2b-card">
+          <h3>Bugünün içerik planı</h3>
+          <ul>
+            <li>1× Instagram Reels fikri</li>
+            <li>1× Kısa açıklama / caption</li>
+            <li>1× Hikâye sorusu (etkileşim için)</li>
+          </ul>
         </div>
 
+        <div class="b2b-card">
+          <h3>Haftalık görünürlük</h3>
+          <ul>
+            <li>3× Reels / TikTok</li>
+            <li>2× Bilgilendirici post</li>
+            <li>1× Müşteri yorumu / başarı öyküsü</li>
+          </ul>
+        </div>
+
+        <div class="b2b-card">
+          <h3>AI’dan hızlı öneriler</h3>
+          <p id="b2bSuggestions">
+            Sektörünü seçtiğinde senin için otomatik içerik başlıkları hazırlamaya hazırım.
+          </p>
+        </div>
       </div>
     </section>
 
@@ -104,11 +133,15 @@
     <section class="section" id="sectionFun">
       <h2>Eğlence Alanı</h2>
 
+      <p class="section-desc">
+        Ziyaretçiyi platformda tutmak için hızlı ve hafif modüller.
+      </p>
+
       <div class="fun-cards">
-        <div class="fun-item"><span>☕</span> Kahve Falı</div>
-        <div class="fun-item"><span>🔮</span> Burç / Tarot</div>
-        <div class="fun-item"><span>💡</span> Günün Tavsiyesi</div>
-        <div class="fun-item"><span>😄</span> Mini Testler</div>
+        <button class="fun-item" data-fun="coffee"><span>☕</span> Kahve Falı</button>
+        <button class="fun-item" data-fun="zodiac"><span>🔮</span> Burç / Tarot</button>
+        <button class="fun-item" data-fun="advice"><span>💡</span> Günün Tavsiyesi</button>
+        <button class="fun-item" data-fun="quiz"><span>😄</span> Mini Testler</button>
       </div>
     </section>
 
@@ -116,28 +149,42 @@
     <section class="section" id="sectionFeed">
       <h2>InflowAI Akışı</h2>
 
-      <div class="feed">
+      <div class="feed" id="feed">
         <div class="feed-item">“Her gün 1 içerik paylaşırsan 1 yıl sonra 365 yeni kapı açarsın.”</div>
         <div class="feed-item">“Bugün üret, yarın büyü.”</div>
         <div class="feed-item">“Ziyaretçin için fikirler hazırladım, hazırsan başlayalım.”</div>
       </div>
     </section>
 
-    <!-- KULLANICI GİRİŞ ALANI -->
-    <section class="section">
+    <!-- KULLANICI GİRİŞ / İÇERİK GİRİŞ ALANI -->
+    <section class="section" id="sectionInput">
       <h2>Bir şey yaz, hemen üretelim</h2>
       <div class="input-row">
-        <input type="text" id="userInput" placeholder="Örn: Reels fikri, açıklama, blog..." />
+        <input
+          type="text"
+          id="userInput"
+          placeholder="Örn: ‘Diş kliniği için Instagram reels fikri’"
+        />
         <button class="btn-primary" id="sendBtn">Gönder</button>
       </div>
 
       <p class="note2">
-        Kayıt olmayanlara 3 hak verilir.  
-        Kayıt olan kullanıcı platformun tüm ücretsiz hizmetlerini sınırsız kullanır.
+        Şu an misafir modundasın. Kayıt olduğunda ürettiğin içerikleri kaydedip geçmişini görebileceksin.
       </p>
     </section>
 
+    <!-- SONUÇ ALANI -->
+    <section class="section" id="sectionResult">
+      <h2>Senin için hazırladığım içerik paketi</h2>
+      <div id="outputBox" class="output-box">
+        Henüz bir şey yazmadın. Yukarıya hedefini yaz, gerisini ben tamamlayayım.
+      </div>
+    </section>
+
   </main>
+
+  <!-- KÜÇÜK BİLDİRİM -->
+  <div id="toast" class="toast"></div>
 
   <script src="ui.js"></script>
 </body>
