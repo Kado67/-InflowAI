@@ -1,118 +1,156 @@
-// ========================================
-// InflowAI - UI Sahne Motoru (Frontend)
-// Tatlı Robot + Polat-AI sahnesi
-// ========================================
+// ===============================================
+// InflowAI - Yaşayan Platform Arayüz Motoru
+// Avatar animasyonları + diyalog sistemi
+// ===============================================
 
 document.addEventListener("DOMContentLoaded", () => {
-  const cuteDialog = document.getElementById("cuteDialog");
-  const polatDialog = document.getElementById("polatDialog");
-  const cuteRobot = document.getElementById("cuteRobot");
-  const polatRobot = document.getElementById("polatRobot");
-  const input = document.getElementById("userInput");
-  const sendBtn = document.getElementById("sendBtn");
 
-  // Güvenlik kontrolü – HTML elemanları gerçekten var mı
-  if (!cuteDialog || !polatDialog || !cuteRobot || !polatRobot || !input || !sendBtn) {
-    console.warn("InflowAI UI: Bazı sahne elemanları bulunamadı.");
-    return;
-  }
+    const avatar = document.getElementById("inflowAvatar");
+    const dialog = document.getElementById("avatarDialog");
+    const input = document.getElementById("userInput");
+    const sendBtn = document.getElementById("sendBtn");
+    const btnStart = document.getElementById("btnStart");
+    const btnTour = document.getElementById("btnTour");
 
-  // Küçük animasyon efekti (zıplama)
-  function bounce(el) {
-    if (!el) return;
-    el.style.transition = "transform 0.25s ease";
-    el.style.transform = "translateY(-10px)";
-    setTimeout(() => {
-      el.style.transform = "translateY(0)";
-    }, 250);
-  }
+    // -----------------------------
+    // 1) Avatar'a mini canlılık efekti
+    // -----------------------------
 
-  // Diyalog değiştirme yardımcıları
-  function setCute(text) {
-    cuteDialog.textContent = text;
-    bounce(cuteRobot);
-  }
-
-  function setPolat(text) {
-    polatDialog.textContent = text;
-    bounce(polatRobot);
-  }
-
-  // Açılış şovu
-  function introShow() {
-    setCute("Hoş geldiiin 😄💙✨");
-    setPolat("Hoş geldin kardeşim. Biz buradayız.");
-
-    setTimeout(() => {
-      setCute("Bugün senin için sihir, dans ve fikir var. 🔮");
-      setPolat("Sorunu söyle, raconu ben yazarım.");
-    }, 4000);
-  }
-
-  // Otomatik mini şovlar (ziyaretçi hiçbir şey yapmasa bile)
-  const autoShows = [
-    () => {
-      setCute("Bak şimdi minik bir dans yapıyorum! 💃✨");
-      setPolat("Sen dans et, ben raconu düşünürüm.");
-    },
-    () => {
-      setCute("Kalp yolladım sana 💙");
-      setPolat("Kalp güzeldir, adamlık daha güzel.");
-    },
-    () => {
-      setCute("Bugün bir tane bile içerik üretmeden gitme. 😄");
-      setPolat("Her gün bir adım, yüz günde yeni bir hayat.");
-    },
-    () => {
-      setCute("İstersen eğlence alanına da uğrayabiliriz. 🎭");
-      setPolat("Hem iş var hem keyif, karar senin kardeşim.");
-    },
-    () => {
-      setCute("Bir soru yaz, birlikte çözelim. 🤖");
-      setPolat("Çözülmeyecek sorun yoktur, eksik racon vardır.");
-    }
-  ];
-
-  function runRandomShow() {
-    const fn = autoShows[Math.floor(Math.random() * autoShows.length)];
-    fn();
-  }
-
-  // Ziyaretçi mesajını işleme
-  function handleUserMessage() {
-    const text = (input.value || "").trim();
-
-    if (!text) {
-      setCute("Bir şey yaz, sana özel cevap vereyim 😄");
-      setPolat("Boş durma kardeşim, bir cümle bile yeter.");
-      return;
+    function avatarPulse() {
+        avatar.style.transition = "0.3s";
+        avatar.style.transform = "scale(1.05)";
+        setTimeout(() => {
+            avatar.style.transform = "scale(1)";
+        }, 300);
     }
 
-    // Ziyaretçi yazdıktan sonra tepki
-    setCute(`Bunu duydum: "${text}" ✨`);
-    setPolat("Güzel soru. Şimdi bunun için en iyi yolu düşünelim.");
-
-    // Mesajı temizle
-    input.value = "";
-
-    // Küçük ek diyalog (isteğe göre genişler)
-    setTimeout(() => {
-      setCute("İstersen bir içerik ya da fikir üretebiliriz.");
-      setPolat("İş, eğlence, strateji… ne lazımsa buradayız.");
-    }, 3000);
-  }
-
-  // Buton ve Enter tuşu olayı
-  sendBtn.addEventListener("click", handleUserMessage);
-  input.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") {
-      handleUserMessage();
+    function avatarShake() {
+        avatar.animate(
+            [
+                { transform: "translateX(0)" },
+                { transform: "translateX(-6px)" },
+                { transform: "translateX(6px)" },
+                { transform: "translateX(0)" }
+            ],
+            { duration: 300 }
+        );
     }
-  });
 
-  // Başlangıçta intro şov
-  introShow();
+    function avatarDance() {
+        avatar.animate(
+            [
+                { transform: "rotate(-4deg) scale(1.04)" },
+                { transform: "rotate(4deg) scale(1.07)" },
+                { transform: "rotate(-4deg) scale(1.04)" }
+            ],
+            { duration: 700 }
+        );
+    }
 
-  // Her 15 saniyede bir otomatik mini şov
-  setInterval(runRandomShow, 15000);
+    // -----------------------------
+    // 2) Avatar konuşma fonksiyonu
+    // -----------------------------
+
+    function speak(text) {
+        dialog.innerHTML = text;
+        avatarPulse();
+    }
+
+    // -----------------------------
+    // 3) Otomatik mini animasyon döngüsü
+    // -----------------------------
+
+    const randomMoves = [
+        () => speak("Buradayım kurban 😄 Hazır bekliyorum."),
+        () => speak("Hadi bir şey yaz, ben buradayım 💜"),
+        () => { speak("Kendimi güncelliyorum... 🧠✨"); avatarShake(); },
+        () => { speak("Dans modunu açıyorum 💃😎"); avatarDance(); }
+    ];
+
+    setInterval(() => {
+        const move = randomMoves[Math.floor(Math.random() * randomMoves.length)];
+        move();
+    }, 14000);
+
+    // -----------------------------
+    // 4) Kullanıcı mesaj gönderdiğinde
+    // -----------------------------
+
+    function handleUserMessage() {
+        const msg = input.value.trim();
+        if (!msg) {
+            avatarShake();
+            speak("Boş gönderme kurban 😊 Bir şey yaz ki konuşalım.");
+            return;
+        }
+
+        speak(`"${msg}" alındı! Şimdi bunu işliyorum… ⚡`);
+        avatarDance();
+
+        input.value = "";
+
+        setTimeout(() => {
+            speak("Hazır! İstersen bu fikri içerik olarak büyütebilirim. 🚀");
+        }, 2500);
+    }
+
+    sendBtn?.addEventListener("click", handleUserMessage);
+
+    input?.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") handleUserMessage();
+    });
+
+    // -----------------------------
+    // 5) Buton: "Hemen içerik üret"
+    // -----------------------------
+
+    btnStart?.addEventListener("click", () => {
+        avatarDance();
+        speak("Tamam kurban! İçerik üretmek için bana bir cümle yaz. ✍️");
+        input.focus();
+    });
+
+    // -----------------------------
+    // 6) Buton: "Platformu bana anlat"
+    // -----------------------------
+
+    btnTour?.addEventListener("click", () => {
+        avatarPulse();
+        speak(`
+            InflowAI 7 katmanlı yaşayan bir platformdur.<br>
+            • İçerik üretir<br>
+            • Eğlendirir<br>
+            • Ziyaretçiyi tutar<br>
+            • B2B paneli şu an ücretsiz<br>
+            • Premium & Kurumsal yakında<br><br>
+            Ne istersen beraber yaparız kurban. 💜
+        `);
+    });
+
+    // -----------------------------
+    // 7) Hızlı Kartlar (mini router)
+    // -----------------------------
+
+    document.querySelectorAll(".btn-mini").forEach((btn) => {
+        btn.addEventListener("click", () => {
+            const target = btn.dataset.target;
+
+            if (target === "content") {
+                speak("Tamamdır! İçerik üretmek için bir cümle yaz bana. ✍️🚀");
+                avatarPulse();
+                input.focus();
+            }
+
+            if (target === "fun") {
+                speak("Eğlence alanı açık! Kahve falı, burç, tarot, mini testler… Hepsi aktif 😄");
+                avatarDance();
+            }
+
+            if (target === "b2b") {
+                speak("B2B paneli şuan ücretsiz! İşletmeler için içerik takvimi ve AI şablonlar aktif. 🏢⚡");
+                avatarPulse();
+            }
+        });
+    });
+
 });
