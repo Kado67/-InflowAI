@@ -2,10 +2,10 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>InflowAI – Yaşayan Platform</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- Google AdSense (reklam alanlarını daha sonra açacağız) -->
+  <!-- Google AdSense (sadece script, reklam alanı yok) -->
   <script async
     src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5803994489635087"
     crossorigin="anonymous"></script>
@@ -13,397 +13,230 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="app-root">
-
-    <!-- ANA MENÜ EKRANI (KARTLI EKRAN) -->
-    <main class="screen screen-home is-active" id="screen-home">
-      <header class="top-bar">
-        <div class="brand">
-          <div class="brand-dot"></div>
-          <span class="brand-title">InflowAI</span>
+  <div class="page-root">
+    <div class="phone-frame">
+      <!-- ÜST BAR -->
+      <header class="app-header">
+        <div class="app-title">
+          <span class="status-dot"></span>
+          <span>InflowAI</span>
         </div>
-        <div class="top-actions">
-          <button class="ghost-btn lang-btn" type="button">TR</button>
-          <button class="primary-pill auth-btn" type="button">Giriş / Kayıt</button>
+        <div class="header-actions">
+          <button class="lang-pill" data-lang-toggle>TR</button>
+          <button class="profile-avatar">
+            <span class="avatar-dot"></span>
+          </button>
         </div>
       </header>
 
-      <section class="home-grid-wrapper">
-        <div class="home-grid">
-
-          <!-- 1. Satır -->
-          <button class="module-card accent-orange"
-                  data-screen-target="content">
-            <span class="module-icon dots-icon"></span>
-            <span class="module-title">İçerik Üretici</span>
-            <span class="module-subtitle">
-              Kısa video, post, başlık – hepsi tek yerde.
-            </span>
+      <!-- ANA KART GRIDİ -->
+      <main class="app-main">
+        <section class="tile-grid">
+          <button class="tile tile-lg gradient-orange" data-panel-target="panel-hub">
+            <span class="tile-title">Merkez Panel</span>
+            <span class="tile-sub">Tüm özetler</span>
           </button>
 
-          <button class="module-card accent-purple"
-                  data-screen-target="ecommerce">
-            <span class="module-icon cart-icon"></span>
-            <span class="module-title">E-Ticaret</span>
-            <span class="module-subtitle">
-              Ürün ekle, sat, stok ve siparişlerini yönet.
-            </span>
+          <button class="tile tile-lg gradient-purple" data-panel-target="panel-ecommerce">
+            <span class="tile-title">E-Ticaret</span>
+            <span class="tile-sub">Ürün & satış</span>
           </button>
 
-          <!-- 2. Satır -->
-          <button class="module-card accent-blue"
-                  data-screen-target="social">
-            <span class="module-icon feed-icon"></span>
-            <span class="module-title">Sosyal Akış</span>
-            <span class="module-subtitle">
-              Paylaşım, akış, beğeni, yorum, takip.
-            </span>
+          <button class="tile gradient-blue" data-panel-target="panel-social">
+            <span class="tile-title">Sosyal Akış</span>
+            <span class="tile-sub">Paylaş & takip</span>
           </button>
 
-          <button class="module-card accent-indigo"
-                  data-screen-target="messaging">
-            <span class="module-icon chat-icon"></span>
-            <span class="module-title">Mesajlaşma</span>
-            <span class="module-subtitle">
-              DM, medya gönderme, grup sohbetleri.
-            </span>
+          <button class="tile gradient-indigo" data-panel-target="panel-messaging">
+            <span class="tile-title">Mesajlaşma</span>
+            <span class="tile-sub">DM & grup</span>
           </button>
 
-          <!-- 3. Satır -->
-          <button class="module-card accent-green"
-                  data-screen-target="calling">
-            <span class="module-icon call-icon"></span>
-            <span class="module-title">Arama Merkezi</span>
-            <span class="module-subtitle">
-              Sesli & görüntülü aramalar, arama geçmişi.
-            </span>
+          <button class="tile gradient-green" data-panel-target="panel-calling">
+            <span class="tile-title">Arama</span>
+            <span class="tile-sub">Ses & görüntü</span>
           </button>
 
-          <button class="module-card accent-gold"
-                  data-screen-target="entertainment">
-            <span class="module-icon fun-icon"></span>
-            <span class="module-title">Eğlence Alanı</span>
-            <span class="module-subtitle">
-              Kahve falı, burç, testler ve mini oyunlar.
-            </span>
+          <button class="tile gradient-gold" data-panel-target="panel-entertainment">
+            <span class="tile-title">Eğlence</span>
+            <span class="tile-sub">Fal & testler</span>
           </button>
 
-          <!-- 4. Satır -->
-          <button class="module-card accent-teal"
-                  data-screen-target="finance">
-            <span class="module-icon finance-icon"></span>
-            <span class="module-title">Muhasebe / Finans</span>
-            <span class="module-subtitle">
-              Gelir–gider, fatura, kasa, raporlar.
-            </span>
+          <button class="tile gradient-deep" data-panel-target="panel-finance">
+            <span class="tile-title">Muhasebe</span>
+            <span class="tile-sub">Gelir & gider</span>
           </button>
 
-          <button class="module-card accent-cyan"
-                  data-screen-target="b2b">
-            <span class="module-icon b2b-icon"></span>
-            <span class="module-title">B2B İşletme</span>
-            <span class="module-subtitle">
-              Müşteri, teklif, proje ve CRM yönetimi.
-            </span>
+          <button class="tile gradient-cyan" data-panel-target="panel-b2b">
+            <span class="tile-title">B2B İşletme</span>
+            <span class="tile-sub">Müşteri & proje</span>
           </button>
+        </section>
 
-        </div>
-      </section>
+        <!-- ALT PANEL: SEÇİLEN BÖLÜM -->
+        <section class="panel-wrapper">
+          <!-- 1) MERKEZ PANEL -->
+          <div class="panel active" id="panel-hub">
+            <h2 class="panel-title">Yaşayan Platform Özeti</h2>
+            <p class="panel-text">
+              Tüm alanlar tek beyinde birleşti. Aşağıda bugün için kısa bir özet görüyorsun.
+            </p>
 
-      <footer class="home-footer">
-        <p class="footer-caption">
-          Tüm meslekler ve tüm alanlar tek yaşayan platformda birleşti.
-        </p>
+            <div class="stat-row">
+              <div class="stat-card">
+                <span class="stat-label">Aktif kullanıcı</span>
+                <span class="stat-value" id="stat-users">0</span>
+              </div>
+              <div class="stat-card">
+                <span class="stat-label">Bugünkü işlem</span>
+                <span class="stat-value" id="stat-actions">0</span>
+              </div>
+            </div>
+
+            <div class="timeline">
+              <h3 class="timeline-title">Son Hareketler</h3>
+              <ul class="timeline-list" id="timeline-list">
+                <!-- JS ile dolduruluyor -->
+              </ul>
+            </div>
+          </div>
+
+          <!-- 2) E-TİCARET -->
+          <div class="panel" id="panel-ecommerce">
+            <h2 class="panel-title">E-Ticaret</h2>
+            <div class="hero-banner">
+              <div class="hero-text">
+                <span class="hero-kicker">Öne Çıkan Ürün</span>
+                <h3 class="hero-title">InflowAI Ultrabook</h3>
+                <p class="hero-price">$999</p>
+                <button class="btn-primary">Şimdi Satın Al</button>
+              </div>
+              <div class="hero-visual"></div>
+            </div>
+
+            <h3 class="section-subtitle">Kategoriler</h3>
+            <div class="chip-row">
+              <button class="chip active" data-category="all">Hepsi</button>
+              <button class="chip" data-category="tech">Teknoloji</button>
+              <button class="chip" data-category="fashion">Moda</button>
+              <button class="chip" data-category="home">Ev & Dekor</button>
+            </div>
+
+            <div class="product-list" id="product-list">
+              <!-- JS ile dolduruluyor -->
+            </div>
+          </div>
+
+          <!-- 3) SOSYAL AKIŞ -->
+          <div class="panel" id="panel-social">
+            <h2 class="panel-title">Sosyal Akış</h2>
+            <div class="feed-list" id="feed-list">
+              <!-- JS ile dolduruluyor -->
+            </div>
+          </div>
+
+          <!-- 4) MESAJLAŞMA -->
+          <div class="panel" id="panel-messaging">
+            <h2 class="panel-title">Mesajlaşma</h2>
+            <ul class="chat-list" id="chat-list">
+              <!-- JS ile dolduruluyor -->
+            </ul>
+
+            <div class="chat-input-bar">
+              <input type="text" id="chat-input" placeholder="Bir mesaj yaz..." />
+              <button id="chat-send-btn">Gönder</button>
+            </div>
+          </div>
+
+          <!-- 5) ARAMA -->
+          <div class="panel" id="panel-calling">
+            <h2 class="panel-title">Aramalar</h2>
+            <ul class="call-list" id="call-list">
+              <!-- JS ile dolduruluyor -->
+            </ul>
+          </div>
+
+          <!-- 6) EĞLENCE -->
+          <div class="panel" id="panel-entertainment">
+            <h2 class="panel-title">Eğlence Alanı</h2>
+            <p class="panel-text">Bugünün kartını seç: kahve falı, tarot, burç ve mini testler.</p>
+            <div class="tarot-row" id="tarot-row">
+              <!-- JS ile dolduruluyor -->
+            </div>
+            <div class="tarot-result" id="tarot-result">
+              Kart seçmek için bir karta dokun.
+            </div>
+          </div>
+
+          <!-- 7) MUHASEBE -->
+          <div class="panel" id="panel-finance">
+            <h2 class="panel-title">Muhasebe / Finans</h2>
+            <div class="stat-row">
+              <div class="stat-card">
+                <span class="stat-label">Bu Ay Gelir</span>
+                <span class="stat-value" id="finance-income">0 ₺</span>
+              </div>
+              <div class="stat-card">
+                <span class="stat-label">Bu Ay Gider</span>
+                <span class="stat-value" id="finance-expense">0 ₺</span>
+              </div>
+            </div>
+
+            <table class="finance-table" id="finance-table">
+              <thead>
+                <tr>
+                  <th>Tarih</th>
+                  <th>Açıklama</th>
+                  <th>Tür</th>
+                  <th>Tutar</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- JS ile dolduruluyor -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- 8) B2B -->
+          <div class="panel" id="panel-b2b">
+            <h2 class="panel-title">B2B İşletme Paneli</h2>
+            <p class="panel-text">Müşteri, teklif ve projelerini tek yerden yönet.</p>
+            <div class="b2b-layout">
+              <div>
+                <h3 class="section-subtitle">Aktif Müşteriler</h3>
+                <ul class="b2b-list" id="b2b-client-list"></ul>
+              </div>
+              <div>
+                <h3 class="section-subtitle">Açık Projeler</h3>
+                <ul class="b2b-list" id="b2b-project-list"></ul>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <!-- ALT NAV (sadece görsel, SPA tek sayfa) -->
+      <footer class="bottom-nav">
+        <button class="bottom-btn active" data-panel-target="panel-hub">
+          <span class="bottom-dot"></span>
+          <span>Özet</span>
+        </button>
+        <button class="bottom-btn" data-panel-target="panel-ecommerce">
+          <span class="bottom-dot"></span>
+          <span>E-Ticaret</span>
+        </button>
+        <button class="bottom-btn" data-panel-target="panel-social">
+          <span class="bottom-dot"></span>
+          <span>Sosyal</span>
+        </button>
+        <button class="bottom-btn" data-panel-target="panel-messaging">
+          <span class="bottom-dot"></span>
+          <span>Mesaj</span>
+        </button>
       </footer>
-    </main>
-
-    <!-- E-TİCARET EKRANI -->
-    <main class="screen" id="screen-ecommerce" aria-hidden="true">
-      <header class="sub-header">
-        <button class="back-btn" data-screen-back="home" type="button"></button>
-        <div class="sub-header-title">
-          <span class="sub-header-label">Modül</span>
-          <h1>E-Ticaret</h1>
-        </div>
-      </header>
-
-      <section class="hero-banner ecommerce-hero">
-        <div class="hero-text">
-          <p class="hero-kicker">Öne Çıkan Ürün</p>
-          <h2 class="hero-title">Modem Ultrabook</h2>
-          <p class="hero-price">$999</p>
-          <button class="primary-pill" type="button">Hemen Satışa Ekle</button>
-        </div>
-        <div class="hero-media"></div>
-      </section>
-
-      <section class="section-block">
-        <header class="section-header">
-          <h2>Kategoriler</h2>
-        </header>
-        <div class="pill-row">
-          <button class="pill active" type="button">Tümü</button>
-          <button class="pill" type="button">Elektronik</button>
-          <button class="pill" type="button">Giyim</button>
-          <button class="pill" type="button">Ev / Dekor</button>
-          <button class="pill" type="button">Dijital Ürün</button>
-        </div>
-
-        <div class="card-row product-row">
-          <article class="mini-card">
-            <h3 class="mini-title">Akıllı Telefon</h3>
-            <p class="mini-meta">Stok: 32 • $799</p>
-          </article>
-          <article class="mini-card">
-            <h3 class="mini-title">Kablosuz Kulaklık</h3>
-            <p class="mini-meta">Stok: 54 • $129</p>
-          </article>
-          <article class="mini-card">
-            <h3 class="mini-title">Dijital Eğitim Seti</h3>
-            <p class="mini-meta">Stok: Sınırsız • $49</p>
-          </article>
-        </div>
-      </section>
-
-      <section class="section-block">
-        <header class="section-header">
-          <h2>Hızlı Özet</h2>
-        </header>
-        <div class="stat-row">
-          <div class="stat-card">
-            <span class="stat-label">Bugünkü Ciro</span>
-            <span class="stat-value">₺0</span>
-          </div>
-          <div class="stat-card">
-            <span class="stat-label">Aktif Ürün</span>
-            <span class="stat-value">0</span>
-          </div>
-        </div>
-      </section>
-    </main>
-
-    <!-- MESAJLAŞMA EKRANI -->
-    <main class="screen" id="screen-messaging" aria-hidden="true">
-      <header class="sub-header">
-        <button class="back-btn" data-screen-back="home" type="button"></button>
-        <div class="sub-header-title">
-          <span class="sub-header-label">Modül</span>
-          <h1>Mesajlaşma</h1>
-        </div>
-      </header>
-
-      <section class="section-block chat-list">
-        <article class="chat-item">
-          <div class="chat-avatar"></div>
-          <div class="chat-main">
-            <div class="chat-row">
-              <span class="chat-name">Anna Green</span>
-              <span class="chat-time">Çevrimiçi</span>
-            </div>
-            <p class="chat-last">“Platform harika gidiyor, devam!”</p>
-          </div>
-        </article>
-
-        <article class="chat-item">
-          <div class="chat-avatar"></div>
-          <div class="chat-main">
-            <div class="chat-row">
-              <span class="chat-name">Proje Ekibi</span>
-              <span class="chat-time">09:35</span>
-            </div>
-            <p class="chat-last">Yeni özellik taslağını gönderdim.</p>
-          </div>
-        </article>
-
-        <article class="chat-item">
-          <div class="chat-avatar"></div>
-          <div class="chat-main">
-            <div class="chat-row">
-              <span class="chat-name">Destek</span>
-              <span class="chat-time">Dün</span>
-            </div>
-            <p class="chat-last">Sorun çözüldü olarak işaretlendi.</p>
-          </div>
-        </article>
-      </section>
-
-      <footer class="chat-input-bar">
-        <input type="text" class="chat-input" placeholder="Mesaj yaz..." />
-        <button class="send-btn" type="button">Gönder</button>
-      </footer>
-    </main>
-
-    <!-- SOSYAL AKIŞ EKRANI -->
-    <main class="screen" id="screen-social" aria-hidden="true">
-      <header class="sub-header">
-        <button class="back-btn" data-screen-back="home" type="button"></button>
-        <div class="sub-header-title">
-          <span class="sub-header-label">Modül</span>
-          <h1>Sosyal Akış</h1>
-        </div>
-      </header>
-
-      <section class="section-block feed-list">
-        <article className="feed-card">
-          <header class="feed-header">
-            <div class="feed-avatar"></div>
-            <div class="feed-user">
-              <span class="feed-name">InflowAI</span>
-              <span class="feed-meta">Yeni duyuru • 1 dk önce</span>
-            </div>
-          </header>
-          <p class="feed-text">
-            InflowAI artık e-ticaret, içerik, muhasebe ve daha onlarca alanda tek beyin altında çalışıyor.
-          </p>
-        </article>
-
-        <article class="feed-card">
-          <header class="feed-header">
-            <div class="feed-avatar"></div>
-            <div class="feed-user">
-              <span class="feed-name">Demo Kullanıcı</span>
-              <span class="feed-meta">2 saat önce</span>
-            </div>
-          </header>
-          <p class="feed-text">
-            İlk ürünümü ekledim, satışa çıkarmak 1 dakikamı aldı.
-          </p>
-        </article>
-      </section>
-    </main>
-
-    <!-- ARAMA EKRANI -->
-    <main class="screen" id="screen-calling" aria-hidden="true">
-      <header class="sub-header">
-        <button class="back-btn" data-screen-back="home" type="button"></button>
-        <div class="sub-header-title">
-          <span class="sub-header-label">Modül</span>
-          <h1>Arama Merkezi</h1>
-        </div>
-      </header>
-
-      <section class="section-block call-list">
-        <article class="call-item">
-          <div class="call-avatar"></div>
-          <div class="call-main">
-            <div class="call-row">
-              <span class="call-name">Mustafa</span>
-              <span class="call-type">Görüntülü</span>
-            </div>
-            <span class="call-meta">Bugün • 09:12 • 12 dk</span>
-          </div>
-        </article>
-        <article class="call-item">
-          <div class="call-avatar"></div>
-          <div class="call-main">
-            <div class="call-row">
-              <span class="call-name">Murat</span>
-              <span class="call-type">Sesli</span>
-            </div>
-            <span class="call-meta">Dün • 22:34 • 6 dk</span>
-          </div>
-        </article>
-      </section>
-    </main>
-
-    <!-- EĞLENCE EKRANI -->
-    <main class="screen" id="screen-entertainment" aria-hidden="true">
-      <header class="sub-header">
-        <button class="back-btn" data-screen-back="home" type="button"></button>
-        <div class="sub-header-title">
-          <span class="sub-header-label">Modül</span>
-          <h1>Eğlence Alanı</h1>
-        </div>
-      </header>
-
-      <section class="section-block tarot-block">
-        <header class="section-header">
-          <h2>Günlük Kart Çek</h2>
-          <p>Bugünkü enerjini görmek için bir kart seç.</p>
-        </header>
-        <div class="tarot-row">
-          <button class="tarot-card" type="button"></button>
-          <button class="tarot-card" type="button"></button>
-          <button class="tarot-card" type="button"></button>
-        </div>
-      </section>
-    </main>
-
-    <!-- MUHASEBE / FİNANS EKRANI -->
-    <main class="screen" id="screen-finance" aria-hidden="true">
-      <header class="sub-header">
-        <button class="back-btn" data-screen-back="home" type="button"></button>
-        <div class="sub-header-title">
-          <span class="sub-header-label">Modül</span>
-          <h1>Muhasebe / Finans</h1>
-        </div>
-      </header>
-
-      <section class="section-block finance-summary">
-        <div class="stat-row">
-          <div class="stat-card">
-            <span class="stat-label">Toplam Gelir</span>
-            <span class="stat-value">₺0</span>
-          </div>
-          <div class="stat-card">
-            <span class="stat-label">Toplam Gider</span>
-            <span class="stat-value">₺0</span>
-          </div>
-        </div>
-      </section>
-
-      <section class="section-block finance-table">
-        <header class="section-header">
-          <h2>Son Hareketler</h2>
-        </header>
-        <div class="finance-row">
-          <span class="finance-title">Örnek gelir</span>
-          <span class="finance-amount positive">+₺0</span>
-        </div>
-        <div class="finance-row">
-          <span class="finance-title">Örnek gider</span>
-          <span class="finance-amount negative">-₺0</span>
-        </div>
-      </section>
-    </main>
-
-    <!-- B2B İŞLETME EKRANI -->
-    <main class="screen" id="screen-b2b" aria-hidden="true">
-      <header class="sub-header">
-        <button class="back-btn" data-screen-back="home" type="button"></button>
-        <div class="sub-header-title">
-          <span class="sub-header-label">Modül</span>
-          <h1>B2B İşletme Paneli</h1>
-        </div>
-      </header>
-
-      <section class="section-block b2b-summary">
-        <div class="stat-row">
-          <div class="stat-card">
-            <span class="stat-label">Aktif Müşteri</span>
-            <span class="stat-value">0</span>
-          </div>
-          <div class="stat-card">
-            <span class="stat-label">Aktif Proje</span>
-            <span class="stat-value">0</span>
-          </div>
-        </div>
-      </section>
-
-      <section class="section-block b2b-list">
-        <header class="section-header">
-          <h2>Örnek Projeler</h2>
-        </header>
-        <article class="b2b-item">
-          <h3>Demo Proje</h3>
-          <p>İlk B2B projen burada listelenecek.</p>
-        </article>
-      </section>
-    </main>
-
+    </div>
   </div>
 
   <script src="app.js"></script>
 </body>
-</html>
-```0
+  </html>
