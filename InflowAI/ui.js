@@ -1,207 +1,203 @@
-// InflowAI - Ziyaretçi tarafı UI beyni
-// Tüm ücretsiz özellikler aktif, kayıt olmayanlara 3 hak sınırı
+// InflowAI Ön Yüz Mantığı
+// Tüm ücretsiz özellikler sınırsız; 3 hak SINIRI YOK.
 
 document.addEventListener("DOMContentLoaded", () => {
-  const avatar = document.getElementById("avatar");
   const avatarBubble = document.getElementById("avatarBubble");
-
-  const btnLogin = document.getElementById("btnLogin");
-  const btnProduce = document.getElementById("btnProduce");
-  const btnExplain = document.getElementById("btnExplain");
-  const featureButtons = document.querySelectorAll(".btn-mini");
-
+  const toast = document.getElementById("toast");
   const userInput = document.getElementById("userInput");
-  const sendBtn = document.getElementById("sendBtn");
-  const feedContainer = document.querySelector("#sectionFeed .feed");
+  const outputBox = document.getElementById("outputBox");
+  const feed = document.getElementById("feed");
 
-  // --- Misafir / kayıtlı kullanıcı mantığı ---
-  const GUEST_LIMIT = 3;
-  let guestUses = 0;
-
-  function isRegistered() {
-    // Gerçek sistemde buraya gerçek login kontrolü gelecek.
-    // Şimdilik herkes misafir modunda.
-    return false;
-  }
-
-  function useRight() {
-    if (isRegistered()) return true;
-
-    guestUses++;
-
-    if (guestUses > GUEST_LIMIT) {
-      alert("3 hakkın bitti. Devam etmek için kayıt ol.");
-      return false;
-    }
-
-    if (guestUses === GUEST_LIMIT) {
-      alert("Bu son ücretsiz hakkın. Devam etmek için kayıt olabilirsin.");
-    }
-
-    return true;
-  }
-
-  // --- Avatar konuşmaları ---
-  const avatarPhrases = [
-    "Hoş geldin, bugün enerjin çok güzel. ✨",
-    "Bir cümle yaz, gerisini ben hallederim. 💜",
-    "Ziyaretçini içeride tutacak fikirler hazırladım.",
-    "Bugün 1 içerik, yarın yeni bir hayat. 🚀",
-    "Kahve falı mı, B2B planı mı? Hepsi bende."
+  /* -----------------------------
+     1. Avatar Konuşma Döngüsü
+  --------------------------------*/
+  const avatarMessages = [
+    "Hoş geldin, bugün ne üretmek istiyorsun? 💜",
+    "Tek cümle yaz, sana tam içerik paketi hazırlayayım. ⚡",
+    "İster eğlen, ister büyü – ikisini de beraber yapalım. ✨",
+    "Kafanda ne varsa yaz, sonraki adımı ben düşünürüm. 🤝",
+    "Ziyaretçilerini şaşırtmak için birkaç fikrim var. Hazır mısın? 🚀",
   ];
+  let msgIndex = 0;
 
-  let avatarIndex = 0;
+  setInterval(() => {
+    msgIndex = (msgIndex + 1) % avatarMessages.length;
+    avatarBubble.textContent = avatarMessages[msgIndex];
+  }, 8000);
 
-  function cycleAvatarSpeech() {
-    avatarIndex = (avatarIndex + 1) % avatarPhrases.length;
-    avatarBubble.textContent = avatarPhrases[avatarIndex];
-    avatar.classList.add("avatar-pulse");
-    setTimeout(() => avatar.classList.remove("avatar-pulse"), 600);
+  /* -----------------------------
+     2. Yardımcı Fonksiyonlar
+  --------------------------------*/
+  function showToast(message) {
+    if (!toast) return;
+    toast.textContent = message;
+    toast.classList.add("show");
+    setTimeout(() => toast.classList.remove("show"), 2600);
   }
 
-  setInterval(cycleAvatarSpeech, 8000);
-
-  // --- Yardımcı: Bölüme kaydır ---
   function scrollToSection(id) {
     const el = document.getElementById(id);
-    if (!el) return;
-    el.scrollIntoView({ behavior: "smooth", block: "start" });
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
   }
 
-  // --- Feed'e yeni içerik ekleme ---
-  function pushToFeed(text) {
-    if (!feedContainer) return;
-    const item = document.createElement("div");
-    item.className = "feed-item";
-    item.textContent = text;
-    feedContainer.prepend(item);
+  /* -----------------------------
+     3. Giriş Butonu
+  --------------------------------*/
+  const btnLogin = document.getElementById("btnLogin");
+  if (btnLogin) {
+    btnLogin.addEventListener("click", () => {
+      showToast(
+        "Giriş ve kayıt sistemi çok yakında. Şimdilik tüm ücretsiz özellikler misafir olarak açık. 💫"
+      );
+    });
   }
 
-  // Kullanıcının yazdığına göre örnek cevaplar üretelim (fake ama yaşayan hissetsin)
-  function generateContentIdea(promptText) {
-    const base = promptText || "Bugünün enerjisi";
+  /* -----------------------------
+     4. Hero Butonları
+  --------------------------------*/
+  const btnProduce = document.getElementById("btnProduce");
+  const btnExplain = document.getElementById("btnExplain");
+  const sendBtn = document.getElementById("sendBtn");
 
-    const ideas = [
-      `Senin için bir içerik fikri: "${base}" temalı bir Reels serisi. İlk video: 15 saniyede güçlü bir soru sor.`,
-      `"${base}" başlıklı bir blog yazısı yaz. Girişte problemi anlat, ortada 3 maddeyle çözüm ver, sonda çağrı yap.`,
-      `Story serisi: 3 ekranda "${base}" hakkında mini ipuçları paylaş. Son ekranda InflowAI'den bahset.`,
-      `"${base}" için bir karusel post: 5 slide. 1: başlık, 2-4: ipuçları, 5: aksiyon çağrısı.`,
-      `Kısa video fikri: Önce sorunu söyle, sonra "${base}" çözümü için 3 hızlı adım göster.`
-    ];
-
-    const idea = ideas[Math.floor(Math.random() * ideas.length)];
-    pushToFeed("🧠 İçerik Fikri: " + idea);
+  function handleProduceClick() {
+    scrollToSection("sectionInput");
+    if (userInput) {
+      userInput.focus();
+    }
   }
 
-  function generateFunAction(type) {
-    const items = {
-      coffee: [
-        "Kahve falı: Bugün aklına gelen fikirleri not al, içlerinden biri hayatını değiştirebilir. ☕",
-        "Fincanın dibinde büyük bir fırsat görüyorum, erteleme!"
-      ],
-      astro: [
-        "Burç yorumu: Bugün iletişim gücün çok yüksek, takipçilerinle konuşmak için iyi zaman. 🔮",
-        "Mini tarot: Çektiğin kart 'Güneş'. Görünür olmaktan korkma."
-      ],
-      advice: [
-        "Günün tavsiyesi: Her gün en az 1 içerik. Devamı kendiliğinden gelir. 💡",
-        "Bugün kendini eleştirmek yerine ürettiğin için teşekkür et."
-      ],
-      quiz: [
-        "Mini test: Bugün 1 mi 3 mü içerik üreteceksin? Karar ver ve uygulamadan çıkmadan birini bitir. 😄",
-        "Kendine sor: 'Takipçime bugün gerçekten nasıl yardım edebilirim?'"
-      ]
-    };
+  if (btnProduce) btnProduce.addEventListener("click", handleProduceClick);
 
-    const list = items[type] || [];
-    if (!list.length) return;
-    const msg = list[Math.floor(Math.random() * list.length)];
-    pushToFeed(msg);
+  if (btnExplain) {
+    btnExplain.addEventListener("click", () => {
+      scrollToSection("sectionFeatures");
+      showToast("Aşağıda şu anda açık olan tüm özellikleri gösteriyorum. 👇");
+    });
   }
 
-  function generateB2BIdea() {
-    const samples = [
-      "B2B planı: Haftada 3 eğitim postu, 1 başarı hikayesi, 1 satış odaklı paylaşım.",
-      "Rapor fikri: Aylık içerik performansını topla, en iyi 5 içeriği yeniden kullan.",
-      "Şablon önerisi: 'Soru - Hata - Çözüm' formatında LinkedIn post serisi."
-    ];
-    const msg = samples[Math.floor(Math.random() * samples.length)];
-    pushToFeed("📊 B2B Panelinden Öneri: " + msg);
-  }
-
-  // --- Giriş butonu ---
-  btnLogin?.addEventListener("click", () => {
-    alert(
-      "Giriş bölümü yakında aktif olacak. Şu an ücretsiz misafir modundasın."
-    );
-  });
-
-  // --- Hemen içerik üret ---
-  btnProduce?.addEventListener("click", () => {
-    if (!useRight()) return;
-    scrollToSection("sectionFeatures");
-    generateContentIdea("Bugünün içeriği");
-    avatarBubble.textContent =
-      "Senin için birkaç fikir ürettim, aşağıya bak. 💜";
-  });
-
-  // --- Platform bana ne yapıyor? ---
-  btnExplain?.addEventListener("click", () => {
-    scrollToSection("sectionFeatures");
-    avatarBubble.textContent =
-      "Aşağıda senin için içerik, eğlence ve B2B alanlarını anlattım. ✨";
-  });
-
-  // --- Kart butonları (Canlı içerik / Eğlence / B2B) ---
-  featureButtons.forEach((btn) => {
+  /* -----------------------------
+     5. Kartlardaki küçük butonlar
+  --------------------------------*/
+  document.querySelectorAll("[data-target]").forEach((btn) => {
     btn.addEventListener("click", () => {
-      const target = btn.dataset.target;
-
-      if (target === "content") {
-        if (!useRight()) return;
-        generateContentIdea("Sosyal medya içeriği");
-        avatarBubble.textContent =
-          "Yeni bir içerik fikri ürettim, akışa ekledim. 🚀";
-        scrollToSection("sectionFeed");
-      }
-
-      if (target === "fun") {
-        if (!useRight()) return;
+      const target = btn.getAttribute("data-target");
+      if (target === "produce") {
+        handleProduceClick();
+      } else if (target === "fun") {
         scrollToSection("sectionFun");
-        generateFunAction("advice");
-        avatarBubble.textContent = "Eğlence alanından bir fikir gönderdim. 😄";
-      }
-
-      if (target === "b2b") {
-        if (!useRight()) return;
-        generateB2BIdea();
-        avatarBubble.textContent =
-          "İşletmeler için bir B2B içerik fikri hazırladım. 📊";
-        scrollToSection("sectionFeed");
+      } else if (target === "b2b") {
+        scrollToSection("sectionB2B");
+        showToast("B2B panelinde işletmeler için hazır planları açtım. 📊");
       }
     });
   });
 
-  // --- Kullanıcı inputu -> içerik üretimi ---
-  sendBtn?.addEventListener("click", () => {
-    const text = (userInput.value || "").trim();
+  /* -----------------------------
+     6. Eğlence Alanı Tıklamaları
+  --------------------------------*/
+  const funReplies = {
+    coffee:
+      "☕ Kahve Falı\n\nBugün içinden geçen ilk fikre güven. Küçük bir içerik bile büyük bir kapı açabilir.",
+    zodiac:
+      "🔮 Burç / Tarot\n\nEnerjin tam üretme modunda. Yeni bir seri başlatmak için harika bir gün.",
+    advice:
+      "💡 Günün Tavsiyesi\n\nMükemmel olsun diye bekleme. ‘Yayınlanmış iyi içerik’, ‘bekleyen mükemmel içerikten’ her zaman daha iyidir.",
+    quiz:
+      "😄 Mini Test\n\nTakipçilerine bugün şu soruyu sor:\n“Bu yıl kendin için yaptığın en iyi şey neydi?”",
+  };
+
+  document.querySelectorAll(".fun-item").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const key = btn.getAttribute("data-fun");
+      const text = funReplies[key] || "Bugün enerjin çok iyi görünüyor. 😄";
+      outputBox.textContent = text;
+      scrollToSection("sectionResult");
+      showToast("Eğlence alanından bir içerik fikri hazırladım. 🎭");
+    });
+  });
+
+  /* -----------------------------
+     7. İçerik Üretimi (Basit AI Simülasyonu)
+  --------------------------------*/
+  function generateContent(topic) {
+    const trimmed = topic.trim();
+    const base = trimmed || "markan";
+
+    const ideas = [
+      `🎬 Reels Fikri:
+- Açılışta ekrana şu metin gelsin: “${base} için 3 saniyede güven ver.”
+- İlk sahne: Önce / Sonra karşılaştırması
+- Son sahne: “Devamı için takip et” yazısı ve logon.`,
+
+      `📝 Post Açıklaması:
+"${base}" hakkında insanların en sık sorduğu soruyu alıp, cevabını 3 maddede anlat.
+1) Sorunu net söyle
+2) Senin çözümünü kısa anlat
+3) Sonunda “Kaydet ve ihtiyacın olunca dön” cümlesini ekle.`,
+
+      `📌 Hikâye / Story Fikri:
+- 3 story'lik mini seri yap.
+1) “Bugün sana küçük ama etkili bir ipucu vereceğim.”
+2) İpucunu tek cümle ile anlat.
+3) “Bu tarz ipuçlarını kaçırmamak için hikâyeleri açık tut.”`,
+
+      `📈 Büyüme Önerisi:
+- Haftada en az 3 video + 2 görsel içerik paylaş.
+- Her içerikte aynı renk paletini ve aynı kapanış cümlesini kullan ki marka akılda kalsın.`,
+    ];
+
+    return `🎯 Hedef: ${trimmed || "Genel içerik üretimi"}
+    
+${ideas.join("\n\n")}`;
+  }
+
+  function handleSend() {
+    if (!userInput || !outputBox) return;
+
+    const text = userInput.value.trim();
     if (!text) {
-      alert("Önce ne üretmek istediğini yaz.");
+      showToast("Önce ne üretmek istediğini yaz. 💡");
+      userInput.focus();
       return;
     }
 
-    if (!useRight()) return;
+    const result = generateContent(text);
+    outputBox.textContent = result;
+    scrollToSection("sectionResult");
+    showToast("Senin için tam bir içerik paketi hazırladım. 🚀");
+  }
 
-    generateContentIdea(text);
-    avatarBubble.textContent =
-      "Tamamdır, aşağıya senin için bir içerik fikri bıraktım. 💜";
-    userInput.value = "";
-  });
+  if (sendBtn) {
+    sendBtn.addEventListener("click", handleSend);
+  }
 
-  userInput?.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      sendBtn.click();
-    }
-  });
+  if (userInput) {
+    userInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        handleSend();
+      }
+    });
+  }
+
+  /* -----------------------------
+     8. Akışa Ara Sıra Otomatik Mesaj Ekle
+  --------------------------------*/
+  const extraFeed = [
+    "“Bugün paylaştığın tek bir içerik, yarın tanışacağın yüzlerce insan demek olabilir.”",
+    "“Düzenli üretim, algoritmanın en sevdiği sevgililik tarzıdır.”",
+    "“İçeriklerin kusursuz olmak zorunda değil, ama devamlı olmak zorunda.”",
+  ];
+  let feedIndex = 0;
+
+  setInterval(() => {
+    if (!feed) return;
+    const div = document.createElement("div");
+    div.className = "feed-item";
+    div.textContent = extraFeed[feedIndex];
+    feed.appendChild(div);
+    feedIndex = (feedIndex + 1) % extraFeed.length;
+  }, 25000);
 });
