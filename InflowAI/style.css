@@ -1,62 +1,73 @@
-/* GENEL STİL */
-* {
+/* GENEL GÖRÜNÜM
+   -------------------------------------------------- */
+
+*,
+*::before,
+*::after {
   box-sizing: border-box;
-  margin: 0;
-  padding: 0;
 }
 
-html, body {
-  height: 100%;
+html,
+body {
+  margin: 0;
+  padding: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+    "Roboto", sans-serif;
+  color: #f9f6ff;
+  background: #050017;
 }
 
 body {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  background: radial-gradient(circle at top, #2b1b66 0, #050014 45%, #020008 100%);
-  color: #f7f0ff;
-  overflow-x: hidden;
+  min-height: 100vh;
 }
 
-/* ARKA PLAN PARILTI */
+/* ARKA PLAN GALAKTİK */
 .bg {
   position: fixed;
   inset: 0;
-  pointer-events: none;
-  background:
-    radial-gradient(circle at 20% 0%, rgba(120, 40, 200, 0.4), transparent 55%),
-    radial-gradient(circle at 80% 100%, rgba(120, 40, 200, 0.35), transparent 55%);
-  opacity: 0.9;
+  background: radial-gradient(circle at top, #4c3cff, transparent 55%),
+    radial-gradient(circle at bottom, #ff2ea6, transparent 55%),
+    radial-gradient(circle at left, #00f0ff, transparent 55%),
+    #050017;
+  opacity: 0.6;
+  filter: blur(2px);
   z-index: -1;
 }
 
 /* ÜST BAR */
 .top {
-  max-width: 960px;
-  margin: 0 auto;
-  padding: 18px 16px 4px;
+  position: sticky;
+  top: 0;
+  z-index: 20;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  padding: 0.75rem 1.25rem;
+  backdrop-filter: blur(18px);
+  background: linear-gradient(to bottom, rgba(5, 0, 23, 0.9), transparent);
 }
 
 .logo {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 0.6rem;
   font-weight: 600;
-  font-size: 1.2rem;
+  letter-spacing: 0.03em;
+  font-size: 1.1rem;
 }
 
 .logo .dot {
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
   border-radius: 999px;
-  background: radial-gradient(circle at 30% 20%, #8bf3ff, #3b9dff 40%, #234bff);
-  box-shadow: 0 0 18px rgba(111, 207, 255, 0.8);
+  background: radial-gradient(circle, #6affff, #21b9ff);
+  box-shadow: 0 0 12px rgba(140, 255, 255, 0.9);
 }
 
 .actions {
   display: flex;
-  gap: 10px;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 /* BUTONLAR */
@@ -66,118 +77,121 @@ button {
   font: inherit;
 }
 
-.btn-primary {
-  padding: 8px 18px;
+.btn-primary,
+.btn-ghost,
+.btn-mini {
   border-radius: 999px;
-  background: linear-gradient(135deg, #ff4ecd, #9b5cff);
+  padding: 0.5rem 1.25rem;
+  font-size: 0.9rem;
+  transition: transform 0.12s ease, box-shadow 0.12s ease,
+    background 0.12s ease;
+  white-space: nowrap;
+}
+
+.btn-primary {
+  background: linear-gradient(120deg, #ff2ea6, #7b5cff);
   color: #fff;
-  font-weight: 600;
-  box-shadow: 0 0 16px rgba(255, 78, 205, 0.55);
-  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+  box-shadow: 0 0 18px rgba(255, 98, 197, 0.7);
 }
 
 .btn-primary:hover {
   transform: translateY(-1px) scale(1.02);
-  box-shadow: 0 0 22px rgba(255, 78, 205, 0.85);
-  opacity: 0.95;
+  box-shadow: 0 0 22px rgba(255, 98, 197, 0.9);
 }
 
 .btn-ghost {
-  padding: 7px 16px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: #f7f0ff;
-  font-weight: 500;
-  transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+  background: rgba(10, 5, 40, 0.7);
+  color: #f5eaff;
+  border: 1px solid rgba(157, 136, 255, 0.4);
 }
 
 .btn-ghost:hover {
-  background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(255, 255, 255, 0.22);
-  transform: translateY(-1px);
+  background: rgba(40, 20, 90, 0.9);
 }
 
-/* ANA CONTAINER */
+.btn-mini {
+  padding-inline: 0.9rem;
+  padding-block: 0.35rem;
+  font-size: 0.8rem;
+  background: rgba(13, 7, 48, 0.9);
+  color: #e9dcff;
+  border: 1px solid rgba(144, 115, 255, 0.5);
+}
+
+.btn-mini:hover {
+  background: rgba(39, 19, 102, 0.95);
+}
+
+/* ANA KAPSAYICI */
 .container {
   max-width: 960px;
   margin: 0 auto;
-  padding: 10px 16px 60px;
+  padding: 1.25rem 1.25rem 3.5rem;
 }
 
-/* HERO + AVATAR */
+/* HERO BÖLÜMÜ */
 .hero {
-  display: grid;
-  grid-template-columns: minmax(0, 1.2fr);
-  gap: 30px;
-  align-items: center;
-  margin-bottom: 32px;
-  text-align: center;
-}
-
-.avatar-wrap {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 14px;
-  margin-top: 10px;
+  text-align: center;
+  margin-top: 1rem;
+  gap: 1.5rem;
+}
+
+/* AVATAR */
+.avatar-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0.25rem;
+  margin-bottom: 0.75rem;
 }
 
 .avatar-glow {
+  position: absolute;
   width: 210px;
   height: 210px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 30% 20%, #76f7ff, #546dff 45%, #1a1b5c);
-  filter: blur(22px);
-  opacity: 0.6;
-  position: absolute;
+  border-radius: 999px;
+  background: radial-gradient(circle, #3bffff, #2c2cf8, transparent 70%);
+  opacity: 0.4;
+  filter: blur(18px);
   z-index: -1;
+  animation: avatarPulse 5s ease-in-out infinite;
 }
 
 .avatar {
-  width: 190px;
-  height: 190px;
+  width: 180px;
+  height: 180px;
   border-radius: 50%;
-  background: radial-gradient(circle at 30% 20%, #2529ff, #6b00ff 45%, #1a0034 80%);
+  background: radial-gradient(circle at 30% 20%, #3ef7ff, #1a1aff 55%, #4b007d);
+  box-shadow: 0 0 25px rgba(74, 189, 255, 0.7),
+    0 0 45px rgba(255, 0, 191, 0.4);
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
-  box-shadow:
-    0 0 36px rgba(102, 166, 255, 0.9),
-    0 0 80px rgba(255, 0, 200, 0.6);
-  animation: float 4.6s ease-in-out infinite;
+  animation: avatarFloat 6s ease-in-out infinite;
 }
 
-.avatar::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: conic-gradient(from 0deg, #ff4ecd, #74f7ff, #d76bff, #ff4ecd);
-  mix-blend-mode: screen;
-  opacity: 0.25;
-}
-
-.avatar .face {
+.face {
   width: 120px;
   height: 70px;
-  border-radius: 40px;
-  background: rgba(4, 8, 40, 0.9);
+  border-radius: 999px;
+  background: rgba(7, 3, 30, 0.85);
   display: flex;
   align-items: center;
-  justify-content: space-around;
-  padding: 0 12px;
-  position: relative;
+  justify-content: space-between;
+  padding-inline: 18px;
 }
 
 .eye {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   border-radius: 999px;
-  background: radial-gradient(circle at 30% 20%, #9affff, #4fd6ff 40%, #0076ff);
-  box-shadow: 0 0 14px rgba(146, 244, 255, 0.9);
-  animation: blink 5s infinite;
+  background: radial-gradient(circle, #9bfcff, #44c2ff);
+  box-shadow: 0 0 10px rgba(156, 255, 255, 0.8);
+  animation: eyeBlink 5s ease-in-out infinite;
 }
 
 .eye-right {
@@ -185,251 +199,303 @@ button {
 }
 
 .mouth {
-  width: 40px;
-  height: 6px;
+  width: 34px;
+  height: 8px;
   border-radius: 999px;
-  background: linear-gradient(90deg, #ffb86c, #ff5ea1);
-  box-shadow: 0 0 12px rgba(255, 133, 170, 0.8);
-  animation: talk 3.25s infinite;
+  background: linear-gradient(90deg, #ffc857, #ff3f9d);
+  box-shadow: 0 0 10px rgba(255, 153, 203, 0.9);
 }
 
+/* KONUŞMA BALONU */
 .bubble {
-  margin-top: 6px;
-  padding: 8px 16px;
+  position: absolute;
+  left: 50%;
+  top: -18px;
+  transform: translateX(-50%);
+  background: rgba(12, 6, 42, 0.96);
   border-radius: 999px;
-  background: rgba(16, 7, 40, 0.92);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  font-size: 0.9rem;
-  color: #fdf5ff;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55);
-  max-width: 260px;
+  padding: 0.45rem 1.1rem;
+  font-size: 0.8rem;
+  border: 1px solid rgba(166, 138, 255, 0.8);
+  box-shadow: 0 0 14px rgba(104, 80, 255, 0.7);
+  white-space: nowrap;
 }
 
-/* AVATAR PULSE CLASS JS İÇİN */
-.avatar-pulse {
-  animation: pulse 0.6s ease-out;
-}
-
-/* HERO METİN */
 .hero-title {
-  margin-top: 10px;
-  font-size: 1.8rem;
-  line-height: 1.2;
+  font-size: 1.65rem;
+  font-weight: 700;
+  line-height: 1.3;
+  text-shadow: 0 0 18px rgba(0, 0, 0, 0.7);
 }
 
 .hero-desc {
-  margin-top: 10px;
-  font-size: 0.98rem;
-  color: #d6ccff;
+  max-width: 640px;
+  font-size: 0.95rem;
+  color: #e8dafc;
+  line-height: 1.6;
 }
 
 .hero-btns {
-  margin-top: 18px;
   display: flex;
-  justify-content: center;
-  gap: 10px;
   flex-wrap: wrap;
+  gap: 0.8rem;
+  justify-content: center;
 }
 
-.note,
-.note2 {
-  margin-top: 14px;
-  font-size: 0.84rem;
-  color: #b6a8ff;
-  text-align: center;
+.note {
+  font-size: 0.8rem;
+  color: #c8b6ff;
+  opacity: 0.9;
 }
 
-/* BÖLÜMLER */
+/* SECTIONS */
 .section {
-  margin-top: 32px;
+  margin-top: 2.25rem;
+  padding: 1.25rem 1rem;
+  background: radial-gradient(circle at top left, rgba(86, 57, 255, 0.25), transparent 60%),
+    radial-gradient(circle at bottom right, rgba(255, 54, 160, 0.18), transparent 55%),
+    rgba(7, 1, 27, 0.9);
+  border-radius: 22px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.55);
+  border: 1px solid rgba(126, 98, 255, 0.3);
 }
 
 .section h2 {
-  font-size: 1.3rem;
-  margin-bottom: 14px;
+  margin: 0 0 0.75rem;
+  font-size: 1.15rem;
+}
+
+.section-desc {
+  font-size: 0.85rem;
+  color: #d7c6ff;
+  margin-bottom: 1rem;
 }
 
 /* KARTLAR */
 .cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-  gap: 14px;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.9rem;
 }
 
 .card {
-  background: radial-gradient(circle at top, rgba(112, 80, 255, 0.25), rgba(8, 6, 30, 0.98));
+  padding: 1rem;
   border-radius: 18px;
-  padding: 14px 16px;
-  border: 1px solid rgba(255, 255, 255, 0.09);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55);
+  background: rgba(7, 3, 33, 0.96);
+  border: 1px solid rgba(122, 100, 255, 0.4);
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 0.35rem;
 }
 
 .card .icon {
-  font-size: 1.5rem;
+  font-size: 1.4rem;
 }
 
 .card h3 {
+  margin: 0.1rem 0;
   font-size: 1rem;
 }
 
 .card p {
-  font-size: 0.9rem;
-  color: #c8beff;
+  margin: 0.2rem 0 0.5rem;
+  font-size: 0.86rem;
+  color: #e3d6ff;
 }
 
-.card .btn-mini {
-  align-self: flex-start;
-  margin-top: 8px;
+.card.highlight {
+  border-color: rgba(15, 233, 176, 0.8);
+  box-shadow: 0 0 20px rgba(2, 201, 152, 0.6);
 }
 
-.highlight {
-  border-color: rgba(102, 255, 204, 0.55);
-  box-shadow: 0 0 18px rgba(102, 255, 204, 0.35);
+/* B2B PANEL */
+.b2b-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.9rem;
+  margin-top: 0.75rem;
 }
 
-/* MINI BUTTON */
-.btn-mini {
-  padding: 6px 13px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.06);
-  color: #f7f0ff;
-  font-size: 0.8rem;
-  font-weight: 500;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  transition: background 0.15s ease, transform 0.15s ease, border-color 0.15s ease;
+.b2b-card {
+  background: rgba(8, 4, 38, 0.96);
+  border-radius: 18px;
+  padding: 0.9rem;
+  border: 1px solid rgba(121, 100, 255, 0.5);
+  font-size: 0.86rem;
 }
 
-.btn-mini:hover {
-  background: rgba(255, 255, 255, 0.14);
-  border-color: rgba(255, 255, 255, 0.28);
-  transform: translateY(-1px);
+.b2b-card h3 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.b2b-card ul {
+  margin: 0;
+  padding-left: 1.1rem;
 }
 
 /* EĞLENCE ALANI */
 .fun-cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-top: 0.75rem;
 }
 
 .fun-item {
-  background: rgba(7, 6, 35, 0.96);
+  background: rgba(8, 3, 36, 0.96);
   border-radius: 16px;
-  padding: 12px 14px;
-  border: 1px solid rgba(255, 255, 255, 0.09);
+  padding: 0.65rem 0.8rem;
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: 0.96rem;
+  gap: 0.6rem;
+  justify-content: flex-start;
+  font-size: 0.86rem;
+  border: 1px solid rgba(132, 107, 255, 0.6);
+  color: #efe5ff;
+  text-align: left;
 }
 
 .fun-item span {
-  font-size: 1.4rem;
+  font-size: 1.2rem;
 }
 
 /* AKIŞ */
 .feed {
+  margin-top: 0.75rem;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 0.55rem;
 }
 
 .feed-item {
-  background: rgba(8, 6, 40, 0.96);
-  border-radius: 16px;
-  padding: 10px 14px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  font-size: 0.9rem;
-  color: #e8ddff;
+  background: rgba(10, 5, 42, 0.95);
+  border-radius: 14px;
+  padding: 0.55rem 0.8rem;
+  font-size: 0.83rem;
+  border: 1px solid rgba(133, 116, 255, 0.45);
 }
 
-/* INPUT ALANI */
+/* GİRİŞ BÖLÜMÜ */
 .input-row {
   display: flex;
-  gap: 8px;
-  margin-top: 10px;
-  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 0.7rem;
 }
 
 .input-row input {
   flex: 1;
-  min-width: 0;
-  padding: 9px 12px;
   border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  background: rgba(3, 2, 24, 0.96);
-  color: #f7f0ff;
+  border: 1px solid rgba(139, 123, 255, 0.6);
+  background: rgba(7, 2, 35, 0.96);
+  color: #f7f1ff;
+  padding: 0.5rem 0.95rem;
+  font-size: 0.88rem;
   outline: none;
-  font-size: 0.9rem;
 }
 
 .input-row input::placeholder {
-  color: #8f86c9;
+  color: #a696ff;
 }
 
-/* RESPONSIVE */
-@media (min-width: 720px) {
-  .hero {
-    grid-template-columns: 0.9fr 1.3fr;
-    text-align: left;
-  }
+.note2 {
+  margin-top: 0.6rem;
+  font-size: 0.8rem;
+  color: #cbbaff;
+}
 
-  .avatar-wrap {
-    align-items: flex-start;
-  }
+/* SONUÇ KUTUSU */
+.output-box {
+  margin-top: 0.6rem;
+  padding: 0.9rem 0.9rem;
+  border-radius: 18px;
+  background: rgba(8, 3, 40, 0.96);
+  border: 1px solid rgba(144, 125, 255, 0.6);
+  font-size: 0.88rem;
+  line-height: 1.6;
+  white-space: pre-line;
+}
 
-  .hero-btns {
-    justify-content: flex-start;
-  }
+/* TOAST MESAJI */
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%) translateY(80px);
+  background: rgba(7, 3, 35, 0.97);
+  padding: 0.6rem 1.1rem;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  border: 1px solid rgba(157, 136, 255, 0.75);
+  box-shadow: 0 0 18px rgba(104, 77, 255, 0.8);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  z-index: 80;
+}
 
-  .note,
-  .note2 {
-    text-align: left;
-  }
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
 }
 
 /* ANİMASYONLAR */
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-8px);
-  }
-}
-
-@keyframes blink {
-  0%, 88%, 100% {
-    transform: scaleY(1);
-  }
-  90%, 92% {
-    transform: scaleY(0.15);
-  }
-}
-
-@keyframes talk {
-  0%, 40%, 100% {
-    transform: scaleY(1);
-  }
-  45%, 60% {
-    transform: scaleY(0.5);
-  }
-}
-
-@keyframes pulse {
-  0% {
-    transform: scale(1);
-    box-shadow: 0 0 36px rgba(102, 166, 255, 0.9), 0 0 80px rgba(255, 0, 200, 0.6);
-  }
-  50% {
-    transform: scale(1.05);
-    box-shadow: 0 0 46px rgba(102, 166, 255, 1), 0 0 110px rgba(255, 0, 200, 1);
-  }
+@keyframes avatarFloat {
+  0%,
   100% {
-    transform: scale(1);
-    box-shadow: 0 0 36px rgba(102, 166, 255, 0.9), 0 0 80px rgba(255, 0, 200, 0.6);
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes avatarPulse {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(0.98);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.04);
+  }
+}
+
+@keyframes eyeBlink {
+  0%,
+  90%,
+  100% {
+    transform: scaleY(1);
+  }
+  92% {
+    transform: scaleY(0.2);
+  }
+  94% {
+    transform: scaleY(1);
+  }
+}
+
+/* MASAÜSTÜ İYİLEŞTİRME */
+@media (min-width: 720px) {
+  .hero-title {
+    font-size: 2.1rem;
+  }
+
+  .hero-desc {
+    font-size: 1rem;
+  }
+
+  .cards {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .b2b-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .fun-cards {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
