@@ -1,0 +1,137 @@
+/* ================================
+   GLOBAL TASARIM AYARLARI
+================================ */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+body {
+  background: #0d0d0f;
+  color: #ffffff;
+  overflow-x: hidden;
+}
+
+/* ================================
+   HEADER
+================================ */
+.header {
+  width: 100%;
+  padding: 20px;
+  background: #111116;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #222;
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: 700;
+  color: #9b59b6;
+}
+
+/* ================================
+   ANA BANNER
+================================ */
+.banner {
+  width: 100%;
+  height: 280px;
+  background: linear-gradient(135deg, #9b59b6, #6a1b9a, #000);
+  border-radius: 16px;
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  padding: 40px;
+  text-align: left;
+}
+
+.banner h1 {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.banner p {
+  font-size: 16px;
+  opacity: 0.8;
+}
+
+/* ================================
+   ÜRÜN LİSTESİ
+================================ */
+.products {
+  margin-top: 30px;
+}
+
+.section-title {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+.product-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.product-card {
+  width: calc(50% - 10px);
+  background: #151519;
+  padding: 15px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.product-card:hover {
+  transform: scale(1.03);
+  background: #1c1c21;
+}
+
+.product-card img {
+  width: 100%;
+  border-radius: 10px;
+}
+
+.product-card h3 {
+  font-size: 16px;
+  margin-top: 10px;
+}
+
+.product-card p {
+  color: #9b59b6;
+  font-weight: 600;
+  margin-top: 5px;
+}
+
+/* ================================
+   ALT MENÜ
+================================ */
+.bottom-menu {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  height: 70px;
+  background: #111116;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  border-top: 1px solid #222;
+}
+
+.bottom-menu a {
+  color: #fff;
+  text-align: center;
+  text-decoration: none;
+  font-size: 13px;
+}
+
+.bottom-menu i {
+  font-size: 20px;
+  display: block;
+  margin-bottom: 4px;
+}
