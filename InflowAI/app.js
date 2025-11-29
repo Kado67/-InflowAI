@@ -1,160 +1,172 @@
-// =======================================
-// InflowAI E-Ticaret - app.js
-// Ön yüz ile API arasındaki köprü
-// =======================================
+/* ============================================
+   InflowAI E-Ticaret Platformu
+   app.js – API bağlantısı, ürün yükleme, sepet sistemi
+============================================ */
 
-// API ana adresin (Render)
-const API_BASE_URL = "https://inflowai-api.onrender.com";
+// API ana adresi
+const API = "https://inflowai-api.onrender.com";
 
-// Sayfadaki ana elemanlar
-const productListEl = document.getElementById("productList");
-const bannerStatusEl = document.getElementById("bannerStatus");
+// HTML elemanları
+const featuredGrid = document.getElementById("featured-products");
+const newGrid = document.getElementById("new-products");
+const bestsellerGrid = document.getElementById("bestseller-products");
 
-// -----------------------------
-// 1) API SAĞLIK / ÖZET KONTROLÜ
-// -----------------------------
-async function checkApiStatus() {
-  try {
-    const res = await fetch(API_BASE_URL + "/");
-    if (!res.ok) throw new Error("API cevabı başarısız");
+// Sepet elemanları
+let CART = [];
+const cartCount = document.getElementById("cart-items-count");
+const cartSubtotal = document.getElementById("cart-subtotal");
+const cartShipping = document.getElementById("cart-shipping");
+const cartTotal = document.getElementById("cart-total");
 
-    const data = await res.json();
-    console.log("API Sağlık:", data);
+// ===============================
+// 1) API'DEN VERİ ÇEKME
+// ===============================
 
-    if (bannerStatusEl) {
-      bannerStatusEl.innerText = "Bağlı • " + (data.service || "InflowAI API");
-    }
-  } catch (err) {
-    console.error("API bağlantı hatası:", err);
-    if (bannerStatusEl) {
-      bannerStatusEl.innerText = "Bağlantı yok • API kontrol et";
-    }
-  }
+// GET request
+async function apiGet(endpoint) {
+  const res = await fetch(`${API}${endpoint}`);
+  return await res.json();
 }
 
-// -----------------------------
-// 2) ÜRÜN LİSTESİ ÇEKME
-//    (Gerçek ürün bekler, demo yok)
-// -----------------------------
+// POST request
+async function apiPost(endpoint, data = {}) {
+  const res = await fetch(`${API}${endpoint}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  return await res.json();
+}
+
+// ===============================
+// 2) ÜRÜNLERİ YÜKLE
+// ===============================
+
 async function loadProducts() {
-  if (!productListEl) return;
-
-  productListEl.innerHTML = "<p>Ürünler yükleniyor...</p>";
-
   try {
-    const res = await fetch(API_BASE_URL + "/products"); // <-- backend’de gerçek endpoint
-    if (!res.ok) {
-      // Endpoint hazır değilse bile kullanıcıya net mesaj
-      productListEl.innerHTML =
-        "<p>Şu anda ürün listesine ulaşılamıyor. Lütfen API /products endpoint'ini kontrol et.</p>";
+    const data = await apiGet("/products");
+
+    if (!data || !Array.isArray(data)) {
+      console.warn("API ürün verisi geçersiz:", data);
       return;
     }
 
-    const products = await res.json();
+    // Ürünleri kategorilere göre ayır
+    const featured = data.slice(0, 8);
+    const newArrivals = data.slice(8, 16);
+    const bestseller = data.slice(16, 24);
 
-    if (!Array.isArray(products) || products.length === 0) {
-      productListEl.innerHTML =
-        "<p>Henüz eklenmiş ürün yok. İlk ürünlerini yönetim panelinden ekleyebilirsin.</p>";
-      return;
-    }
+    renderProducts(featuredGrid, featured);
+    renderProducts(newGrid, newArrivals);
+    renderProducts(bestsellerGrid, bestseller);
 
-    renderProductCards(products);
   } catch (err) {
-    console.error("Ürün yükleme hatası:", err);
-    productListEl.innerHTML =
-      "<p>Ürünler alınırken bir sorun oluştu. Birazdan tekrar dene.</p>";
+    console.error("Ürünler yüklenirken hata:", err);
   }
 }
 
-// -----------------------------
-// 3) ÜRÜN KARTLARINI RENDER ETME
-// -----------------------------
-function renderProductCards(products) {
-  productListEl.innerHTML = "";
+// Ürünleri ekrana bas
+function renderProducts(target, products) {
+  target.innerHTML = "";
 
   products.forEach((product) => {
     const card = document.createElement("div");
     card.className = "product-card";
 
     card.innerHTML = `
-      <img src="${product.imageUrl || "https://via.placeholder.com/400x260"}" alt="${product.name || "Ürün"}" />
-      <h3>${product.name || "İsimsiz Ürün"}</h3>
-      <p>${formatPrice(product.price)}</p>
+      <div class="product-image">
+        <img src="${product.image || ""}" alt="${product.name}">
+      </div>
+
+      <div class="product-info">
+        <h3>${product.name}</h3>
+
+        <div class="product-prices">
+          ${product.oldPrice ? `<span class="old-price">₺${product.oldPrice}</span>` : ""}
+          <span class="new-price">₺${product.price}</span>
+        </div>
+
+        <div class="product-actions">
+          <button class="btn small add-to-cart" data-id="${product.id}">
+            Sepete Ekle
+          </button>
+          <button class="favorite-btn">❤</button>
+        </div>
+      </div>
     `;
 
-    card.addEventListener("click", () => openProductDetail(product));
-    productListEl.appendChild(card);
+    target.appendChild(card);
   });
+
+  // Sepete ekleme butonlarını aktif et
+  activateCartButtons();
 }
 
-// -----------------------------
-// 4) FİYAT FORMATLAMA
-// -----------------------------
-function formatPrice(price) {
-  if (price === undefined || price === null || isNaN(Number(price))) {
-    return "Fiyat yakında";
-  }
+// ===============================
+// 3) SEPET SİSTEMİ
+// ===============================
 
-  return new Intl.NumberFormat("tr-TR", {
-    style: "currency",
-    currency: "TRY",
-    maximumFractionDigits: 2,
-  }).format(price);
-}
-
-// -----------------------------
-// 5) ÜRÜN DETAYI (GEÇİCİ ÇÖZÜM)
-//    Şimdilik basit popup. Sonraki adımda
-//    ayrı ürün detay sayfası yaparız.
-// -----------------------------
-function openProductDetail(product) {
-  const name = product.name || "Ürün";
-  const price = formatPrice(product.price);
-  const sku = product.sku || "-";
-  const stock = product.stock ?? "Belirtilmemiş";
-
-  alert(
-    `${name}\n\nFiyat: ${price}\nStok: ${stock}\nSKU: ${sku}\n\nDetay sayfası bir sonraki adımda ayrı ekran olacak.`
-  );
-}
-
-// -----------------------------
-// 6) ALT MENÜ TIKLAMALARI
-// -----------------------------
-function setupBottomMenu() {
-  const links = document.querySelectorAll(".bottom-menu a");
-
-  links.forEach((link) => {
-    link.addEventListener("click", (e) => {
-      e.preventDefault();
-      const target = link.dataset.page;
-
-      switch (target) {
-        case "home":
-          // Şu an bulunduğumuz ekran
-          window.scrollTo({ top: 0, behavior: "smooth" });
-          break;
-        case "orders":
-          alert("Siparişler ekranı, ikinci adımda gerçek sayfa olarak gelecek.");
-          break;
-        case "cart":
-          alert("Sepet ekranı, ödeme entegrasyonu ile birlikte eklenecek.");
-          break;
-        case "profile":
-          alert("Profil ekranı, giriş sistemi ile birlikte aktif olacak.");
-          break;
-        default:
-          break;
-      }
+function activateCartButtons() {
+  document.querySelectorAll(".add-to-cart").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      const id = e.target.getAttribute("data-id");
+      addToCart(id);
     });
   });
 }
 
-// -----------------------------
-// 7) SAYFA YÜKLENİNCE ÇALIŞAN İLK FONKSİYONLAR
-// -----------------------------
-document.addEventListener("DOMContentLoaded", () => {
-  checkApiStatus();   // / -> sağlık ve servis adı
-  loadProducts();     // /products -> gerçek ürün listesi
-  setupBottomMenu();  // alt menü
+// Sepete ekle
+async function addToCart(productId) {
+  try {
+    const result = await apiPost("/cart/add", { id: productId });
+
+    if (result.success) {
+      CART = result.cart;
+      updateCartUI();
+    }
+  } catch (err) {
+    console.error("Sepete ekleme hatası:", err);
+  }
+}
+
+// Sepeti güncelle UI
+function updateCartUI() {
+  let totalItems = 0;
+  let subtotal = 0;
+
+  CART.forEach((item) => {
+    totalItems += item.quantity;
+    subtotal += item.quantity * item.price;
+  });
+
+  const shipping = subtotal > 0 ? 29.9 : 0;
+  const total = subtotal + shipping;
+
+  cartCount.innerText = totalItems;
+  cartSubtotal.innerText = `₺${subtotal.toFixed(2)}`;
+  cartShipping.innerText = `₺${shipping.toFixed(2)}`;
+  cartTotal.innerText = `₺${total.toFixed(2)}`;
+
+  // Header’daki sepet toplamı da güncellenebilir
+  const headerTotal = document.querySelector(".cart-total");
+  const headerBadge = document.querySelector(".cart-count-badge");
+
+  if (headerTotal) headerTotal.innerText = `₺${subtotal.toFixed(2)}`;
+  if (headerBadge) headerBadge.innerText = totalItems;
+}
+
+// ===============================
+// 4) SAYFA YÜKLENİNCE BAŞLAT
+// ===============================
+
+window.addEventListener("DOMContentLoaded", () => {
+  loadProducts();
+
+  // Başlangıç sepetini API’den çek
+  apiGet("/cart").then((res) => {
+    if (res && res.cart) {
+      CART = res.cart;
+      updateCartUI();
+    }
+  });
 });
