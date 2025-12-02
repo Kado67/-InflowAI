@@ -1,12 +1,22 @@
-/* ============================================
-   InflowAI E-Ticaret Platformu
-   app.js – API bağlantısı, ürün yükleme, sepet sistemi
-============================================ */
+// app.js – InflowAI E‑Ticaret Platformu
+// Ürünleri API'den çeker, karta basar, sepeti yönetir.
 
-// API ana adresi
-const API = "https://inflowai-api.onrender.com";
+// ===============================
+// 0) GENEL AYARLAR
+// ===============================
 
-// HTML elemanları
+// Backend ana adresi (Express tarafında /api ile başlatmıştık)
+const API_BASE = "https://inflowai-api.onrender.com/api";
+
+// Para formatı (₺)
+const formatPrice = (value) =>
+  new Intl.NumberFormat("tr-TR", {
+    style: "currency",
+    currency: "TRY",
+    minimumFractionDigits: 2,
+  }).format(Number(value || 0));
+
+// HTML elemanları (ürün gridleri)
 const featuredGrid = document.getElementById("featured-products");
 const newGrid = document.getElementById("new-products");
 const bestsellerGrid = document.getElementById("bestseller-products");
@@ -18,155 +28,269 @@ const cartSubtotal = document.getElementById("cart-subtotal");
 const cartShipping = document.getElementById("cart-shipping");
 const cartTotal = document.getElementById("cart-total");
 
+// Header sepet
+const headerTotal = document.querySelector(".cart-total");
+const headerBadge = document.querySelector(".cart-count-badge");
+
 // ===============================
-// 1) API'DEN VERİ ÇEKME
+// 1) API YARDIMCI FONKSİYONLARI
 // ===============================
 
-// GET request
 async function apiGet(endpoint) {
-  const res = await fetch(`${API}${endpoint}`);
-  return await res.json();
-}
-
-// POST request
-async function apiPost(endpoint, data = {}) {
-  const res = await fetch(`${API}${endpoint}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
-  });
-  return await res.json();
-}
-
-// ===============================
-// 2) ÜRÜNLERİ YÜKLE
-// ===============================
-
-async function loadProducts() {
   try {
-    const data = await apiGet("/products");
+    const res = await fetch(`${API_BASE}${endpoint}`, {
+      credentials: "include",
+    });
 
-    if (!data || !Array.isArray(data)) {
-      console.warn("API ürün verisi geçersiz:", data);
-      return;
+    if (!res.ok) {
+      console.error("GET hata:", res.status, res.statusText);
+      return null;
     }
 
-    // Ürünleri kategorilere göre ayır
-    const featured = data.slice(0, 8);
-    const newArrivals = data.slice(8, 16);
-    const bestseller = data.slice(16, 24);
-
-    renderProducts(featuredGrid, featured);
-    renderProducts(newGrid, newArrivals);
-    renderProducts(bestsellerGrid, bestseller);
-
+    const data = await res.json();
+    return data;
   } catch (err) {
-    console.error("Ürünler yüklenirken hata:", err);
+    console.error("GET exception:", err);
+    return null;
   }
 }
 
+async function apiPost(endpoint, body = {}) {
+  try {
+    const res = await fetch(`${API_BASE}${endpoint}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify(body),
+    });
+
+    if (!res.ok) {
+      console.error("POST hata:", res.status, res.statusText);
+      return null;
+    }
+
+    const data = await res.json();
+    return data;
+  } catch (err) {
+    console.error("POST exception:", err);
+    return null;
+  }
+}
+
+// ===============================
+// 2) ÜRÜN YÜKLEME
+// ===============================
+
+function normalizeProducts(apiData) {
+  // Backend iki şekilde dönebilir:
+  // 1) [ {...}, {...} ]
+  // 2) { success: true, data: [ {...}, {...} ] }
+  if (!apiData) return [];
+
+  if (Array.isArray(apiData)) return apiData;
+
+  if (Array.isArray(apiData.data)) return apiData.data;
+
+  return [];
+}
+
+async function loadProducts() {
+  const raw = await apiGet("/products");
+  const products = normalizeProducts(raw);
+
+  if (!products.length) {
+    console.warn("Ürün verisi boş veya hatalı:", raw);
+    renderProducts(featuredGrid, []);
+    renderProducts(newGrid, []);
+    renderProducts(bestsellerGrid, []);
+    return;
+  }
+
+  // Basit bir bölme mantığı (istersen ileride backendten direkt
+  // featured/new/bestseller endpointleri de kullanabiliriz)
+  const featured = products.slice(0, 8);
+  const newArrivals = products.slice(8, 16);
+  const bestsellers = products.slice(16, 24);
+
+  renderProducts(featuredGrid, featured);
+  renderProducts(newGrid, newArrivals);
+  renderProducts(bestsellerGrid, bestsellers);
+}
+
 // Ürünleri ekrana bas
-function renderProducts(target, products) {
-  target.innerHTML = "";
+function renderProducts(targetElement, products) {
+  if (!targetElement) return;
+
+  targetElement.innerHTML = "";
+
+  if (!products || !products.length) {
+    const empty = document.createElement("div");
+    empty.style.fontSize = "13px";
+    empty.style.color = "#777";
+    empty.textContent = "Şu anda listelenecek ürün bulunamadı.";
+    targetElement.appendChild(empty);
+    return;
+  }
 
   products.forEach((product) => {
+    const {
+      _id,
+      id,
+      name,
+      title,
+      price,
+      oldPrice,
+      image,
+      imageUrl,
+      images,
+    } = product;
+
+    const productId = _id || id;
+    const productName = name || title || "Ürün Adı";
+    const productPrice = Number(price || 0);
+    const productOldPrice = oldPrice ? Number(oldPrice) : null;
+
+    // Görsel
+    let imgSrc = "";
+    if (image) imgSrc = image;
+    else if (imageUrl) imgSrc = imageUrl;
+    else if (Array.isArray(images) && images.length) imgSrc = images[0];
+
     const card = document.createElement("div");
     card.className = "product-card";
 
     card.innerHTML = `
       <div class="product-image">
-        <img src="${product.image || ""}" alt="${product.name}">
+        ${
+          imgSrc
+            ? `<img src="${imgSrc}" alt="${productName}" />`
+            : "<span>Ürün Görseli</span>"
+        }
       </div>
 
       <div class="product-info">
-        <h3>${product.name}</h3>
+        <h3>${productName}</h3>
 
         <div class="product-prices">
-          ${product.oldPrice ? `<span class="old-price">₺${product.oldPrice}</span>` : ""}
-          <span class="new-price">₺${product.price}</span>
+          ${
+            productOldPrice
+              ? `<span class="old-price">${formatPrice(
+                  productOldPrice
+                )}</span>`
+              : ""
+          }
+          <span class="new-price">${formatPrice(productPrice)}</span>
         </div>
 
         <div class="product-actions">
-          <button class="btn small add-to-cart" data-id="${product.id}">
+          <button
+            class="btn small add-to-cart"
+            data-id="${productId || ""}"
+            data-price="${productPrice}"
+          >
             Sepete Ekle
           </button>
-          <button class="favorite-btn">❤</button>
+          <button class="favorite-btn" type="button">❤</button>
         </div>
       </div>
     `;
 
-    target.appendChild(card);
+    targetElement.appendChild(card);
   });
 
-  // Sepete ekleme butonlarını aktif et
-  activateCartButtons();
+  // Yeni render edilen butonlar için event bağla
+  attachCartButtonEvents();
 }
 
 // ===============================
 // 3) SEPET SİSTEMİ
 // ===============================
 
-function activateCartButtons() {
+function attachCartButtonEvents() {
   document.querySelectorAll(".add-to-cart").forEach((btn) => {
-    btn.addEventListener("click", (e) => {
-      const id = e.target.getAttribute("data-id");
-      addToCart(id);
+    // Aynı butona iki kere listener eklememek için kontrol
+    if (btn.dataset.bound === "true") return;
+
+    btn.addEventListener("click", async (e) => {
+      const button = e.currentTarget;
+      const productId = button.getAttribute("data-id");
+      const price = Number(button.getAttribute("data-price") || "0");
+
+      if (!productId) {
+        console.warn("Ürün ID bulunamadı.");
+        return;
+      }
+
+      // Önce backend sepetine eklemeyi dene
+      const result = await apiPost("/cart/add", { productId });
+
+      if (result && result.success && Array.isArray(result.cart)) {
+        CART = result.cart;
+      } else {
+        // Backend tarafı hazır değilse, en azından front-end sepeti çalışsın
+        const localItem = CART.find((i) => i.productId === productId);
+        if (localItem) {
+          localItem.quantity += 1;
+        } else {
+          CART.push({
+            productId,
+            price,
+            quantity: 1,
+          });
+        }
+      }
+
+      updateCartUI();
     });
+
+    btn.dataset.bound = "true";
   });
 }
 
-// Sepete ekle
-async function addToCart(productId) {
-  try {
-    const result = await apiPost("/cart/add", { id: productId });
-
-    if (result.success) {
-      CART = result.cart;
-      updateCartUI();
-    }
-  } catch (err) {
-    console.error("Sepete ekleme hatası:", err);
-  }
-}
-
-// Sepeti güncelle UI
 function updateCartUI() {
   let totalItems = 0;
   let subtotal = 0;
 
   CART.forEach((item) => {
-    totalItems += item.quantity;
-    subtotal += item.quantity * item.price;
+    const qty = Number(item.quantity || 0);
+    const price = Number(item.price || 0);
+    totalItems += qty;
+    subtotal += qty * price;
   });
 
+  // Şimdilik sabit kargo mantığı
   const shipping = subtotal > 0 ? 29.9 : 0;
   const total = subtotal + shipping;
 
-  cartCount.innerText = totalItems;
-  cartSubtotal.innerText = `₺${subtotal.toFixed(2)}`;
-  cartShipping.innerText = `₺${shipping.toFixed(2)}`;
-  cartTotal.innerText = `₺${total.toFixed(2)}`;
+  if (cartCount) cartCount.textContent = String(totalItems);
+  if (cartSubtotal) cartSubtotal.textContent = formatPrice(subtotal);
+  if (cartShipping) cartShipping.textContent = formatPrice(shipping);
+  if (cartTotal) cartTotal.textContent = formatPrice(total);
 
-  // Header’daki sepet toplamı da güncellenebilir
-  const headerTotal = document.querySelector(".cart-total");
-  const headerBadge = document.querySelector(".cart-count-badge");
+  if (headerTotal) headerTotal.textContent = formatPrice(total);
+  if (headerBadge) headerBadge.textContent = String(totalItems);
+}
 
-  if (headerTotal) headerTotal.innerText = `₺${subtotal.toFixed(2)}`;
-  if (headerBadge) headerBadge.innerText = totalItems;
+// Backend sepetini yükle (kullanıcı giriş yaptıysa)
+async function loadCartFromApi() {
+  const data = await apiGet("/cart");
+
+  if (data && Array.isArray(data.cart)) {
+    CART = data.cart;
+  } else if (data && Array.isArray(data)) {
+    // Backend direkt [] döndürürse
+    CART = data;
+  }
+
+  updateCartUI();
 }
 
 // ===============================
-// 4) SAYFA YÜKLENİNCE BAŞLAT
+// 4) SAYFA YÜKLENİNCE
 // ===============================
 
 window.addEventListener("DOMContentLoaded", () => {
   loadProducts();
-
-  // Başlangıç sepetini API’den çek
-  apiGet("/cart").then((res) => {
-    if (res && res.cart) {
-      CART = res.cart;
-      updateCartUI();
-    }
-  });
+  loadCartFromApi();
+  updateCartUI(); // Başlangıçta sıfır değerleri göster
 });
