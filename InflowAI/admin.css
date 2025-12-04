@@ -1,1 +1,167 @@
+:root {
+  --admin-bg: #f5f5f7;
+  --admin-sidebar-bg: #20232a;
+  --admin-sidebar-text: #f5f5f5;
+  --admin-primary: #f27a1a;
+  --admin-primary-dark: #d96507;
+  --admin-border: #e0e0e0;
+  --admin-card-bg: #ffffff;
+  --radius-md: 6px;
+  --shadow-soft: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
 
+body {
+  background-color: var(--admin-bg);
+}
+
+.admin-wrapper {
+  display: flex;
+  min-height: 100vh;
+}
+
+.admin-sidebar {
+  width: 240px;
+  background: var(--admin-sidebar-bg);
+  color: var(--admin-sidebar-text);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.logo-mark {
+  background: var(--admin-primary);
+  color: white;
+  padding: 6px 8px;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+.admin-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: auto;
+}
+
+.nav-item {
+  background: none;
+  border: none;
+  color: #ccc;
+  text-align: left;
+  padding: 8px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.nav-item.active,
+.nav-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.admin-sidebar-footer {
+  margin-top: 20px;
+  font-size: 12px;
+}
+
+.admin-sidebar-footer a {
+  color: #ccc;
+}
+
+.admin-main {
+  flex: 1;
+  padding: 20px;
+}
+
+.admin-page {
+  display: none;
+}
+
+.admin-page.active {
+  display: block;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+.stat-card {
+  background: var(--admin-card-bg);
+  padding: 14px;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-soft);
+}
+
+.stat-card p {
+  font-size: 22px;
+  font-weight: bold;
+  margin: 0;
+}
+
+.table-card,
+.form-card {
+  background: white;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-soft);
+  margin-bottom: 16px;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.admin-table th,
+.admin-table td {
+  border-bottom: 1px solid #eee;
+  padding: 8px;
+}
+
+.form-row {
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.btn {
+  padding: 8px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  border: none;
+}
+
+.btn.primary {
+  background: var(--admin-primary);
+  color: white;
+}
+
+.btn.primary:hover {
+  background: var(--admin-primary-dark);
+}
+
+.btn.ghost {
+  background: white;
+  border: 1px solid #ddd;
+}
+
+.btn.small {
+  font-size: 12px;
+  padding: 5px 10px;
+  }
