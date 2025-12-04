@@ -1,1 +1,45 @@
+// vendor.js – Mağaza Aç (Tedarikçi Başvurusu)
 
+const API_BASE = "https://inflowai-api.onrender.com/api";
+
+const form = document.getElementById("vendor-form");
+const msg = document.getElementById("vendor-message");
+
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  msg.textContent = "";
+  msg.style.color = "#555";
+
+  const body = {
+    name: document.getElementById("vendor-name").value,
+    ownerName: document.getElementById("vendor-owner").value,
+    email: document.getElementById("vendor-email").value,
+    phone: document.getElementById("vendor-phone").value,
+    iban: document.getElementById("vendor-iban").value,
+    description: document.getElementById("vendor-desc").value,
+  };
+
+  try {
+    const res = await fetch(`${API_BASE}/vendors`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+
+    const data = await res.json();
+
+    if (!data.success) {
+      msg.textContent = data.message || "Başvuru kaydedilemedi.";
+      msg.style.color = "#c62828";
+      return;
+    }
+
+    msg.textContent = "Başvurun alındı kurban 😊";
+    msg.style.color = "#2e7d32";
+    form.reset();
+
+  } catch (err) {
+    msg.textContent = "Sunucu hatası, daha sonra tekrar dene.";
+    msg.style.color = "#c62828";
+  }
+});
