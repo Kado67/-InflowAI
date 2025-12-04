@@ -242,7 +242,7 @@ async function loadCartFromApi() {
   updateCartUI();
 }
 
-// ---------- ALT NAV / MAĞAZA AÇ LINKLERİ ----------
+// ---------- ALT NAV / MAĞAZA AÇ ----------
 
 function setupBottomNav() {
   const bottomItems = document.querySelectorAll(".bottom-nav-item");
@@ -281,8 +281,8 @@ function setupOpenStoreLinks() {
   links.forEach((link) => {
     link.addEventListener("click", (e) => {
       e.preventDefault();
-      // İleride gerçek "Mağaza Aç / Tedarikçi Kayıt" sayfasına yönlendireceğiz
-      alert("Tedarikçi başvuru sayfası yakında aktif olacak, kurban. 😊");
+      // İleride tedarikçi kayıt sayfasına yönlendireceğiz (admin panel hazır olunca)
+      alert("Kurban, tedarikçi başvuru sayfası bir sonraki adımda açılacak. 😊");
     });
   });
 }
