@@ -1,1 +1,155 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <title>InflowAI · Admin Paneli</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="admin.css" />
+  <script src="admin.js" defer></script>
+</head>
+<body>
+  <div class="admin-wrapper">
+    <aside class="admin-sidebar">
+      <div class="admin-logo">
+        <span class="logo-mark">IA</span>
+        <span class="logo-text">InflowAI Admin</span>
+      </div>
+
+      <nav class="admin-nav">
+        <button class="nav-item active" data-page="dashboard">Genel Bakış</button>
+        <button class="nav-item" data-page="products">Ürünler</button>
+        <button class="nav-item" data-page="vendors">Tedarikçiler</button>
+      </nav>
+
+      <div class="admin-sidebar-footer">
+        <a href="index.html">🛒 Platforma Dön</a>
+      </div>
+    </aside>
+
+    <main class="admin-main">
+
+      <section class="admin-page active" id="page-dashboard">
+        <h1>Genel Bakış</h1>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <h3>Toplam Ürün</h3>
+            <p id="stat-products">-</p>
+          </div>
+          <div class="stat-card">
+            <h3>Tedarikçi Sayısı</h3>
+            <p id="stat-vendors">-</p>
+          </div>
+          <div class="stat-card">
+            <h3>Aktif Ürünler</h3>
+            <p id="stat-active-products">-</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="admin-page" id="page-products">
+        <div class="page-header">
+          <h1>Ürün Yönetimi</h1>
+          <button class="btn primary" id="btn-new-product">Yeni Ürün</button>
+        </div>
+
+        <div class="form-card" id="product-form-card" hidden>
+          <h2 id="product-form-title">Yeni Ürün Ekle</h2>
+
+          <form id="product-form">
+            <input type="hidden" id="product-id" />
+
+            <div class="form-row">
+              <label>Ürün Adı</label>
+              <input type="text" id="product-name" required />
+            </div>
+
+            <div class="form-row">
+              <label>Slug</label>
+              <input type="text" id="product-slug" required />
+            </div>
+
+            <div class="form-row">
+              <label>Fiyat</label>
+              <input type="number" id="product-price" required />
+            </div>
+
+            <div class="form-row">
+              <label>Eski Fiyat</label>
+              <input type="number" id="product-oldPrice" />
+            </div>
+
+            <div class="form-row">
+              <label>Stok</label>
+              <input type="number" id="product-stock" />
+            </div>
+
+            <div class="form-row">
+              <label>Görsel URL</label>
+              <input type="text" id="product-image" />
+            </div>
+
+            <div class="form-row">
+              <label>Açıklama</label>
+              <textarea id="product-description"></textarea>
+            </div>
+
+            <div class="form-row checkbox-row">
+              <label>
+                <input type="checkbox" id="product-active" checked /> Aktif
+              </label>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn primary">Kaydet</button>
+              <button type="button" class="btn ghost" id="product-form-cancel">İptal</button>
+            </div>
+
+            <p id="product-form-message"></p>
+          </form>
+        </div>
+
+        <div class="table-card">
+          <h2>Ürün Listesi</h2>
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Ad</th>
+                <th>Fiyat</th>
+                <th>Stok</th>
+                <th>Aktif</th>
+                <th>İşlem</th>
+              </tr>
+            </thead>
+            <tbody id="products-table-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="admin-page" id="page-vendors">
+        <div class="page-header">
+          <h1>Tedarikçi Yönetimi</h1>
+        </div>
+
+        <div class="table-card">
+          <h2>Tedarikçi Listesi</h2>
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Mağaza</th>
+                <th>Email</th>
+                <th>Telefon</th>
+                <th>Durum</th>
+              </tr>
+            </thead>
+            <tbody id="vendors-table-body"></tbody>
+          </table>
+        </div>
+
+      </section>
+
+    </main>
+  </div>
+</body>
+  </html>
