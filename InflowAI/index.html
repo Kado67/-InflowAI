@@ -2,366 +2,91 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8" />
-  <title>InflowAI · Akıllı E‑Ticaret Platformu</title>
+  <title>InflowAI · Mağaza Aç (Tedarikçi Başvurusu)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta
-    name="description"
-    content="InflowAI ·  satıcılı akıllı e‑ticaret platformu. Gerçek ziyaretçi, gerçek sipariş."
-  />
 
   <link rel="stylesheet" href="style.css" />
-  <script src="app.js" defer></script>
+  <link rel="stylesheet" href="vendor.css" />
+  <script src="vendor.js" defer></script>
 </head>
 <body>
   <div class="page-wrapper">
-
-    <!-- TOP BAR -->
-    <div class="top-bar">
-      <div class="top-bar-inner">
-        <div class="top-bar-left">
-          <span>InflowAI E‑Ticaret · Akıllı Mağaza</span>
-        </div>
-        <div class="top-bar-right">
-          <a href="#" class="top-link" id="open-store-top">Mağaza Aç</a>
-          <a href="#" class="top-link">Yardım / SSS</a>
-          <a href="#" class="top-link">Sipariş Takip</a>
-          <button class="lang-switch" type="button">TR | EN</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- HEADER -->
     <header class="main-header">
       <div class="container header-inner">
         <div class="header-logo">
-          <a href="/" class="logo-link" aria-label="InflowAI Anasayfa">
+          <a href="index.html" class="logo-link">
             <span class="logo-mark">IA</span>
             <span class="logo-text">InflowAI</span>
           </a>
         </div>
-
-        <div class="header-search">
-          <form class="search-form" id="main-search-form" role="search">
-            <div class="search-category">
-              <label class="visually-hidden" for="search-category">
-                Kategori
-              </label>
-              <select id="search-category" name="category">
-                <option value="all">Tüm Kategoriler</option>
-                <option value="elektronik">Elektronik</option>
-                <option value="moda">Moda</option>
-                <option value="ev-yasam">Ev &amp; Yaşam</option>
-              </select>
-            </div>
-            <label class="visually-hidden" for="search-input">
-              Ürün, kategori veya marka ara
-            </label>
-            <input
-              id="search-input"
-              type="text"
-              name="q"
-              placeholder="Ürün, kategori veya marka ara…"
-              autocomplete="off"
-            />
-            <button type="submit" class="search-button">Ara</button>
-          </form>
-        </div>
-
         <div class="header-actions">
-          <a href="#" class="header-link account-link">
-            <span class="icon" aria-hidden="true">👤</span>
-            <span>Hesabım</span>
-          </a>
-          <a href="#" class="header-link favorites-link">
-            <span class="icon" aria-hidden="true">❤</span>
-            <span>Favorilerim</span>
-          </a>
-          <button type="button" class="header-cart" id="header-cart-button">
-            <div class="cart-icon" aria-hidden="true">🛒</div>
-            <div class="cart-info">
-              <span class="cart-title">Sepetim</span>
-              <span class="cart-total" id="header-cart-total">₺0,00</span>
-            </div>
-            <span class="cart-count-badge" id="header-cart-count">0</span>
-          </button>
+          <span style="font-size:13px;color:#777;">Tedarikçi Başvuru Formu</span>
         </div>
       </div>
     </header>
 
-    <!-- ANA NAV -->
-    <nav class="main-nav" aria-label="Ana menü">
-      <div class="container nav-inner">
-        <button class="nav-all-categories" id="nav-all-categories">
-          ☰ Tüm Kategoriler
-        </button>
-        <ul class="nav-menu">
-          <li><a href="#" class="active">Anasayfa</a></li>
-          <li><a href="#">Yeni Gelenler</a></li>
-          <li><a href="#">Çok Satanlar</a></li>
-          <li><a href="#">Kampanyalar</a></li>
-          <li><a href="#">Elektronik</a></li>
-          <li><a href="#">Moda</a></li>
-          <li><a href="#">Ev &amp; Yaşam</a></li>
-          <li><a href="#">Fırsatlar</a></li>
-        </ul>
-      </div>
-    </nav>
-
-    <!-- ANA İÇERİK -->
     <main class="main-content">
-      <div class="container main-grid">
+      <div class="container vendor-page">
+        <div class="vendor-card">
+          <h1>Mağaza Aç · Tedarikçi Başvurusu</h1>
+          <p class="vendor-subtitle">
+            Platformda satış yapmak için aşağıdaki bilgileri doldurun.
+          </p>
 
-        <!-- KATEGORİ LİSTESİ -->
-        <aside class="side-categories" aria-label="Kategoriler">
-          <h3 class="side-title">Kategoriler</h3>
-          <ul class="category-list" id="category-list">
-            <li><a href="#">Telefon &amp; Aksesuar</a></li>
-            <li><a href="#">Bilgisayar &amp; Tablet</a></li>
-            <li><a href="#">TV &amp; Ses Sistemleri</a></li>
-            <li><a href="#">Beyaz Eşya</a></li>
-            <li><a href="#">Moda</a></li>
-            <li><a href="#">Ayakkabı &amp; Çanta</a></li>
-            <li><a href="#">Ev &amp; Dekorasyon</a></li>
-            <li><a href="#">Kozmetik &amp; Bakım</a></li>
-            <li><a href="#">Spor &amp; Outdoor</a></li>
-            <li class="all-link"><a href="#">Tüm Kategoriler ›</a></li>
-          </ul>
-        </aside>
-
-        <!-- HERO / KAMPANYA -->
-        <section class="hero-slider" aria-label="Kampanyalar">
-          <div class="hero-slide" data-slide="0">
-            <div class="hero-text">
-              <p class="hero-kicker">INFLOWAI FIRSATLARI</p>
-              <h1 class="hero-title">Akıllı Mağaza, Gerçek Ziyaretçi.</h1>
-              <p class="hero-subtitle">
-                Gerçek sipariş veren ziyaretçiler, tedarikçiler için otomatik komisyon sistemi
-                ve çok satıcılı altyapı. Hepsi InflowAI altında.
-              </p>
-              <div class="hero-buttons">
-                <a href="#" class="btn primary">Günün Fırsatları</a>
-                <a href="#" class="btn ghost" id="open-store-hero">Mağaza Aç</a>
-              </div>
+          <form id="vendor-form" class="vendor-form">
+            <div class="form-row">
+              <label for="vendor-name">Mağaza Adı</label>
+              <input type="text" id="vendor-name" required />
             </div>
-            <div class="hero-image">
-              <div class="hero-image-placeholder">
-                Kampanya Görseli Alanı
-              </div>
+
+            <div class="form-row">
+              <label for="vendor-owner">Ad Soyad</label>
+              <input type="text" id="vendor-owner" required />
             </div>
-          </div>
 
-          <div class="hero-dots" role="tablist">
-            <button class="dot active" data-slide-to="0" aria-label="1. görsel"></button>
-            <button class="dot" data-slide-to="1" aria-label="2. görsel"></button>
-            <button class="dot" data-slide-to="2" aria-label="3. görsel"></button>
-          </div>
-        </section>
+            <div class="form-row">
+              <label for="vendor-email">E‑posta</label>
+              <input type="email" id="vendor-email" required />
+            </div>
 
-        <!-- SAĞ BANNERLAR -->
-        <aside class="side-banners" aria-label="Bilgi kartları">
-          <div class="banner-card">
-            <h3>Aynı Gün Kargo</h3>
-            <p>16:00'ya kadar verilen siparişler aynı gün kargoda.</p>
-            <span class="banner-icon">🚚</span>
-          </div>
-          <div class="banner-card">
-            <h3>InflowAI ile Mağaza Aç</h3>
-            <p>5 dakikada mağazana giriş yap, ürünlerini ekle, satışa başla.</p>
-            <a href="#" class="banner-link" id="open-store-banner">Hemen Başla ›</a>
-          </div>
-        </aside>
+            <div class="form-row">
+              <label for="vendor-phone">Telefon</label>
+              <input type="tel" id="vendor-phone" />
+            </div>
+
+            <div class="form-row">
+              <label for="vendor-iban">IBAN (opsiyonel)</label>
+              <input type="text" id="vendor-iban" />
+            </div>
+
+            <div class="form-row">
+              <label for="vendor-desc">Mağaza Açıklaması</label>
+              <textarea id="vendor-desc" rows="3"></textarea>
+            </div>
+
+            <div class="form-row checkbox-row">
+              <label>
+                <input type="checkbox" id="vendor-terms" required />
+                Kullanım şartlarını kabul ediyorum.
+              </label>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn primary">Başvuruyu Gönder</button>
+              <a href="index.html" class="btn ghost">Anasayfaya Dön</a>
+            </div>
+
+            <p class="vendor-info-text" id="vendor-message"></p>
+          </form>
+        </div>
       </div>
-
-      <!-- GÜVEN ŞERİDİ -->
-      <section class="features-strip" aria-label="InflowAI özellikleri">
-        <div class="container features-grid">
-          <div class="feature-item">
-            <div class="feature-icon">⚡</div>
-            <div class="feature-text">
-              <h4>Hızlı Teslimat</h4>
-              <p>Çoklu kargo entegrasyonu ile hızlı gönderim.</p>
-            </div>
-          </div>
-          <div class="feature-item">
-            <div class="feature-icon">🔒</div>
-            <div class="feature-text">
-              <h4>Güvenli Ödeme</h4>
-              <p>İyzico altyapısı ve 3D Secure.</p>
-            </div>
-          </div>
-          <div class="feature-item">
-            <div class="feature-icon">↩</div>
-            <div class="feature-text">
-              <h4>Kolay İade</h4>
-              <p>Esnek iade ve değişim koşulları.</p>
-            </div>
-          </div>
-          <div class="feature-item">
-            <div class="feature-icon">📊</div>
-            <div class="feature-text">
-              <h4>Akıllı Raporlama</h4>
-              <p>Tedarikçiler için anlık performans raporları.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ÜRÜNLER + SEPET ÖZETİ -->
-      <section class="products-section">
-        <div class="container products-layout">
-
-          <div class="products-main">
-
-            <section class="products-block" aria-labelledby="featured-title">
-              <div class="products-header">
-                <h2 id="featured-title">Öne Çıkan Ürünler</h2>
-                <div class="products-sort">
-                  <label for="sort-featured">Sırala:</label>
-                  <select id="sort-featured" name="sort-featured">
-                    <option value="popular">En Popüler</option>
-                    <option value="new">En Yeni</option>
-                    <option value="price-asc">Fiyat (Artan)</option>
-                    <option value="price-desc">Fiyat (Azalan)</option>
-                  </select>
-                </div>
-              </div>
-              <div class="product-grid" id="featured-products">
-                <article class="product-card product-placeholder">
-                  <div class="product-image">Ürünler yükleniyor…</div>
-                  <div class="product-info">
-                    <h3 class="product-title">Örnek Ürün</h3>
-                    <div class="product-prices">
-                      <span class="old-price">₺999,90</span>
-                      <span class="new-price">₺749,90</span>
-                    </div>
-                    <div class="product-actions">
-                      <button class="btn small">Sepete Ekle</button>
-                      <button class="favorite-btn" type="button">❤</button>
-                    </div>
-                  </div>
-                </article>
-              </div>
-            </section>
-
-            <section class="products-block" aria-labelledby="new-title">
-              <div class="products-header">
-                <h2 id="new-title">Yeni Gelenler</h2>
-              </div>
-              <div class="product-grid" id="new-products"></div>
-            </section>
-
-            <section class="products-block" aria-labelledby="bestseller-title">
-              <div class="products-header">
-                <h2 id="bestseller-title">Çok Satanlar</h2>
-              </div>
-              <div class="product-grid" id="bestseller-products"></div>
-            </section>
-
-          </div>
-
-          <!-- SEPET ÖZETİ -->
-          <aside class="cart-summary" aria-label="Sepet özeti">
-            <h3>Sepet Özeti</h3>
-            <div class="cart-summary-row">
-              <span>Toplam Ürün</span>
-              <span id="cart-items-count">0</span>
-            </div>
-            <div class="cart-summary-row">
-              <span>Ara Toplam</span>
-              <span id="cart-subtotal">₺0,00</span>
-            </div>
-            <div class="cart-summary-row">
-              <span>Kargo</span>
-              <span id="cart-shipping">₺0,00</span>
-            </div>
-            <div class="cart-summary-row total">
-              <span>Genel Toplam</span>
-              <span id="cart-total">₺0,00</span>
-            </div>
-
-            <div class="cart-summary-actions">
-              <a href="#" class="btn ghost full-width" id="cart-view-button">
-                Sepeti Gör
-              </a>
-              <a href="#" class="btn primary full-width" id="cart-checkout-button">
-                Satın Al
-              </a>
-            </div>
-
-            <p class="cart-info-text">
-              Ödeme altyapısı İyzico ile bağlanacak. Şu anda sepet test modunda çalışmaktadır.
-            </p>
-          </aside>
-        </div>
-      </section>
     </main>
 
-    <!-- MOBİL ALT NAV -->
-    <nav class="bottom-nav" aria-label="Mobil alt menü">
-      <button type="button" class="bottom-nav-item active" data-target="home">
-        <span aria-hidden="true">🏠</span>
-        <span>Anasayfa</span>
-      </button>
-      <button type="button" class="bottom-nav-item" data-target="categories">
-        <span aria-hidden="true">📂</span>
-        <span>Kategoriler</span>
-      </button>
-      <button
-        type="button"
-        class="bottom-nav-item"
-        data-target="cart"
-        id="bottom-cart-button"
-      >
-        <span aria-hidden="true">🛒</span>
-        <span>Sepet</span>
-      </button>
-      <button type="button" class="bottom-nav-item" data-target="account">
-        <span aria-hidden="true">👤</span>
-        <span>Hesap</span>
-      </button>
-    </nav>
-
-    <!-- FOOTER -->
     <footer class="site-footer">
-      <div class="container footer-grid">
-        <div class="footer-col">
-          <h4>InflowAI</h4>
-          <ul>
-            <li><a href="#">Biz Kimiz?</a></li>
-            <li><a href="#">InflowAI Platformu</a></li>
-            <li><a href="#" id="open-store-footer">Mağaza Aç</a></li>
-          </ul>
-        </div>
-        <div class="footer-col">
-          <h4>Müşteri Hizmetleri</h4>
-          <ul>
-            <li><a href="#">Sık Sorulan Sorular</a></li>
-            <li><a href="#">İade &amp; Değişim</a></li>
-            <li><a href="#">Kargo &amp; Teslimat</a></li>
-          </ul>
-        </div>
-        <div class="footer-col">
-          <h4>Kurumsal</h4>
-          <ul>
-            <li><a href="#">Tedarikçi Başvurusu</a></li>
-            <li><a href="#">Kurumsal İşbirlikleri</a></li>
-            <li><a href="#">Reklam &amp; Sponsor</a></li>
-          </ul>
-        </div>
-        <div class="footer-col">
-          <h4>Bizi Takip Et</h4>
-          <ul class="social-list">
-            <li><a href="#">X</a></li>
-            <li><a href="#">Instagram</a></li>
-            <li><a href="#">YouTube</a></li>
-          </ul>
-        </div>
-      </div>
       <div class="footer-bottom">
-        <p>© 2025 InflowAI · Tüm hakları saklıdır.</p>
+        <p>© 2025 InflowAI · Mağaza Aç Başvurusu</p>
       </div>
     </footer>
-
   </div>
 </body>
-                        </html>
+</html>
