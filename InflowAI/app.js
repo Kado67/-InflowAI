@@ -5,7 +5,7 @@
 // 0) GENEL AYARLAR
 // ===============================
 
-// Backend ana adresi (Express tarafında /api ile başlatmıştık)
+// Backend ana adresi
 const API_BASE = "https://inflowai-api.onrender.com/api";
 
 // Para formatı (₺)
@@ -29,8 +29,8 @@ const cartShipping = document.getElementById("cart-shipping");
 const cartTotal = document.getElementById("cart-total");
 
 // Header sepet
-const headerTotal = document.querySelector(".cart-total");
-const headerBadge = document.querySelector(".cart-count-badge");
+const headerTotal = document.getElementById("header-cart-total");
+const headerBadge = document.getElementById("header-cart-count");
 
 // ===============================
 // 1) API YARDIMCI FONKSİYONLARI
@@ -82,13 +82,15 @@ async function apiPost(endpoint, body = {}) {
 // ===============================
 
 function normalizeProducts(apiData) {
-  // Backend iki şekilde dönebilir:
+  // Backend birkaç formatta dönebilir:
   // 1) [ {...}, {...} ]
-  // 2) { success: true, data: [ {...}, {...} ] }
+  // 2) { success: true, products: [ {...}, {...} ] }
+  // 3) { success: true, data: [ {...}, {...} ] }
   if (!apiData) return [];
 
   if (Array.isArray(apiData)) return apiData;
 
+  if (Array.isArray(apiData.products)) return apiData.products;
   if (Array.isArray(apiData.data)) return apiData.data;
 
   return [];
@@ -106,7 +108,7 @@ async function loadProducts() {
     return;
   }
 
-  // Basit bir bölme mantığı (istersen ileride backendten direkt
+  // Basit bir bölme mantığı (ileride backend’ten direkt
   // featured/new/bestseller endpointleri de kullanabiliriz)
   const featured = products.slice(0, 8);
   const newArrivals = products.slice(8, 16);
@@ -156,8 +158,9 @@ function renderProducts(targetElement, products) {
     else if (imageUrl) imgSrc = imageUrl;
     else if (Array.isArray(images) && images.length) imgSrc = images[0];
 
-    const card = document.createElement("div");
+    const card = document.createElement("article");
     card.className = "product-card";
+    card.setAttribute("data-product-id", productId || "");
 
     card.innerHTML = `
       <div class="product-image">
@@ -169,7 +172,7 @@ function renderProducts(targetElement, products) {
       </div>
 
       <div class="product-info">
-        <h3>${productName}</h3>
+        <h3 class="product-title">${productName}</h3>
 
         <div class="product-prices">
           ${
@@ -185,12 +188,15 @@ function renderProducts(targetElement, products) {
         <div class="product-actions">
           <button
             class="btn small add-to-cart"
+            type="button"
             data-id="${productId || ""}"
             data-price="${productPrice}"
           >
             Sepete Ekle
           </button>
-          <button class="favorite-btn" type="button">❤</button>
+          <button class="favorite-btn" type="button" aria-label="Favorilere ekle">
+            ❤
+          </button>
         </div>
       </div>
     `;
