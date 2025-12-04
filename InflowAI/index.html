@@ -5,7 +5,9 @@
   <title>InflowAI E-Ticaret Platformu</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- Tasarım için CSS (sonra dolduracağız) -->
+  <meta name="description" content="InflowAI E-Ticaret · Akıllı Mağaza. Gerçek sipariş veren ziyaretçiler, çok satıcılı altyapı ve gelişen akıllı platform." />
+
+  <!-- Tasarım için CSS -->
   <link rel="stylesheet" href="style.css" />
 
   <!-- İleride API ve dinamik işlemler için JS -->
@@ -22,10 +24,12 @@
           <span>InflowAI E-Ticaret · Akıllı Mağaza</span>
         </div>
         <div class="top-bar-right">
-          <a href="#">Mağaza Aç</a>
-          <a href="#">Yardım / SSS</a>
-          <a href="#">Sipariş Takip</a>
-          <span class="lang-switch">TR | EN</span>
+          <a href="#" class="top-link">Mağaza Aç</a>
+          <a href="#" class="top-link">Yardım / SSS</a>
+          <a href="#" class="top-link">Sipariş Takip</a>
+          <button type="button" class="lang-switch" aria-label="Dil değiştir">
+            TR | EN
+          </button>
         </div>
       </div>
     </div>
@@ -34,26 +38,40 @@
     <header class="main-header">
       <div class="container header-inner">
         <div class="header-logo">
-          <a href="#">
+          <a href="/" class="logo-link" aria-label="InflowAI Anasayfa">
             <span class="logo-mark">IA</span>
             <span class="logo-text">InflowAI</span>
           </a>
         </div>
 
         <div class="header-search">
-          <form class="search-form" action="#" method="get">
+          <form
+            class="search-form"
+            id="main-search-form"
+            action="#"
+            method="get"
+            role="search"
+          >
             <div class="search-category">
-              <select name="category">
+              <label class="visually-hidden" for="search-category">
+                Kategori seçin
+              </label>
+              <select id="search-category" name="category">
                 <option value="all">Tüm Kategoriler</option>
                 <option value="elektronik">Elektronik</option>
                 <option value="moda">Moda</option>
                 <option value="ev-yasam">Ev &amp; Yaşam</option>
               </select>
             </div>
+            <label class="visually-hidden" for="search-input">
+              Ürün, kategori veya marka ara
+            </label>
             <input
+              id="search-input"
               type="text"
               name="q"
               placeholder="Ürün, kategori veya marka ara…"
+              autocomplete="off"
             />
             <button type="submit" class="search-button">
               Ara
@@ -62,30 +80,30 @@
         </div>
 
         <div class="header-actions">
-          <a href="#" class="header-link account-link">
-            <span class="icon">👤</span>
+          <a href="#" class="header-link account-link" id="header-account-link">
+            <span class="icon" aria-hidden="true">👤</span>
             <span>Hesabım</span>
           </a>
-          <a href="#" class="header-link favorites-link">
-            <span class="icon">❤</span>
+          <a href="#" class="header-link favorites-link" id="header-favorites-link">
+            <span class="icon" aria-hidden="true">❤</span>
             <span>Favorilerim</span>
           </a>
-          <a href="#" class="header-cart">
-            <div class="cart-icon">🛒</div>
+          <button type="button" class="header-cart" id="header-cart-button">
+            <div class="cart-icon" aria-hidden="true">🛒</div>
             <div class="cart-info">
               <span class="cart-title">Sepetim</span>
-              <span class="cart-total">₺0,00</span>
+              <span class="cart-total" id="header-cart-total">₺0,00</span>
             </div>
-            <span class="cart-count-badge">0</span>
-          </a>
+            <span class="cart-count-badge" id="header-cart-count">0</span>
+          </button>
         </div>
       </div>
     </header>
 
     <!-- 3) ALT MENÜ BAR (NAVİGASYON) -->
-    <nav class="main-nav">
+    <nav class="main-nav" aria-label="Ana menü">
       <div class="container nav-inner">
-        <button class="nav-all-categories">
+        <button class="nav-all-categories" id="nav-all-categories">
           ☰ Tüm Kategoriler
         </button>
         <ul class="nav-menu">
@@ -106,9 +124,9 @@
       <div class="container main-grid">
 
         <!-- SOL KATEGORİ MENÜSÜ -->
-        <aside class="side-categories">
+        <aside class="side-categories" aria-label="Kategori listesi">
           <h3 class="side-title">Kategoriler</h3>
-          <ul class="category-list">
+          <ul class="category-list" id="category-list">
             <li><a href="#">Telefon &amp; Aksesuar</a></li>
             <li><a href="#">Bilgisayar &amp; Tablet</a></li>
             <li><a href="#">TV &amp; Ses Sistemleri</a></li>
@@ -123,8 +141,8 @@
         </aside>
 
         <!-- ORTA: ANA SLIDER ALANI -->
-        <section class="hero-slider">
-          <div class="hero-slide">
+        <section class="hero-slider" aria-label="Kampanyalar">
+          <div class="hero-slide" data-slide="0">
             <div class="hero-text">
               <p class="hero-kicker">InflowAI Fırsatları</p>
               <h1 class="hero-title">Akıllı Mağaza, Gerçek Ziyaretçi.</h1>
@@ -138,26 +156,27 @@
               </div>
             </div>
             <div class="hero-image">
-              <!-- Buraya örnek kampanya görseli için arka plan / img gelecek -->
               <div class="hero-image-placeholder">
                 Kampanya Görseli
               </div>
             </div>
           </div>
 
-          <div class="hero-dots">
-            <button class="dot active"></button>
-            <button class="dot"></button>
-            <button class="dot"></button>
+          <!-- İleride ekstra slide eklenecekse JS ile klonlanabilir -->
+
+          <div class="hero-dots" role="tablist" aria-label="Slider noktaları">
+            <button class="dot active" data-slide-to="0" aria-label="1. görsel"></button>
+            <button class="dot" data-slide-to="1" aria-label="2. görsel"></button>
+            <button class="dot" data-slide-to="2" aria-label="3. görsel"></button>
           </div>
         </section>
 
         <!-- SAĞ: İKİ KÜÇÜK BANNER -->
-        <aside class="side-banners">
+        <aside class="side-banners" aria-label="Öne çıkan özellikler">
           <div class="banner-card">
             <h3>Aynı Gün Kargo</h3>
             <p>16:00’ya kadar verilen siparişlerde hızlı teslimat.</p>
-            <span class="banner-icon">🚚</span>
+            <span class="banner-icon" aria-hidden="true">🚚</span>
           </div>
           <div class="banner-card">
             <h3>InflowAI ile Mağaza Aç</h3>
@@ -169,31 +188,31 @@
       </div>
 
       <!-- 5) GÜVEN & ÖZELLİK İKONLARI -->
-      <section class="features-strip">
+      <section class="features-strip" aria-label="Platform özellikleri">
         <div class="container features-grid">
           <div class="feature-item">
-            <div class="feature-icon">⚡</div>
+            <div class="feature-icon" aria-hidden="true">⚡</div>
             <div class="feature-text">
               <h4>Hızlı Teslimat</h4>
               <p>Aynı gün kargo seçenekleri.</p>
             </div>
           </div>
           <div class="feature-item">
-            <div class="feature-icon">🔒</div>
+            <div class="feature-icon" aria-hidden="true">🔒</div>
             <div class="feature-text">
               <h4>Güvenli Ödeme</h4>
               <p>3D Secure &amp; SSL ile koruma.</p>
             </div>
           </div>
           <div class="feature-item">
-            <div class="feature-icon">↩</div>
+            <div class="feature-icon" aria-hidden="true">↩</div>
             <div class="feature-text">
               <h4>Kolay İade</h4>
               <p>14 gün koşulsuz iade.</p>
             </div>
           </div>
           <div class="feature-item">
-            <div class="feature-icon">📞</div>
+            <div class="feature-icon" aria-hidden="true">📞</div>
             <div class="feature-text">
               <h4>7/24 Destek</h4>
               <p>InflowAI destek ekibi yanında.</p>
@@ -210,9 +229,9 @@
           <div class="products-main">
 
             <!-- ÖNE ÇIKAN ÜRÜNLER -->
-            <div class="products-block">
+            <section class="products-block" aria-labelledby="featured-title">
               <div class="products-header">
-                <h2>Öne Çıkan Ürünler</h2>
+                <h2 id="featured-title">Öne Çıkan Ürünler</h2>
                 <div class="products-sort">
                   <label for="sort-featured">Sırala:</label>
                   <select id="sort-featured" name="sort-featured">
@@ -225,48 +244,52 @@
               </div>
 
               <div class="product-grid" id="featured-products">
-                <!-- Ürün kartları JS ile buraya yüklenecek -->
-                <div class="product-card product-placeholder">
+                <!-- JS için template bırakıyoruz -->
+                <article class="product-card product-placeholder" data-product-template="featured">
                   <div class="product-image">Ürün Görseli</div>
                   <div class="product-info">
-                    <h3>Örnek Ürün Adı</h3>
+                    <h3 class="product-title">Örnek Ürün Adı</h3>
                     <div class="product-prices">
                       <span class="old-price">₺999,90</span>
                       <span class="new-price">₺749,90</span>
                     </div>
                     <div class="product-actions">
-                      <button class="btn small add-to-cart">Sepete Ekle</button>
-                      <button class="favorite-btn">❤</button>
+                      <button class="btn small add-to-cart" type="button">
+                        Sepete Ekle
+                      </button>
+                      <button class="favorite-btn" type="button" aria-label="Favorilere ekle">
+                        ❤
+                      </button>
                     </div>
                   </div>
-                </div>
+                </article>
               </div>
-            </div>
+            </section>
 
             <!-- YENİ GELENLER -->
-            <div class="products-block">
+            <section class="products-block" aria-labelledby="new-title">
               <div class="products-header">
-                <h2>Yeni Gelenler</h2>
+                <h2 id="new-title">Yeni Gelenler</h2>
               </div>
               <div class="product-grid" id="new-products">
                 <!-- Ürün kartları JS ile yüklenecek -->
               </div>
-            </div>
+            </section>
 
             <!-- ÇOK SATANLAR -->
-            <div class="products-block">
+            <section class="products-block" aria-labelledby="bestseller-title">
               <div class="products-header">
-                <h2>Çok Satanlar</h2>
+                <h2 id="bestseller-title">Çok Satanlar</h2>
               </div>
               <div class="product-grid" id="bestseller-products">
                 <!-- Ürün kartları JS ile yüklenecek -->
               </div>
-            </div>
+            </section>
 
           </div>
 
           <!-- SAĞ: SEPET ÖZETİ -->
-          <aside class="cart-summary">
+          <aside class="cart-summary" aria-label="Sepet özeti">
             <h3>Sepet Özeti</h3>
             <div class="cart-summary-row">
               <span>Toplam Ürün</span>
@@ -286,13 +309,13 @@
             </div>
 
             <div class="cart-summary-actions">
-              <a href="#" class="btn ghost full-width">Sepeti Gör</a>
-              <a href="#" class="btn primary full-width">Satın Al</a>
+              <a href="#" class="btn ghost full-width" id="cart-view-button">Sepeti Gör</a>
+              <a href="#" class="btn primary full-width" id="cart-checkout-button">Satın Al</a>
             </div>
 
             <p class="cart-info-text">
               Ödeme sistemi şu an MANUEL çalışıyor. Gerçek ödeme entegrasyonu
-              PayTR ile eklenecek. Siparişler kontrol paneli üzerinden
+              iyzico ile eklenecek. Siparişler kontrol paneli üzerinden
               onaylanacak.
             </p>
           </aside>
@@ -302,23 +325,23 @@
     </main>
 
     <!-- 7) ALT MENÜ (MOBİL İÇİN SABİT NAV) -->
-    <nav class="bottom-nav">
-      <a href="#" class="bottom-nav-item active">
-        <span>🏠</span>
+    <nav class="bottom-nav" aria-label="Mobil alt menü">
+      <button type="button" class="bottom-nav-item active">
+        <span aria-hidden="true">🏠</span>
         <span>Anasayfa</span>
-      </a>
-      <a href="#" class="bottom-nav-item">
-        <span>📂</span>
+      </button>
+      <button type="button" class="bottom-nav-item">
+        <span aria-hidden="true">📂</span>
         <span>Kategoriler</span>
-      </a>
-      <a href="#" class="bottom-nav-item">
-        <span>🛒</span>
+      </button>
+      <button type="button" class="bottom-nav-item" id="bottom-cart-button">
+        <span aria-hidden="true">🛒</span>
         <span>Sepet</span>
-      </a>
-      <a href="#" class="bottom-nav-item">
-        <span>👤</span>
+      </button>
+      <button type="button" class="bottom-nav-item">
+        <span aria-hidden="true">👤</span>
         <span>Hesap</span>
-      </a>
+      </button>
     </nav>
 
     <!-- 8) FOOTER -->
@@ -364,4 +387,4 @@
 
   </div>
 </body>
-  </html>
+</html>
