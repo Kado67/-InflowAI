@@ -1,6 +1,60 @@
+// admin.js – InflowAI Admin Panel
 const API_BASE = "https://inflowai-api.onrender.com/api";
 
-// --- NAVIGATION ---
+// Eğer kullanıcı login olduysa accessToken zaten localStorage'a yazılmıştır.
+// İsim farklıysa (örneğin "token") burada değiştirirsin.
+const ACCESS_TOKEN =
+  localStorage.getItem("accessToken") || localStorage.getItem("token") || "";
+
+// ------------ YARDIMCI FONKSİYONLAR ------------
+
+function getAuthHeaders() {
+  const headers = {
+    "Content-Type": "application/json",
+  };
+  if (ACCESS_TOKEN) {
+    headers.Authorization = `Bearer ${ACCESS_TOKEN}`;
+  }
+  return headers;
+}
+
+async function apiGet(path) {
+  try {
+    const res = await fetch(`${API_BASE}${path}`, {
+      headers: getAuthHeaders(),
+    });
+    if (!res.ok) {
+      console.warn("GET hata:", res.status, path);
+      return null;
+    }
+    return await res.json();
+  } catch (err) {
+    console.error("GET isteği hata:", err);
+    return null;
+  }
+}
+
+async function apiSend(path, method = "POST", body = {}) {
+  try {
+    const res = await fetch(`${API_BASE}${path}`, {
+      method,
+      headers: getAuthHeaders(),
+      body: JSON.stringify(body),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      console.warn("API hata:", res.status, data);
+      return { success: false, ...data };
+    }
+    return data;
+  } catch (err) {
+    console.error("API send hata:", err);
+    return { success: false, message: "Sunucuya ulaşılamadı." };
+  }
+}
+
+// ------------ NAVIGATION ------------
+
 const navItems = document.querySelectorAll(".nav-item");
 const pages = document.querySelectorAll(".admin-page");
 
@@ -10,182 +64,226 @@ navItems.forEach((btn) => {
     navItems.forEach((b) => b.classList.remove("active"));
     pages.forEach((p) => p.classList.remove("active"));
     btn.classList.add("active");
-    document.getElementById(`page-${page}`).classList.add("active");
+    const target = document.getElementById(`page-${page}`);
+    if (target) target.classList.add("active");
   });
 });
 
-// --- API HELPERS ---
-async function apiGet(url) {
-  try {
-    const res = await fetch(API_BASE + url);
-    return await res.json();
-  } catch {
-    return null;
-  }
-}
+// ------------ DASHBOARD ------------
 
-async function apiSend(url, method = "POST", body = {}) {
-  try {
-    const res = await fetch(API_BASE + url, {
-      method,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
-    return await res.json();
-  } catch {
-    return null;
-  }
-}
-
-// --- DASHBOARD ---
 async function loadStats() {
-  const prod = await apiGet("/products");
-  const vendors = await apiGet("/vendors");
+  const [prodRes, supplierRes] = await Promise.all([
+    apiGet("/products"),
+    apiGet("/suppliers"),
+  ]);
 
-  const products = prod?.products || prod || [];
-  const vendorList = vendors?.vendors || vendors || [];
+  const products = prodRes?.products || prodRes || [];
+  const suppliers = supplierRes?.suppliers || supplierRes || [];
 
-  document.getElementById("stat-products").textContent = products.length;
-  document.getElementById("stat-vendors").textContent = vendorList.length;
-  document.getElementById("stat-active-products").textContent = products.filter(
-    (p) => p.isActive !== false
-  ).length;
-}
+  const activeProducts = products.filter((p) => p.isActive !== false);
 
-// --- PRODUCTS ---
-const productFormCard = document.getElementById("product-form-card");
-const productForm = document.getElementById("product-form");
-const productMsg = document.getElementById("product-form-message");
-
-document.getElementById("btn-new-product").addEventListener("click", () => {
-  productForm.reset();
-  document.getElementById("product-id").value = "";
-  productMsg.textContent = "";
-  productFormCard.hidden = false;
-});
-
-document.getElementById("product-form-cancel").addEventListener("click", () => {
-  productFormCard.hidden = true;
-});
-
-productForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  productMsg.textContent = "Kaydediliyor...";
-
-  const id = document.getElementById("product-id").value;
-
-  const body = {
-    name: document.getElementById("product-name").value,
-    slug: document.getElementById("product-slug").value,
-    price: Number(document.getElementById("product-price").value),
-    oldPrice: Number(document.getElementById("product-oldPrice").value || 0),
-    stock: Number(document.getElementById("product-stock").value || 0),
-    images: document.getElementById("product-image").value
-      ? [document.getElementById("product-image").value]
-      : [],
-    description: document.getElementById("product-description").value,
-    isActive: document.getElementById("product-active").checked,
+  const setText = (id, text) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = text;
   };
 
-  const method = id ? "PUT" : "POST";
-  const url = id ? `/products/${id}` : "/products";
+  setText("stat-products", products.length);
+  setText("stat-suppliers", suppliers.length);
+  setText("stat-active-products", activeProducts.length);
+}
 
-  const res = await apiSend(url, method, body);
+// ------------ ÜRÜN YÖNETİMİ ------------
 
-  if (!res || res.success === false) {
-    productMsg.textContent = "Hata: " + (res?.message || "Kaydedilemedi");
-    productMsg.style.color = "red";
-    return;
+const productFormCard = document.getElementById("product-form-card");
+const productForm = document.getElementById("product-form");
+const productFormTitle = document.getElementById("product-form-title");
+const productFormMessage = document.getElementById("product-form-message");
+const productsTableBody = document.getElementById("products-table-body");
+
+const btnNewProduct = document.getElementById("btn-new-product");
+const btnProductCancel = document.getElementById("product-form-cancel");
+
+if (btnNewProduct) {
+  btnNewProduct.addEventListener("click", () => openProductForm());
+}
+
+if (btnProductCancel) {
+  btnProductCancel.addEventListener("click", () => {
+    productFormCard.hidden = true;
+  });
+}
+
+function openProductForm(product = null) {
+  productForm.reset();
+  productFormMessage.textContent = "";
+  document.getElementById("product-id").value = product?._id || "";
+
+  if (product) {
+    productFormTitle.textContent = "Ürünü Düzenle";
+    document.getElementById("product-name").value = product.name || "";
+    document.getElementById("product-slug").value = product.slug || "";
+    document.getElementById("product-price").value = product.price || "";
+    document.getElementById("product-oldPrice").value =
+      product.oldPrice ?? "";
+    document.getElementById("product-stock").value = product.stock ?? 0;
+    document.getElementById("product-image").value =
+      (product.images && product.images[0]) || "";
+    document.getElementById("product-description").value =
+      product.description || "";
+    document.getElementById("product-active").checked =
+      product.isActive !== false;
+  } else {
+    productFormTitle.textContent = "Yeni Ürün Ekle";
+    document.getElementById("product-active").checked = true;
   }
 
-  productMsg.textContent = "Başarıyla kaydedildi";
-  productMsg.style.color = "green";
+  productFormCard.hidden = false;
+}
 
-  setTimeout(() => {
-    productFormCard.hidden = true;
-    loadProducts();
-    loadStats();
-  }, 600);
-});
+if (productForm) {
+  productForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    productFormMessage.style.color = "#6b7280";
+    productFormMessage.textContent = "Kaydediliyor...";
 
-async function loadProducts() {
+    if (!ACCESS_TOKEN) {
+      productFormMessage.style.color = "#b91c1c";
+      productFormMessage.textContent =
+        "Ürün kaydetmek için önce giriş yapmalısın.";
+      return;
+    }
+
+    const id = document.getElementById("product-id").value;
+
+    const body = {
+      name: document.getElementById("product-name").value,
+      slug: document.getElementById("product-slug").value,
+      price: Number(document.getElementById("product-price").value || 0),
+      oldPrice: document.getElementById("product-oldPrice").value
+        ? Number(document.getElementById("product-oldPrice").value)
+        : undefined,
+      stock: Number(document.getElementById("product-stock").value || 0),
+      images: document.getElementById("product-image").value
+        ? [document.getElementById("product-image").value]
+        : [],
+      description: document.getElementById("product-description").value,
+      isActive: document.getElementById("product-active").checked,
+    };
+
+    const path = id ? `/products/${id}` : "/products";
+    const method = id ? "PUT" : "POST";
+
+    const res = await apiSend(path, method, body);
+
+    if (!res || res.success === false) {
+      productFormMessage.style.color = "#b91c1c";
+      productFormMessage.textContent =
+        res?.message || "Ürün kaydedilemedi. (Token / API kontrol et)";
+      return;
+    }
+
+    productFormMessage.style.color = "#15803d";
+    productFormMessage.textContent = "Ürün kaydedildi.";
+
+    setTimeout(() => {
+      productFormCard.hidden = true;
+      loadProductsAdmin();
+      loadStats();
+    }, 600);
+  });
+}
+
+async function loadProductsAdmin() {
   const res = await apiGet("/products");
   const products = res?.products || res || [];
 
-  const tbody = document.getElementById("products-table-body");
-  tbody.innerHTML = "";
+  productsTableBody.innerHTML = "";
+
+  if (!products.length) {
+    const tr = document.createElement("tr");
+    tr.innerHTML =
+      '<td colspan="5">Henüz ürün yok. "Yeni Ürün" ile ekleyebilirsin.</td>';
+    productsTableBody.appendChild(tr);
+    return;
+  }
 
   products.forEach((p) => {
     const tr = document.createElement("tr");
     tr.innerHTML = `
-      <td>${p.name}</td>
-      <td>${p.price} ₺</td>
-      <td>${p.stock}</td>
-      <td>${p.isActive !== false ? "Evet" : "Hayır"}</td>
+      <td>${p.name || "-"}</td>
+      <td>${Number(p.price || 0).toFixed(2)} ₺</td>
+      <td>${p.stock ?? 0}</td>
+      <td>${p.isActive === false ? "Hayır" : "Evet"}</td>
       <td>
         <button class="btn small" data-edit="${p._id}">Düzenle</button>
         <button class="btn small" data-del="${p._id}">Sil</button>
       </td>
     `;
-    tbody.appendChild(tr);
+    productsTableBody.appendChild(tr);
   });
 
-  tbody.querySelectorAll("[data-edit]").forEach((btn) => {
-    btn.addEventListener("click", () => editProduct(btn.dataset.edit));
+  productsTableBody.querySelectorAll("[data-edit]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const id = btn.getAttribute("data-edit");
+      const product = products.find((x) => x._id === id);
+      if (product) openProductForm(product);
+    });
   });
 
-  tbody.querySelectorAll("[data-del]").forEach((btn) => {
-    btn.addEventListener("click", () => deleteProduct(btn.dataset.del));
+  productsTableBody.querySelectorAll("[data-del]").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const id = btn.getAttribute("data-del");
+      if (!ACCESS_TOKEN) {
+        alert("Ürün silmek için önce giriş yapmalısın.");
+        return;
+      }
+      if (!confirm("Bu ürünü silmek istiyor musun?")) return;
+      const res = await apiSend(`/products/${id}`, "DELETE");
+      if (res && res.success !== false) {
+        loadProductsAdmin();
+        loadStats();
+      } else {
+        alert(res?.message || "Ürün silinemedi.");
+      }
+    });
   });
 }
 
-async function editProduct(id) {
-  const data = await apiGet("/products/" + id);
-  const p = data?.product || data;
+// ------------ TEDARİKÇİLER ------------
 
-  document.getElementById("product-id").value = p._id;
-  document.getElementById("product-name").value = p.name;
-  document.getElementById("product-slug").value = p.slug;
-  document.getElementById("product-price").value = p.price;
-  document.getElementById("product-oldPrice").value = p.oldPrice || "";
-  document.getElementById("product-stock").value = p.stock;
-  document.getElementById("product-image").value = p.images?.[0] || "";
-  document.getElementById("product-description").value = p.description || "";
-  document.getElementById("product-active").checked = p.isActive !== false;
+async function loadSuppliersAdmin() {
+  const res = await apiGet("/suppliers");
+  const suppliers = res?.suppliers || res || [];
+  const tbody = document.getElementById("suppliers-table-body");
 
-  productFormCard.hidden = false;
-}
+  if (!tbody) return;
 
-async function deleteProduct(id) {
-  if (!confirm("Bu ürünü silmek istiyor musun?")) return;
-  await apiSend(`/products/${id}`, "DELETE");
-  loadProducts();
-  loadStats();
-}
-
-// --- VENDORS ---
-async function loadVendors() {
-  const res = await apiGet("/vendors");
-  const vendors = res?.vendors || res || [];
-
-  const tbody = document.getElementById("vendors-table-body");
   tbody.innerHTML = "";
 
-  vendors.forEach((v) => {
+  if (!suppliers.length) {
+    const tr = document.createElement("tr");
+    tr.innerHTML =
+      '<td colspan="4">Kayıtlı tedarikçi bulunamadı.</td>';
+    tbody.appendChild(tr);
+    return;
+  }
+
+  suppliers.forEach((s) => {
     const tr = document.createElement("tr");
     tr.innerHTML = `
-      <td>${v.name || "-"}</td>
-      <td>${v.email || "-"}</td>
-      <td>${v.phone || "-"}</td>
-      <td>${v.status || "Beklemede"}</td>
+      <td>${s.storeName || s.name || "-"}</td>
+      <td>${s.email || "-"}</td>
+      <td>${s.phone || "-"}</td>
+      <td>${s.status || "Aktif"}</td>
     `;
     tbody.appendChild(tr);
   });
 }
 
-// INIT
-window.addEventListener("DOMContentLoaded", () => {
-  loadStats();
-  loadProducts();
-  loadVendors();
+// ------------ INIT ------------
+
+window.addEventListener("DOMContentLoaded", async () => {
+  await loadStats();
+  await loadProductsAdmin();
+  await loadSuppliersAdmin();
 });
