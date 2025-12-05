@@ -6,47 +6,50 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="style.css" />
 </head>
-<body class="page-info">
+<body data-page="vendor-register">
   <header class="page-header-simple">
     <h1>Mağaza Aç</h1>
   </header>
 
-  <main class="main-content with-tabbar">
-    <section class="form-card">
-      <p class="muted-text small">
-        Aşağıdaki form, InflowAI mağaza başvurusu için örnek bir formdur.
-        Gerçek başvuru akışı, API ile bağlanarak geliştirilecektir.
+  <main class="page-main with-footer container-narrow">
+    <form id="vendor-form" class="info-card">
+      <p class="info-text small">
+        Bu form, InflowAI üzerinde mağaza açmak isteyen tedarikçilerin
+        başvurularını almak için kullanılır. Bilgileriniz inceleme için sisteme kaydedilir,
+        ekibimiz uygun olduğunda sizinle iletişime geçer.
       </p>
 
-      <form>
-        <div class="form-row">
-          <label>Mağaza Adı</label>
-          <input type="text" required />
-        </div>
-        <div class="form-row">
-          <label>Yetkili Kişi</label>
-          <input type="text" required />
-        </div>
-        <div class="form-row">
-          <label>E-posta</label>
-          <input type="email" required />
-        </div>
-        <div class="form-row">
-          <label>Telefon</label>
-          <input type="tel" required />
-        </div>
-        <div class="form-row">
-          <label>Web Sitesi (opsiyonel)</label>
-          <input type="url" />
-        </div>
+      <div class="form-row">
+        <label>Mağaza Adı</label>
+        <input type="text" id="vendor-storeName" required />
+      </div>
 
-        <div class="form-actions">
-          <button type="submit" class="btn primary">
-            Başvuruyu Gönder
-          </button>
-        </div>
-      </form>
-    </section>
+      <div class="form-row">
+        <label>Yetkili Kişi</label>
+        <input type="text" id="vendor-contactName" required />
+      </div>
+
+      <div class="form-row">
+        <label>E‑posta</label>
+        <input type="email" id="vendor-email" required />
+      </div>
+
+      <div class="form-row">
+        <label>Telefon</label>
+        <input type="tel" id="vendor-phone" />
+      </div>
+
+      <div class="form-row">
+        <label>Web Sitesi (opsiyonel)</label>
+        <input type="url" id="vendor-website" />
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn primary">Başvuruyu Gönder</button>
+      </div>
+
+      <p id="vendor-message" class="form-message"></p>
+    </form>
   </main>
 
   <nav class="app-tabbar">
@@ -67,5 +70,52 @@
       <span class="tab-label">Hesap</span>
     </a>
   </nav>
+
+  <script>
+    const API_BASE = "https://inflowai-api.onrender.com/api";
+
+    const form = document.getElementById("vendor-form");
+    const msgEl = document.getElementById("vendor-message");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      msgEl.style.color = "#6b7280";
+      msgEl.textContent = "Başvurunuz gönderiliyor...";
+
+      const body = {
+        storeName: document.getElementById("vendor-storeName").value,
+        contactName: document.getElementById("vendor-contactName").value,
+        email: document.getElementById("vendor-email").value,
+        phone: document.getElementById("vendor-phone").value,
+        website: document.getElementById("vendor-website").value,
+      };
+
+      try {
+        const res = await fetch(API_BASE + "/suppliers/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        });
+
+        const data = await res.json().catch(() => ({}));
+
+        if (!res.ok || data.success === false) {
+          msgEl.style.color = "#b91c1c";
+          msgEl.textContent =
+            data.message || "Başvuru gönderilemedi. Lütfen tekrar deneyin.";
+          return;
+        }
+
+        msgEl.style.color = "#15803d";
+        msgEl.textContent =
+          "Başvurunuz alındı. İnceleme sonrası ekibimiz sizinle iletişime geçecektir.";
+        form.reset();
+      } catch (err) {
+        console.error(err);
+        msgEl.style.color = "#b91c1c";
+        msgEl.textContent = "Sunucuya ulaşılamadı.";
+      }
+    });
+  </script>
 </body>
 </html>
