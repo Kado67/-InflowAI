@@ -1,1 +1,72 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Sepetim · InflowAI</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="app.js" defer></script>
+</head>
+<body class="page-cart">
+  <header class="page-header-simple">
+    <h1>Sepetim</h1>
+  </header>
 
+  <main class="main-content with-tabbar">
+    <section id="cart-items" class="list-card">
+      <!-- app.js doldurur -->
+    </section>
+
+    <section class="cart-summary-card">
+      <h2>Sepet Özeti</h2>
+      <div class="summary-row">
+        <span>Toplam Ürün</span>
+        <span id="cart-total-items">0</span>
+      </div>
+      <div class="summary-row">
+        <span>Ara Toplam</span>
+        <span id="cart-subtotal">₺0,00</span>
+      </div>
+      <div class="summary-row">
+        <span>Kargo</span>
+        <span id="cart-shipping">₺0,00</span>
+      </div>
+      <div class="summary-row total">
+        <span>Genel Toplam</span>
+        <span id="cart-grandtotal">₺0,00</span>
+      </div>
+
+      <button class="btn-outline-full" onclick="location.href='index.html'">
+        Alışverişe Devam Et
+      </button>
+      <button class="btn-primary-full" id="btn-checkout">
+        Satın Al
+      </button>
+
+      <p class="cart-info-text">
+        Ödeme altyapısı InflowAI ile entegre edilecektir. Şu anda sepet test
+        modunda çalışmaktadır.
+      </p>
+    </section>
+  </main>
+
+  <nav class="app-tabbar">
+    <a href="index.html" class="tab-item">
+      <span class="tab-icon">🏠</span>
+      <span class="tab-label">Anasayfa</span>
+    </a>
+    <a href="favoriler.html" class="tab-item">
+      <span class="tab-icon">⭐</span>
+      <span class="tab-label">Favoriler</span>
+    </a>
+    <a href="sepet.html" class="tab-item active">
+      <span class="tab-icon">🛒</span>
+      <span class="tab-label">Sepet</span>
+    </a>
+    <a href="hesabim.html" class="tab-item">
+      <span class="tab-icon">👤</span>
+      <span class="tab-label">Hesap</span>
+    </a>
+  </nav>
+</body>
+</html>
