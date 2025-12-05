@@ -13,10 +13,11 @@
 
   <main class="page-main with-footer container-narrow">
     <form id="vendor-form" class="info-card">
+
       <p class="info-text small">
         Bu form, InflowAI üzerinde mağaza açmak isteyen tedarikçilerin
-        başvurularını almak için kullanılır. Bilgileriniz inceleme için sisteme kaydedilir,
-        ekibimiz uygun olduğunda sizinle iletişime geçer.
+        başvurularını kaydetmek için kullanılır. Mağaza sahibinin bilgileri
+        sisteme işlenir ve hesap anında oluşturulur.
       </p>
 
       <div class="form-row">
@@ -25,7 +26,7 @@
       </div>
 
       <div class="form-row">
-        <label>Yetkili Kişi</label>
+        <label>Yetkili Ad Soyad</label>
         <input type="text" id="vendor-contactName" required />
       </div>
 
@@ -35,17 +36,27 @@
       </div>
 
       <div class="form-row">
-        <label>Telefon</label>
+        <label>Şifre</label>
+        <input type="password" id="vendor-password" required />
+      </div>
+
+      <div class="form-row">
+        <label>Şifre Tekrar</label>
+        <input type="password" id="vendor-password2" required />
+      </div>
+
+      <div class="form-row">
+        <label>Telefon (opsiyonel)</label>
         <input type="tel" id="vendor-phone" />
       </div>
 
       <div class="form-row">
-        <label>Web Sitesi (İsteğe Bağlı)</label>
+        <label>Web Sitesi (opsiyonel)</label>
         <input type="url" id="vendor-website" />
       </div>
 
       <div class="form-actions">
-        <button type="submit" class="btn primary">Başvuruyu Gönder</button>
+        <button type="submit" class="btn primary">Mağaza Oluştur</button>
       </div>
 
       <p id="vendor-message" class="form-message"></p>
@@ -80,24 +91,31 @@
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
       msgEl.style.color = "#6b7280";
-      msgEl.textContent = "Başvurunuz gönderiliyor...";
+      msgEl.textContent = "Mağaza oluşturuluyor...";
 
       const storeName = document.getElementById("vendor-storeName").value;
+      const pass1 = document.getElementById("vendor-password").value;
+      const pass2 = document.getElementById("vendor-password2").value;
+
+      if (pass1 !== pass2) {
+        msgEl.style.color = "#b91c1c";
+        msgEl.textContent = "Şifreler uyuşmuyor.";
+        return;
+      }
 
       const body = {
-        // 🔥 Backend'in ZORUNLU beklediği field
-        name: storeName,
-
-        // Ek bilgiler
+        name: storeName,                  // MODEL İSTİYOR
         storeName: storeName,
         contactName: document.getElementById("vendor-contactName").value,
         email: document.getElementById("vendor-email").value,
+        password: pass1,                  // 🔥 ARTIK ŞİFRE GÖNDERİLİYOR
         phone: document.getElementById("vendor-phone").value,
         website: document.getElementById("vendor-website").value,
+        role: "supplier"
       };
 
       try {
-        const res = await fetch(API_BASE + "/suppliers/register", {
+        const res = await fetch(API_BASE + "/auth/register", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(body),
@@ -108,15 +126,17 @@
         if (!res.ok || data.success === false) {
           msgEl.style.color = "#b91c1c";
           msgEl.textContent =
-            data.message ||
-            "Başvuru gönderilemedi. Lütfen tekrar deneyin.";
+            data.message || "Hesap oluşturulamadı. Lütfen tekrar deneyin.";
           return;
         }
 
         msgEl.style.color = "#15803d";
         msgEl.textContent =
-          "Başvurunuz alındı. İnceleme sonrası ekibimiz sizinle iletişime geçecektir.";
-        form.reset();
+          "Mağaza başarıyla oluşturuldu. Giriş sayfasına yönlendiriliyorsunuz...";
+
+        setTimeout(() => {
+          window.location.href = "supplier_login.html";
+        }, 900);
       } catch (err) {
         console.error(err);
         msgEl.style.color = "#b91c1c";
