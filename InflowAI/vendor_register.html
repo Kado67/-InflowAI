@@ -2,206 +2,70 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8" />
-  <title>InflowAI · Mağaza Aç (Tedarikçi Başvurusu)</title>
+  <title>Mağaza Aç · InflowAI</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
   <link rel="stylesheet" href="style.css" />
-  <style>
-    /* Mağaza Aç sayfası ekstra stiller */
-    .vendor-page {
-      display: flex;
-      justify-content: center;
-      margin-top: 24px;
-    }
-
-    .vendor-card {
-      max-width: 520px;
-      width: 100%;
-      background-color: #ffffff;
-      border-radius: var(--radius-lg);
-      padding: 20px 18px 18px;
-      box-shadow: var(--shadow-soft);
-    }
-
-    .vendor-card h1 {
-      margin: 0 0 6px;
-      font-size: 20px;
-      font-weight: 700;
-    }
-
-    .vendor-subtitle {
-      margin: 0 0 16px;
-      font-size: 13px;
-      color: var(--color-muted);
-    }
-
-    .vendor-form .form-row {
-      display: flex;
-      flex-direction: column;
-      margin-bottom: 12px;
-    }
-
-    .vendor-form label {
-      font-size: 13px;
-      margin-bottom: 3px;
-    }
-
-    .vendor-form input,
-    .vendor-form textarea {
-      border: 1px solid var(--color-border);
-      border-radius: 6px;
-      padding: 7px 10px;
-      font-size: 14px;
-    }
-
-    .vendor-form .checkbox-row {
-      margin-top: 5px;
-      font-size: 12px;
-      color: var(--color-muted);
-    }
-
-    .vendor-form .checkbox-row input {
-      margin-right: 4px;
-    }
-
-    .vendor-form .form-actions {
-      display: flex;
-      gap: 12px;
-      margin-top: 10px;
-    }
-
-    .vendor-info-text {
-      font-size: 13px;
-      margin-top: 10px;
-    }
-  </style>
 </head>
-<body>
-  <div class="page-wrapper">
-    <header class="main-header">
-      <div class="container header-inner">
-        <div class="header-logo">
-          <a href="index.html" class="logo-link">
-            <span class="logo-mark">IA</span>
-            <span class="logo-text">InflowAI</span>
-          </a>
+<body class="page-info">
+  <header class="page-header-simple">
+    <h1>Mağaza Aç</h1>
+  </header>
+
+  <main class="main-content with-tabbar">
+    <section class="form-card">
+      <p class="muted-text small">
+        Aşağıdaki form, InflowAI mağaza başvurusu için örnek bir formdur.
+        Gerçek başvuru akışı, API ile bağlanarak geliştirilecektir.
+      </p>
+
+      <form>
+        <div class="form-row">
+          <label>Mağaza Adı</label>
+          <input type="text" required />
         </div>
-        <div class="header-actions">
-          <span style="font-size:13px;color:#777;">Tedarikçi Başvuru Formu</span>
+        <div class="form-row">
+          <label>Yetkili Kişi</label>
+          <input type="text" required />
         </div>
-      </div>
-    </header>
-
-    <main class="main-content">
-      <div class="container vendor-page">
-        <div class="vendor-card">
-          <h1>Mağaza Aç · Tedarikçi Başvurusu</h1>
-          <p class="vendor-subtitle">
-            InflowAI üzerinde ürün satmak için aşağıdaki bilgileri doldurun.
-          </p>
-
-          <form id="vendor-form" class="vendor-form">
-            <div class="form-row">
-              <label for="vendor-name">Mağaza Adı</label>
-              <input type="text" id="vendor-name" required />
-            </div>
-
-            <div class="form-row">
-              <label for="vendor-owner">Ad Soyad</label>
-              <input type="text" id="vendor-owner" required />
-            </div>
-
-            <div class="form-row">
-              <label for="vendor-email">E‑posta</label>
-              <input type="email" id="vendor-email" required />
-            </div>
-
-            <div class="form-row">
-              <label for="vendor-phone">Telefon</label>
-              <input type="tel" id="vendor-phone" />
-            </div>
-
-            <div class="form-row">
-              <label for="vendor-iban">IBAN (opsiyonel)</label>
-              <input type="text" id="vendor-iban" />
-            </div>
-
-            <div class="form-row">
-              <label for="vendor-desc">Mağaza Açıklaması</label>
-              <textarea id="vendor-desc" rows="3"></textarea>
-            </div>
-
-            <div class="form-row checkbox-row">
-              <label>
-                <input type="checkbox" id="vendor-terms" required />
-                Kullanım şartlarını kabul ediyorum.
-              </label>
-            </div>
-
-            <div class="form-actions">
-              <button type="submit" class="btn primary">Başvuruyu Gönder</button>
-              <a href="index.html" class="btn ghost">Anasayfaya Dön</a>
-            </div>
-
-            <p class="vendor-info-text" id="vendor-message"></p>
-          </form>
+        <div class="form-row">
+          <label>E-posta</label>
+          <input type="email" required />
         </div>
-      </div>
-    </main>
+        <div class="form-row">
+          <label>Telefon</label>
+          <input type="tel" required />
+        </div>
+        <div class="form-row">
+          <label>Web Sitesi (opsiyonel)</label>
+          <input type="url" />
+        </div>
 
-    <footer class="site-footer">
-      <div class="footer-bottom">
-        <p>© 2025 InflowAI · Mağaza Aç Başvurusu</p>
-      </div>
-    </footer>
-  </div>
+        <div class="form-actions">
+          <button type="submit" class="btn primary">
+            Başvuruyu Gönder
+          </button>
+        </div>
+      </form>
+    </section>
+  </main>
 
-  <script>
-    const API_BASE = "https://inflowai-api.onrender.com/api";
-
-    const form = document.getElementById("vendor-form");
-    const msg = document.getElementById("vendor-message");
-
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      msg.textContent = "";
-      msg.style.color = "#555";
-
-      const body = {
-        name: document.getElementById("vendor-name").value,
-        ownerName: document.getElementById("vendor-owner").value,
-        email: document.getElementById("vendor-email").value,
-        phone: document.getElementById("vendor-phone").value,
-        iban: document.getElementById("vendor-iban").value,
-        description: document.getElementById("vendor-desc").value,
-      };
-
-      try {
-        const res = await fetch(API_BASE + "/vendors", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(body),
-        });
-
-        const data = await res.json();
-
-        if (!data.success) {
-          msg.textContent =
-            data.message || "Başvuru kaydedilemedi. Daha sonra tekrar dene.";
-          msg.style.color = "#c62828";
-          return;
-        }
-
-        msg.textContent =
-          "Başvurun alındı kurban, en kısa sürede inceleyip dönüş yapacağız. 😊";
-        msg.style.color = "#2e7d32";
-        form.reset();
-      } catch (err) {
-        console.error(err);
-        msg.textContent = "Sunucu hatası, daha sonra tekrar dene.";
-        msg.style.color = "#c62828";
-      }
-    });
-  </script>
+  <nav class="app-tabbar">
+    <a href="index.html" class="tab-item">
+      <span class="tab-icon">🏠</span>
+      <span class="tab-label">Anasayfa</span>
+    </a>
+    <a href="favoriler.html" class="tab-item">
+      <span class="tab-icon">⭐</span>
+      <span class="tab-label">Favoriler</span>
+    </a>
+    <a href="sepet.html" class="tab-item">
+      <span class="tab-icon">🛒</span>
+      <span class="tab-label">Sepet</span>
+    </a>
+    <a href="hesabim.html" class="tab-item">
+      <span class="tab-icon">👤</span>
+      <span class="tab-label">Hesap</span>
+    </a>
+  </nav>
 </body>
-                </html>
+</html>
