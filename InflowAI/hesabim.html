@@ -1,1 +1,82 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hesabım · InflowAI</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="app.js" defer></script>
+</head>
+<body class="page-account">
+  <header class="account-header">
+    <div class="account-avatar">IA</div>
+    <div class="account-info">
+      <div class="account-name" id="account-name">Misafir Kullanıcı</div>
+      <div class="account-email" id="account-email">
+        Giriş yaparak bilgilerinizi görüntüleyin.
+      </div>
+    </div>
+  </header>
 
+  <main class="main-content with-tabbar">
+    <section class="account-section">
+      <h2>Hızlı İşlemler</h2>
+      <div class="account-grid">
+        <button class="account-chip" id="btn-go-orders">
+          Siparişlerim
+        </button>
+        <button class="account-chip">
+          Kuponlarım
+        </button>
+        <button class="account-chip">
+          Adreslerim
+        </button>
+        <button class="account-chip">
+          Destek Taleplerim
+        </button>
+      </div>
+    </section>
+
+    <section class="account-section">
+      <h2>Hesap</h2>
+      <ul class="account-list">
+        <li>Hesap Bilgilerim</li>
+        <li>Parola &amp; Güvenlik</li>
+        <li>Bildirim Ayarları</li>
+      </ul>
+    </section>
+
+    <section class="account-section">
+      <h2>Diğer</h2>
+      <ul class="account-list">
+        <li><a href="musteri_sorular.html">Sık Sorulan Sorular</a></li>
+        <li><a href="musteri_iade.html">İade &amp; Değişim</a></li>
+        <li><a href="musteri_kargo.html">Kargo &amp; Teslimat</a></li>
+      </ul>
+    </section>
+
+    <button class="btn-outline-full" id="btn-logout">
+      Çıkış Yap
+    </button>
+  </main>
+
+  <nav class="app-tabbar">
+    <a href="index.html" class="tab-item">
+      <span class="tab-icon">🏠</span>
+      <span class="tab-label">Anasayfa</span>
+    </a>
+    <a href="favoriler.html" class="tab-item">
+      <span class="tab-icon">⭐</span>
+      <span class="tab-label">Favoriler</span>
+    </a>
+    <a href="sepet.html" class="tab-item">
+      <span class="tab-icon">🛒</span>
+      <span class="tab-label">Sepet</span>
+    </a>
+    <a href="hesabim.html" class="tab-item active">
+      <span class="tab-icon">👤</span>
+      <span class="tab-label">Hesap</span>
+    </a>
+  </nav>
+</body>
+</html>
