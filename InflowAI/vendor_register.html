@@ -40,7 +40,7 @@
       </div>
 
       <div class="form-row">
-        <label>Web Sitesi (opsiyonel)</label>
+        <label>Web Sitesi (İsteğe Bağlı)</label>
         <input type="url" id="vendor-website" />
       </div>
 
@@ -82,8 +82,14 @@
       msgEl.style.color = "#6b7280";
       msgEl.textContent = "Başvurunuz gönderiliyor...";
 
+      const storeName = document.getElementById("vendor-storeName").value;
+
       const body = {
-        storeName: document.getElementById("vendor-storeName").value,
+        // 🔥 Backend'in ZORUNLU beklediği field
+        name: storeName,
+
+        // Ek bilgiler
+        storeName: storeName,
         contactName: document.getElementById("vendor-contactName").value,
         email: document.getElementById("vendor-email").value,
         phone: document.getElementById("vendor-phone").value,
@@ -102,7 +108,8 @@
         if (!res.ok || data.success === false) {
           msgEl.style.color = "#b91c1c";
           msgEl.textContent =
-            data.message || "Başvuru gönderilemedi. Lütfen tekrar deneyin.";
+            data.message ||
+            "Başvuru gönderilemedi. Lütfen tekrar deneyin.";
           return;
         }
 
