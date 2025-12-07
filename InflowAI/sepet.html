@@ -1,72 +1,98 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8" />
-  <title>Sepetim · InflowAI</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="style.css" />
-  <script src="app.js" defer></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sepet · InflowAI</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-<body class="page-cart">
-  <header class="page-header-simple">
-    <h1>Sepetim</h1>
-  </header>
+<body>
 
-  <main class="main-content with-tabbar">
-    <section id="cart-items" class="list-card">
-      <!-- app.js doldurur -->
-    </section>
+<header class="page-header-simple">
+  <h1>Sepetim</h1>
+</header>
 
-    <section class="cart-summary-card">
-      <h2>Sepet Özeti</h2>
-      <div class="summary-row">
-        <span>Toplam Ürün</span>
-        <span id="cart-total-items">0</span>
-      </div>
-      <div class="summary-row">
-        <span>Ara Toplam</span>
-        <span id="cart-subtotal">₺0,00</span>
-      </div>
-      <div class="summary-row">
-        <span>Kargo</span>
-        <span id="cart-shipping">₺0,00</span>
-      </div>
-      <div class="summary-row total">
-        <span>Genel Toplam</span>
-        <span id="cart-grandtotal">₺0,00</span>
-      </div>
+<main class="page-main container-narrow">
+  <div id="cartBox">Yükleniyor...</div>
 
-      <button class="btn-outline-full" onclick="location.href='index.html'">
-        Alışverişe Devam Et
-      </button>
-      <button class="btn-primary-full" id="btn-checkout">
-        Satın Al
-      </button>
+  <button id="checkoutBtn" class="btn primary">Siparişi Tamamla</button>
+</main>
 
-      <p class="cart-info-text">
-        Ödeme altyapısı InflowAI ile entegre edilecektir. Şu anda sepet test
-        modunda çalışmaktadır.
-      </p>
-    </section>
-  </main>
+<nav class="app-tabbar">
+  <a href="index.html" class="tab-item">🏠 Anasayfa</a>
+  <a href="sepet.html" class="tab-item active">🛒 Sepet</a>
+  <a href="hesabim.html" class="tab-item">👤 Hesabım</a>
+</nav>
 
-  <nav class="app-tabbar">
-    <a href="index.html" class="tab-item">
-      <span class="tab-icon">🏠</span>
-      <span class="tab-label">Anasayfa</span>
-    </a>
-    <a href="favoriler.html" class="tab-item">
-      <span class="tab-icon">⭐</span>
-      <span class="tab-label">Favoriler</span>
-    </a>
-    <a href="sepet.html" class="tab-item active">
-      <span class="tab-icon">🛒</span>
-      <span class="tab-label">Sepet</span>
-    </a>
-    <a href="hesabim.html" class="tab-item">
-      <span class="tab-icon">👤</span>
-      <span class="tab-label">Hesap</span>
-    </a>
-  </nav>
+<script>
+  const API = "https://inflowai-api.onrender.com/api";
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    alert("Giriş yapmalısınız.");
+    window.location.href = "hesabim.html";
+  }
+
+  async function loadCart() {
+    const box = document.getElementById("cartBox");
+
+    const res = await fetch(API + "/cart", {
+      headers: { Authorization: "Bearer " + token }
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      box.textContent = "Sepet yüklenemedi.";
+      return;
+    }
+
+    if (data.items.length === 0) {
+      box.textContent = "Sepetiniz boş.";
+      return;
+    }
+
+    let html = "";
+    let total = 0;
+
+    data.items.forEach(i => {
+      html += `
+        <div class="cart-row">
+          <div>Ürün: ${i.productId}</div>
+          <div>Adet: ${i.quantity}</div>
+          <div>Fiyat: ${i.price}₺</div>
+        </div>
+      `;
+      total += i.price * i.quantity;
+    });
+
+    html += `<h3>Toplam: ${total}₺</h3>`;
+    box.innerHTML = html;
+  }
+
+  document.getElementById("checkoutBtn").onclick = async () => {
+    const res = await fetch(API + "/orders", {
+      method: "POST",
+      headers: {
+        Authorization: "Bearer " + token,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ items: [] }) // Sepet API service'den çekiliyor
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      alert(data.message || "Sipariş oluşturulamadı");
+      return;
+    }
+
+    alert("Sipariş oluşturuldu!");
+    window.location.href = "hesabim.html";
+  };
+
+  loadCart();
+</script>
+
 </body>
 </html>
