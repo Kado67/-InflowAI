@@ -2,97 +2,80 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sepet · InflowAI</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Sepetim · Inflow Market</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-<header class="page-header-simple">
-  <h1>Sepetim</h1>
-</header>
+<header class="page-header-simple">Sepetim</header>
 
 <main class="page-main container-narrow">
-  <div id="cartBox">Yükleniyor...</div>
-
+  <div id="cartBox" class="cart-box">Yükleniyor...</div>
+  <br>
   <button id="checkoutBtn" class="btn primary">Siparişi Tamamla</button>
 </main>
 
 <nav class="app-tabbar">
-  <a href="index.html" class="tab-item">🏠 Anasayfa</a>
-  <a href="sepet.html" class="tab-item active">🛒 Sepet</a>
-  <a href="hesabim.html" class="tab-item">👤 Hesabım</a>
+  <a href="index.html"><span>🏠</span>Anasayfa</a>
+  <a href="sepet.html" class="active"><span>🛒</span>Sepet</a>
+  <a href="hesabim.html"><span>👤</span>Hesabım</a>
 </nav>
 
+<script src="app.js"></script>
 <script>
-  const API = "https://inflowai-api.onrender.com/api";
-  const token = localStorage.getItem("token");
+const API_URL = "https://inflowai-api.onrender.com/api";
+requireLogin();
 
-  if (!token) {
-    alert("Giriş yapmalısınız.");
-    window.location.href = "hesabim.html";
+async function loadCart() {
+  const box = document.getElementById("cartBox");
+  const res = await fetch(API_URL + "/cart", {
+    headers: { Authorization: "Bearer " + getToken() }
+  });
+  const data = await res.json();
+  if (!res.ok) {
+    box.textContent = "Sepet yüklenemedi.";
+    return;
   }
-
-  async function loadCart() {
-    const box = document.getElementById("cartBox");
-
-    const res = await fetch(API + "/cart", {
-      headers: { Authorization: "Bearer " + token }
-    });
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      box.textContent = "Sepet yüklenemedi.";
-      return;
-    }
-
-    if (data.items.length === 0) {
-      box.textContent = "Sepetiniz boş.";
-      return;
-    }
-
-    let html = "";
-    let total = 0;
-
-    data.items.forEach(i => {
-      html += `
-        <div class="cart-row">
+  if (!data.items.length) {
+    box.textContent = "Sepetiniz boş.";
+    return;
+  }
+  let total = 0;
+  box.innerHTML = "";
+  data.items.forEach(i => {
+    total += i.price * i.quantity;
+    box.innerHTML += `
+      <div class="cart-item">
+        <div class="cart-info">
           <div>Ürün: ${i.productId}</div>
-          <div>Adet: ${i.quantity}</div>
-          <div>Fiyat: ${i.price}₺</div>
+          <div class="cart-qty">Adet: ${i.quantity}</div>
         </div>
-      `;
-      total += i.price * i.quantity;
-    });
+        <div class="cart-price">${i.price}₺</div>
+      </div>`;
+  });
+  box.innerHTML += `<div class="cart-summary">
+    <span>Toplam</span><span>${total}₺</span></div>`;
+}
 
-    html += `<h3>Toplam: ${total}₺</h3>`;
-    box.innerHTML = html;
+document.getElementById("checkoutBtn").onclick = async () => {
+  const res = await fetch(API_URL + "/orders", {
+    method: "POST",
+    headers: {
+      Authorization: "Bearer " + getToken(),
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ items: [] })
+  });
+  const data = await res.json();
+  if (!res.ok) {
+    alert(data.message || "Sipariş oluşturulamadı.");
+    return;
   }
+  alert("Sipariş oluşturuldu.");
+  window.location.href = "hesabim.html";
+};
 
-  document.getElementById("checkoutBtn").onclick = async () => {
-    const res = await fetch(API + "/orders", {
-      method: "POST",
-      headers: {
-        Authorization: "Bearer " + token,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ items: [] }) // Sepet API service'den çekiliyor
-    });
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      alert(data.message || "Sipariş oluşturulamadı");
-      return;
-    }
-
-    alert("Sipariş oluşturuldu!");
-    window.location.href = "hesabim.html";
-  };
-
-  loadCart();
+loadCart();
 </script>
-
 </body>
 </html>
