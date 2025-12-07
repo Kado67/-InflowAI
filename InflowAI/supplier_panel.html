@@ -2,53 +2,43 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tedarikçi Paneli · InflowAI</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Tedarikçi Paneli · Inflow Market</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header class="page-header-simple">
-    <h1>Tedarikçi Paneli</h1>
-  </header>
+<header class="page-header-simple">Tedarikçi Paneli</header>
 
-  <main class="page-main container-narrow">
-    <section class="info-card">
+<main class="page-main container-narrow">
+  <section class="info-card">
+    <h3>Yeni Ürün Ekle</h3>
+    <div class="form-row">
+      <label>Ürün Adı</label>
+      <input id="pname">
+    </div>
+    <div class="form-row">
+      <label>Fiyat</label>
+      <input id="pprice" type="number">
+    </div>
+    <div class="form-row">
+      <label>Stok</label>
+      <input id="pstock" type="number">
+    </div>
+    <div class="form-row">
+      <label>Fotoğraf</label>
+      <input id="pimage" type="file" accept="image/*">
+    </div>
+    <button id="addProduct" class="btn primary">Ürün Ekle</button>
+    <p id="panelMsg" class="form-message"></p>
+  </section>
 
-      <h2>Yeni Ürün Ekle</h2>
+  <section class="info-card">
+    <h3>Ürünlerim</h3>
+    <div id="myProducts"></div>
+  </section>
+</main>
 
-      <div class="form-row">
-        <label>Ürün Adı</label>
-        <input type="text" id="pname" required />
-      </div>
-
-      <div class="form-row">
-        <label>Fiyat</label>
-        <input type="number" id="pprice" required />
-      </div>
-
-      <div class="form-row">
-        <label>Stok</label>
-        <input type="number" id="pstock" required />
-      </div>
-
-      <div class="form-row">
-        <label>Fotoğraf</label>
-        <input type="file" id="pimage" accept="image/*" />
-      </div>
-
-      <button id="addProduct" class="btn primary">Ürün Ekle</button>
-
-      <p id="panelMsg" class="form-message"></p>
-
-    </section>
-
-    <section class="info-card">
-      <h2>Ürünlerim</h2>
-      <div id="myProducts"></div>
-    </section>
-
-  </main>
-
-  <script src="supplier.js"></script>
+<script src="app.js"></script>
+<script src="supplier.js"></script>
 </body>
 </html>
