@@ -24,8 +24,18 @@ const area = document.getElementById("accountArea");
 const user = getUser();
 const token = getToken();
 
+// Sepetten geldiyse şık uyarı kartı göstermek için
+const params = new URLSearchParams(location.search);
+const fromCart = params.get("msg") === "login-required";
+
 function renderLoggedOut() {
-  area.innerHTML = `
+  const extraMsg = fromCart
+    ? `<div class="info-card" style="margin-bottom:12px; border-left:4px solid #f27a1a">
+         Bu işlemi tamamlamak için önce giriş yapmanız gerekiyor.
+       </div>`
+    : "";
+
+  area.innerHTML = extraMsg + `
     <div class="account-card">
       <h3>Giriş Yap</h3>
       <div class="form-row">
@@ -37,7 +47,17 @@ function renderLoggedOut() {
         <input id="password" type="password">
       </div>
       <button class="btn primary" onclick="login()">Giriş Yap</button>
-      <p>Kayıt olmak için <a href="musteri_register.html">Yeni Üyelik</a></p>
+
+      <p style="margin-top:8px;">
+        Müşteri hesabı açmak için
+        <a href="musteri_register.html">Yeni Üyelik</a>
+      </p>
+
+      <p style="margin-top:4px;font-size:13px;">
+        Tedarikçi misiniz?
+        <a href="vendor_register.html">Mağaza Aç</a> ·
+        <a href="supplier_login.html">Mağaza Girişi</a>
+      </p>
     </div>`;
 }
 
