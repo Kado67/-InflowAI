@@ -1,193 +1,80 @@
 <!DOCTYPE html>
 <html lang="tr">
-  <head>
-    <meta charset="UTF-8" />
-    <title>InflowAI · Admin Giriş</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="style.css" />
-    <style>
-      body {
-        background: #0f172a;
-        color: #f9fafb;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-          Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-      }
-      .login-wrapper {
-        min-height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 16px;
-      }
-      .login-card {
-        background: #111827;
-        border-radius: 16px;
-        padding: 20px 18px 18px;
-        box-shadow: 0 18px 40px rgba(15, 23, 42, 0.6);
-        width: 100%;
-        max-width: 360px;
-      }
-      .login-header {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        margin-bottom: 16px;
-      }
-      .login-logo {
-        width: 32px;
-        height: 32px;
-        border-radius: 999px;
-        background: #f97316;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 700;
-      }
-      .login-title {
-        font-weight: 600;
-        font-size: 16px;
-      }
-      .login-subtitle {
-        font-size: 12px;
-        color: #9ca3af;
-        margin-bottom: 14px;
-      }
-      .login-row {
-        display: flex;
-        flex-direction: column;
-        margin-bottom: 10px;
-      }
-      .login-row label {
-        font-size: 13px;
-        margin-bottom: 4px;
-      }
-      .login-row input {
-        border-radius: 999px;
-        border: 1px solid #4b5563;
-        background: #020617;
-        color: #e5e7eb;
-        padding: 8px 12px;
-        font-size: 13px;
-        outline: none;
-      }
-      .login-row input:focus {
-        border-color: #f97316;
-      }
-      .login-button {
-        width: 100%;
-        border-radius: 999px;
-        border: none;
-        background: #f97316;
-        color: #fff;
-        padding: 9px 12px;
-        font-size: 14px;
-        margin-top: 10px;
-        cursor: pointer;
-      }
-      .login-button:hover {
-        background: #ea580c;
-      }
-      .login-message {
-        font-size: 12px;
-        margin-top: 8px;
-        color: #f97316;
-      }
-      .back-link {
-        margin-top: 12px;
-        font-size: 12px;
-        color: #9ca3af;
-      }
-      .back-link a {
-        color: #e5e7eb;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="login-wrapper">
-      <div class="login-card">
-        <div class="login-header">
-          <div class="login-logo">IA</div>
-          <div class="login-title">InflowAI Admin</div>
-        </div>
-        <div class="login-subtitle">Yönetici paneline giriş yapın.</div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tedarikçi Giriş · InflowAI</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="page-header-simple">
+    <h1>Tedarikçi Girişi</h1>
+  </header>
 
-        <form id="admin-login-form">
-          <div class="login-row">
-            <label>E‑posta</label>
-            <input
-              type="email"
-              id="admin-email"
-              value="admin@inflowai.com"
-              required
-            />
-          </div>
-          <div class="login-row">
-            <label>Şifre</label>
-            <input
-              type="password"
-              id="admin-password"
-              value="InflowAI2025!"
-              required
-            />
-          </div>
-
-          <button type="submit" class="login-button">Giriş Yap</button>
-          <div id="admin-login-message" class="login-message"></div>
-        </form>
-
-        <div class="back-link">
-          Müşteri tarafına dönmek için
-          <a href="index.html">buraya tıklayın</a>.
-        </div>
+  <main class="page-main with-footer container-narrow">
+    <form id="supplier-login-form" class="info-card">
+      <div class="form-row">
+        <label>E‑posta</label>
+        <input type="email" id="supplier-email" required />
       </div>
-    </div>
 
-    <script>
-      const API_BASE = "https://inflowai-api.onrender.com/api";
+      <div class="form-row">
+        <label>Şifre</label>
+        <input type="password" id="supplier-password" required />
+      </div>
 
-      const form = document.getElementById("admin-login-form");
-      const msg = document.getElementById("admin-login-message");
+      <div class="form-actions">
+        <button type="submit" class="btn primary">Giriş Yap</button>
+      </div>
 
-      form.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        msg.textContent = "Giriş yapılıyor...";
+      <p id="supplier-login-msg" class="form-message"></p>
+    </form>
+  </main>
 
-        const email = document.getElementById("admin-email").value;
-        const password = document.getElementById("admin-password").value;
+  <script>
+    const API = "https://inflowai-api.onrender.com/api";
 
-        try {
-          const res = await fetch(API_BASE + "/admin/login", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email, password }),
-          });
+    document.getElementById("supplier-login-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
 
-          const data = await res.json().catch(() => ({}));
+      const email = document.getElementById("supplier-email").value;
+      const password = document.getElementById("supplier-password").value;
+      const msg = document.getElementById("supplier-login-msg");
 
-          if (!res.ok || data.success === false || !data.token) {
-            msg.style.color = "#fca5a5";
-            msg.textContent =
-              data.message || "Giriş başarısız. Bilgileri kontrol edin.";
-            return;
-          }
+      msg.textContent = "Giriş yapılıyor...";
 
-          // TOKEN'I KAYDEDİYORUZ
-          localStorage.setItem("accessToken", data.token);
-
-          msg.style.color = "#bbf7d0";
-          msg.textContent = "Giriş başarılı. Admin panele yönlendiriliyorsunuz...";
-
-          setTimeout(() => {
-            window.location.href = "admin.html";
-          }, 700);
-        } catch (err) {
-          console.error(err);
-          msg.style.color = "#fca5a5";
-          msg.textContent = "Sunucuya bağlanılamadı.";
-        }
+      const res = await fetch(API + "/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
       });
-    </script>
-  </body>
-          </html>
+
+      const data = await res.json();
+
+      if (!res.ok || data.success === false) {
+        msg.textContent = data.message || "Giriş hatası.";
+        msg.style.color = "#b91c1c";
+        return;
+      }
+
+      // Tedarikçi onay kontrolü
+      if (data.user.role === "supplier") {
+        if (data.user.status === "pending") {
+          msg.textContent = "Mağazanız onay bekliyor.";
+          return;
+        }
+        if (data.user.status === "blocked") {
+          msg.textContent = "Mağazanız engellenmiş.";
+          return;
+        }
+      }
+
+      // Token kaydet
+      localStorage.setItem("token", data.accessToken);
+      localStorage.setItem("user", JSON.stringify(data.user));
+
+      window.location.href = "supplier_panel.html";
+    });
+  </script>
+</body>
+</html>
