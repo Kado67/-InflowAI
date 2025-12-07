@@ -1,108 +1,68 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8" />
-  <title>Tedarikçi Giriş · InflowAI</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Tedarikçi Girişi · Inflow Market</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-<body data-page="supplier-login">
-  <header class="page-header-simple">
-    <h1>Tedarikçi Giriş</h1>
-  </header>
+<body>
+<header class="page-header-simple">Tedarikçi Girişi</header>
 
-  <main class="page-main with-footer container-narrow">
-    <form id="supplier-login-form" class="info-card">
-      <h2>Mağazanıza giriş yapın</h2>
+<main class="page-main container-narrow">
+  <form id="supplier-login-form" class="info-card">
+    <div class="form-row">
+      <label>E‑posta</label>
+      <input type="email" id="supplier-email" required>
+    </div>
+    <div class="form-row">
+      <label>Şifre</label>
+      <input type="password" id="supplier-password" required>
+    </div>
+    <button class="btn primary" type="submit">Giriş Yap</button>
+    <p id="supplier-login-msg" class="form-message"></p>
+  </form>
+</main>
 
-      <div class="form-row">
-        <label>E‑posta</label>
-        <input type="email" id="sup-login-email" required />
-      </div>
+<script src="app.js"></script>
+<script>
+const API_URL = "https://inflowai-api.onrender.com/api";
 
-      <div class="form-row">
-        <label>Şifre</label>
-        <input type="password" id="sup-login-password" required />
-      </div>
+document.getElementById("supplier-login-form").addEventListener("submit", async e => {
+  e.preventDefault();
+  const email = document.getElementById("supplier-email").value;
+  const password = document.getElementById("supplier-password").value;
+  const msg = document.getElementById("supplier-login-msg");
+  msg.textContent = "Giriş yapılıyor...";
 
-      <div class="form-actions">
-        <button type="submit" class="btn primary">Giriş Yap</button>
-      </div>
+  const res = await fetch(API_URL + "/auth/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password })
+  });
+  const data = await res.json();
 
-      <p id="sup-login-message" class="form-message"></p>
+  if (!res.ok) {
+    msg.textContent = data.message || "Giriş hatası.";
+    msg.style.color = "#b91c1c";
+    return;
+  }
 
-      <p class="info-text small">
-        Henüz tedarikçi değil misiniz?
-        <a href="supplier_register.html">Mağaza oluşturun</a>.
-      </p>
-    </form>
-  </main>
+  if (data.user.role === "supplier") {
+    if (data.user.status === "pending") {
+      msg.textContent = "Mağazanız onay bekliyor.";
+      return;
+    }
+    if (data.user.status === "blocked") {
+      msg.textContent = "Mağazanız engellenmiş.";
+      return;
+    }
+  }
 
-  <nav class="app-tabbar">
-    <a href="index.html" class="tab-item active">
-      <span class="tab-icon">🏠</span>
-      <span class="tab-label">Anasayfa</span>
-    </a>
-    <a href="favoriler.html" class="tab-item">
-      <span class="tab-icon">⭐</span>
-      <span class="tab-label">Favoriler</span>
-    </a>
-    <a href="sepet.html" class="tab-item">
-      <span class="tab-icon">🛒</span>
-      <span class="tab-label">Sepet</span>
-    </a>
-    <a href="hesabim.html" class="tab-item">
-      <span class="tab-icon">👤</span>
-      <span class="tab-label">Hesap</span>
-    </a>
-  </nav>
-
-  <script>
-    const API_BASE = "https://inflowai-api.onrender.com/api";
-
-    const loginForm = document.getElementById("supplier-login-form");
-    const loginMsg = document.getElementById("sup-login-message");
-
-    loginForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      loginMsg.style.color = "#6b7280";
-      loginMsg.textContent = "Giriş yapılıyor...";
-
-      const body = {
-        email: document.getElementById("sup-login-email").value,
-        password: document.getElementById("sup-login-password").value,
-      };
-
-      try {
-        const res = await fetch(API_BASE + "/auth/login", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(body),
-        });
-
-        const data = await res.json().catch(() => ({}));
-
-        if (!res.ok || data.success === false || !data.token) {
-          loginMsg.style.color = "#b91c1c";
-          loginMsg.textContent =
-            data.message || "Giriş başarısız. Bilgileri kontrol edin.";
-          return;
-        }
-
-        localStorage.setItem("accessToken", data.token);
-        if (data.user) {
-          localStorage.setItem("supplierUser", JSON.stringify(data.user));
-        }
-
-        loginMsg.style.color = "#15803d";
-        loginMsg.textContent =
-          "Giriş başarılı. Tedarikçi paneline yönlendiriliyorsunuz...";
-        setTimeout(() => (window.location.href = "supplier_panel.html"), 800);
-      } catch (err) {
-        loginMsg.style.color = "#b91c1c";
-        loginMsg.textContent = "Sunucuya ulaşılamadı.";
-      }
-    });
-  </script>
+  localStorage.setItem("token", data.accessToken);
+  localStorage.setItem("user", JSON.stringify(data.user));
+  window.location.href = "supplier_panel.html";
+});
+</script>
 </body>
 </html>
