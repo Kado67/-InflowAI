@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Yeni Üyelik · Inflow Market</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="page-header-simple">Yeni Üyelik</header>
+
+<main class="page-main container-narrow">
+  <form id="registerForm" class="info-card">
+    <div class="form-row">
+      <label>Ad Soyad</label>
+      <input id="name" required>
+    </div>
+
+    <div class="form-row">
+      <label>E‑posta</label>
+      <input id="email" type="email" required>
+    </div>
+
+    <div class="form-row">
+      <label>Telefon</label>
+      <input id="phone">
+    </div>
+
+    <div class="form-row">
+      <label>Şifre</label>
+      <input id="password" type="password" required>
+    </div>
+
+    <button type="submit" class="btn primary">Üye Ol</button>
+    <p id="regMsg" class="form-message"></p>
+  </form>
+</main>
+
+<nav class="app-tabbar">
+  <a href="index.html"><span>🏠</span>Anasayfa</a>
+  <a href="sepet.html"><span>🛒</span>Sepet</a>
+  <a href="hesabim.html"><span>👤</span>Hesabım</a>
+</nav>
+
+<script>
+  const API = "https://inflowai-api.onrender.com/api";
+
+  document.getElementById("registerForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const msg = document.getElementById("regMsg");
+
+    const body = {
+      name: document.getElementById("name").value,
+      email: document.getElementById("email").value,
+      phone: document.getElementById("phone").value,
+      password: document.getElementById("password").value
+      // role göndermezsek backend zaten role:"user", status:"active" yapıyor
+    };
+
+    msg.textContent = "Kaydınız oluşturuluyor...";
+
+    const res = await fetch(API + "/auth/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body)
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      msg.textContent = data.message || "Kayıt sırasında bir hata oluştu.";
+      msg.style.color = "#b91c1c";
+      return;
+    }
+
+    msg.textContent = "Üyeliğiniz oluşturuldu! Giriş sayfasına yönlendiriliyorsunuz...";
+    msg.style.color = "#16a34a";
+
+    setTimeout(() => {
+      window.location.href = "hesabim.html";
+    }, 1500);
+  });
+</script>
+</body>
+</html>
