@@ -2,94 +2,80 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mağaza Aç · InflowAI</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Mağaza Aç · Inflow Market</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+<header class="page-header-simple">Mağaza Aç</header>
 
-  <header class="page-header-simple">
-    <h1>Mağaza Aç</h1>
-  </header>
+<main class="page-main container-narrow">
+  <form id="vendorForm" class="info-card">
+    <div class="form-row">
+      <label>Mağaza Adı</label>
+      <input id="storeName" required>
+    </div>
+    <div class="form-row">
+      <label>Yetkili Adı</label>
+      <input id="contactName" required>
+    </div>
+    <div class="form-row">
+      <label>E‑posta</label>
+      <input id="email" type="email" required>
+    </div>
+    <div class="form-row">
+      <label>Telefon</label>
+      <input id="phone">
+    </div>
+    <div class="form-row">
+      <label>Web Sitesi</label>
+      <input id="website">
+    </div>
+    <div class="form-row">
+      <label>Şifre</label>
+      <input id="password" type="password" required>
+    </div>
+    <button class="btn primary" type="submit">Başvuruyu Gönder</button>
+    <p id="vendorMsg" class="form-message"></p>
+  </form>
+</main>
 
-  <main class="page-main container-narrow">
-    <form id="vendorForm" class="info-card">
+<script>
+const API_URL = "https://inflowai-api.onrender.com/api";
 
-      <div class="form-row">
-        <label>Mağaza Adı</label>
-        <input type="text" id="storeName" required />
-      </div>
+document.getElementById("vendorForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  const msg = document.getElementById("vendorMsg");
 
-      <div class="form-row">
-        <label>Yetkili Adı</label>
-        <input type="text" id="contactName" required />
-      </div>
+  const body = {
+    name: document.getElementById("storeName").value,
+    storeName: document.getElementById("storeName").value,
+    contactName: document.getElementById("contactName").value,
+    email: document.getElementById("email").value,
+    password: document.getElementById("password").value,
+    phone: document.getElementById("phone").value,
+    website: document.getElementById("website").value,
+    role: "supplier"
+  };
 
-      <div class="form-row">
-        <label>E‑posta</label>
-        <input type="email" id="email" required />
-      </div>
+  msg.textContent = "Gönderiliyor...";
 
-      <div class="form-row">
-        <label>Telefon</label>
-        <input type="text" id="phone" />
-      </div>
+  const res = await fetch(API_URL + "/auth/register", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body)
+  });
+  const data = await res.json();
 
-      <div class="form-row">
-        <label>Web Sitesi</label>
-        <input type="text" id="website" />
-      </div>
+  if (!res.ok) {
+    msg.textContent = data.message || "Başvuru gönderilemedi.";
+    msg.style.color = "#b91c1c";
+    return;
+  }
 
-      <div class="form-row">
-        <label>Şifre</label>
-        <input type="password" id="password" required />
-      </div>
-
-      <button class="btn primary" type="submit">Başvuruyu Gönder</button>
-
-      <p id="vendorMsg" class="form-message"></p>
-    </form>
-  </main>
-
-  <script>
-    const API = "https://inflowai-api.onrender.com/api";
-
-    document.getElementById("vendorForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-
-      const msg = document.getElementById("vendorMsg");
-
-      const body = {
-        name: document.getElementById("storeName").value,
-        storeName: document.getElementById("storeName").value,
-        contactName: document.getElementById("contactName").value,
-        email: document.getElementById("email").value,
-        password: document.getElementById("password").value,
-        phone: document.getElementById("phone").value,
-        website: document.getElementById("website").value,
-        role: "supplier"
-      };
-
-      msg.textContent = "Gönderiliyor...";
-
-      const res = await fetch(API + "/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok || data.success === false) {
-        msg.textContent = data.message || "Başvuru gönderilemedi.";
-        msg.style.color = "#b91c1c";
-        return;
-      }
-
-      msg.textContent = "Başvurunuz alınmıştır! Admin onayı bekleniyor.";
-      msg.style.color = "#15803d";
-    });
-  </script>
-
+  msg.textContent = "Başvurunuz alınmıştır, mağazanız admin onayına gönderildi.";
+  msg.style.color = "#16a34a";
+});
+</script>
 </body>
 </html>
