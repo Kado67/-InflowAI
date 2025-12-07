@@ -1,174 +1,33 @@
 <!DOCTYPE html>
 <html lang="tr">
-  <head>
-    <meta charset="UTF-8" />
-    <title>InflowAI · Admin Paneli</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Paneli · InflowAI</title>
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
 
-    <!-- Ana site stilin + admin stilin -->
-    <link rel="stylesheet" href="style.css" />
-    <link rel="stylesheet" href="admin.css" />
+<header class="admin-header">
+  <h1>InflowAI · Admin Paneli</h1>
+  <button onclick="logoutAdmin()" class="logout-btn">Çıkış Yap</button>
+</header>
 
-    <script src="admin.js" defer></script>
-  </head>
-  <body>
-    <div class="admin-wrapper">
-      <!-- SIDEBAR -->
-      <aside class="admin-sidebar">
-        <div class="admin-logo">
-          <span class="logo-mark">IA</span>
-          <span class="logo-text">InflowAI Admin</span>
-        </div>
+<main class="admin-main">
 
-        <nav class="admin-nav">
-          <button class="nav-item active" data-page="dashboard">
-            Genel Bakış
-          </button>
-          <button class="nav-item" data-page="products">Ürünler</button>
-          <button class="nav-item" data-page="suppliers">Tedarikçiler</button>
-        </nav>
+  <section class="admin-card">
+    <h2>Bekleyen Mağaza Başvuruları</h2>
+    <div id="pendingSuppliers">Yükleniyor...</div>
+  </section>
 
-        <div class="admin-sidebar-footer">
-          <div>Yönetici paneli</div>
-          <a href="index.html">🛒 Müşteri tarafına dön</a>
-        </div>
-      </aside>
+  <section class="admin-card">
+    <h2>Aktif Mağazalar</h2>
+    <div id="activeSuppliers">Yükleniyor...</div>
+  </section>
 
-      <!-- ANA İÇERİK -->
-      <main class="admin-main">
-        <!-- DASHBOARD -->
-        <section class="admin-page active" id="page-dashboard">
-          <h1>Genel Bakış</h1>
+</main>
 
-          <div class="stats-grid">
-            <div class="stat-card">
-              <h3>Toplam Ürün</h3>
-              <p id="stat-products">-</p>
-            </div>
-            <div class="stat-card">
-              <h3>Tedarikçi Sayısı</h3>
-              <p id="stat-suppliers">-</p>
-            </div>
-            <div class="stat-card">
-              <h3>Aktif Ürünler</h3>
-              <p id="stat-active-products">-</p>
-            </div>
-          </div>
-        </section>
+<script src="admin.js"></script>
 
-        <!-- ÜRÜN YÖNETİMİ -->
-        <section class="admin-page" id="page-products">
-          <div class="page-header">
-            <h1>Ürün Yönetimi</h1>
-            <button class="btn primary" id="btn-new-product">
-              + Yeni Ürün
-            </button>
-          </div>
-
-          <!-- FORM -->
-          <div class="form-card" id="product-form-card" hidden>
-            <h2 id="product-form-title">Yeni Ürün Ekle</h2>
-
-            <form id="product-form">
-              <input type="hidden" id="product-id" />
-
-              <div class="form-row">
-                <label>Ürün Adı</label>
-                <input type="text" id="product-name" required />
-              </div>
-
-              <div class="form-row">
-                <label>Slug (URL)</label>
-                <input type="text" id="product-slug" required />
-              </div>
-
-              <div class="form-row">
-                <label>Fiyat (₺)</label>
-                <input type="number" step="0.01" id="product-price" required />
-              </div>
-
-              <div class="form-row">
-                <label>Eski Fiyat (opsiyonel)</label>
-                <input type="number" step="0.01" id="product-oldPrice" />
-              </div>
-
-              <div class="form-row">
-                <label>Stok</label>
-                <input type="number" id="product-stock" value="0" />
-              </div>
-
-              <div class="form-row">
-                <label>Görsel URL</label>
-                <input type="text" id="product-image" />
-              </div>
-
-              <div class="form-row">
-                <label>Açıklama</label>
-                <textarea id="product-description" rows="3"></textarea>
-              </div>
-
-              <div class="form-row checkbox-row">
-                <label>
-                  <input type="checkbox" id="product-active" checked />
-                  Aktif ürün
-                </label>
-              </div>
-
-              <div class="form-actions">
-                <button type="submit" class="btn primary">Kaydet</button>
-                <button
-                  type="button"
-                  class="btn ghost"
-                  id="product-form-cancel"
-                >
-                  İptal
-                </button>
-              </div>
-
-              <p class="form-message" id="product-form-message"></p>
-            </form>
-          </div>
-
-          <!-- TABLO -->
-          <div class="table-card">
-            <h2>Ürün Listesi</h2>
-            <table class="admin-table">
-              <thead>
-                <tr>
-                  <th>Ad</th>
-                  <th>Fiyat</th>
-                  <th>Stok</th>
-                  <th>Aktif</th>
-                  <th>İşlem</th>
-                </tr>
-              </thead>
-              <tbody id="products-table-body"></tbody>
-            </table>
-          </div>
-        </section>
-
-        <!-- TEDARİKÇİLER -->
-        <section class="admin-page" id="page-suppliers">
-          <div class="page-header">
-            <h1>Tedarikçiler</h1>
-          </div>
-
-          <div class="table-card">
-            <h2>Tedarikçi Listesi</h2>
-            <table class="admin-table">
-              <thead>
-                <tr>
-                  <th>Mağaza</th>
-                  <th>E‑posta</th>
-                  <th>Telefon</th>
-                  <th>Durum</th>
-                </tr>
-              </thead>
-              <tbody id="suppliers-table-body"></tbody>
-            </table>
-          </div>
-        </section>
-      </main>
-    </div>
-  </body>
+</body>
 </html>
