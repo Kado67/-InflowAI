@@ -1,77 +1,118 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Anasayfa · InflowAI</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Inflow Market</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
-<body>
 
-<header class="page-header-simple">
-  <h1>InflowAI Ürünler</h1>
-</header>
+<body class="page-root">
 
-<main class="page-main container-narrow">
-  <div id="productList">Yükleniyor...</div>
-</main>
+  <!-- ============================== -->
+  <!--          HEADER                -->
+  <!-- ============================== -->
+  <header class="main-header">
+    <div class="logo">Inflow<span>Market</span></div>
 
-<nav class="app-tabbar">
-  <a href="index.html" class="tab-item active">🏠 Anasayfa</a>
-  <a href="sepet.html" class="tab-item">🛒 Sepet</a>
-  <a href="hesabim.html" class="tab-item">👤 Hesabım</a>
-</nav>
+    <div class="search">
+      <input type="text" id="searchInput" placeholder="Ürün ara..." />
+      <span class="search-icon">🔍</span>
+    </div>
 
-<script>
-  const API = "https://inflowai-api.onrender.com/api";
+    <div class="header-right">
+      <a href="hesabim.html" class="header-icon-btn">
+        <span>👤</span> Hesabım
+      </a>
+      <a href="sepet.html" class="header-icon-btn">
+        <span>🛒</span> Sepet
+      </a>
+    </div>
+  </header>
 
-  async function loadProducts() {
-    const box = document.getElementById("productList");
-    box.innerHTML = "Yükleniyor...";
+  <!-- ============================== -->
+  <!--        KATEGORİ BAR            -->
+  <!-- ============================== -->
+  <div class="category-strip">
+    <div class="category-pill active">Tümü</div>
+    <div class="category-pill">Elektronik</div>
+    <div class="category-pill">Moda</div>
+    <div class="category-pill">Ev & Yaşam</div>
+    <div class="category-pill">Saat & Takı</div>
+    <div class="category-pill">Market</div>
+    <div class="category-pill">Spor</div>
+  </div>
 
-    const res = await fetch(API + "/products");
-    const data = await res.json();
+  <!-- ============================== -->
+  <!--          ANA İÇERİK            -->
+  <!-- ============================== -->
+  <main class="page-main">
+    <div id="productGrid" class="product-grid">Yükleniyor...</div>
+  </main>
 
-    if (!res.ok) {
-      box.innerHTML = "Ürünler yüklenemedi.";
-      return;
+  <!-- ============================== -->
+  <!--             TABBAR            -->
+  <!-- ============================== -->
+  <nav class="app-tabbar">
+    <a href="index.html" class="active"><span>🏠</span>Anasayfa</a>
+    <a href="sepet.html"><span>🛒</span>Sepet</a>
+    <a href="hesabim.html"><span>👤</span>Hesabım</a>
+  </nav>
+
+  <script>
+    const API = "https://inflowai-api.onrender.com/api";
+
+    async function loadProducts() {
+      const grid = document.getElementById("productGrid");
+      grid.innerHTML = "Yükleniyor...";
+
+      const res = await fetch(API + "/products");
+      const data = await res.json();
+
+      if (!res.ok) {
+        grid.innerHTML = "Ürünler yüklenemedi.";
+        return;
+      }
+
+      grid.innerHTML = "";
+
+      data.products.forEach(p => {
+        grid.innerHTML += `
+          <div class="product-card">
+            <img src="${p.images?.[0] || ''}" alt="">
+            <div class="product-card-body">
+              <div class="product-name">${p.name}</div>
+              <div class="product-price">${p.price}₺</div>
+              <button class="btn primary add-to-cart-mini" onclick="addToCart('${p._id}')">
+                Sepete Ekle
+              </button>
+            </div>
+          </div>
+        `;
+      });
     }
 
-    box.innerHTML = "";
+    async function addToCart(id) {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        window.location.href = "hesabim.html";
+        return;
+      }
 
-    data.products.forEach(p => {
-      box.innerHTML += `
-        <div class="product-card">
-          <img src="${p.images?.[0] || ''}" class="product-img" />
-          <h3>${p.name}</h3>
-          <p>${p.price}₺</p>
-          <button onclick="addToCart('${p._id}')">Sepete Ekle</button>
-        </div>
-      `;
-    });
-  }
+      await fetch(API + "/cart/add", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token
+        },
+        body: JSON.stringify({ productId: id, quantity: 1 })
+      });
 
-  async function addToCart(id) {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      alert("Sepete eklemek için giriş yapmalısınız.");
-      window.location.href = "hesabim.html";
-      return;
+      alert("Sepete eklendi!");
     }
 
-    await fetch(API + "/cart/add", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + token
-      },
-      body: JSON.stringify({ productId: id, quantity: 1 })
-    });
-    alert("Sepete eklendi!");
-  }
-
-  loadProducts();
-</script>
+    loadProducts();
+  </script>
 
 </body>
 </html>
