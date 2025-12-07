@@ -1,82 +1,94 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Hesabım · InflowAI</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="style.css" />
-  <script src="app.js" defer></script>
+  <link rel="stylesheet" href="style.css">
 </head>
-<body class="page-account">
-  <header class="account-header">
-    <div class="account-avatar">IA</div>
-    <div class="account-info">
-      <div class="account-name" id="account-name">Misafir Kullanıcı</div>
-      <div class="account-email" id="account-email">
-        Giriş yaparak bilgilerinizi görüntüleyin.
+<body>
+
+<header class="page-header-simple">
+  <h1>Hesabım</h1>
+</header>
+
+<main class="page-main container-narrow" id="accountArea">
+  Yükleniyor...
+</main>
+
+<nav class="app-tabbar">
+  <a href="index.html" class="tab-item">🏠 Anasayfa</a>
+  <a href="sepet.html" class="tab-item">🛒 Sepet</a>
+  <a href="hesabim.html" class="tab-item active">👤 Hesabım</a>
+</nav>
+
+<script>
+  const API = "https://inflowai-api.onrender.com/api";
+
+  function renderLoggedOut() {
+    document.getElementById("accountArea").innerHTML = `
+      <div class="info-card">
+        <h3>Giriş Yap</h3>
+        <input id="email" type="email" placeholder="E‑posta" />
+        <input id="password" type="password" placeholder="Şifre" />
+        <button onclick="login()" class="btn primary">Giriş Yap</button>
+
+        <p>Kayıt olmak için:
+          <a href="musteri_register.html">Yeni Üyelik</a>
+        </p>
+
+        <p><a href="forgot_password.html">Şifremi Unuttum</a></p>
       </div>
-    </div>
-  </header>
+    `;
+  }
 
-  <main class="main-content with-tabbar">
-    <section class="account-section">
-      <h2>Hızlı İşlemler</h2>
-      <div class="account-grid">
-        <button class="account-chip" id="btn-go-orders">
-          Siparişlerim
-        </button>
-        <button class="account-chip">
-          Kuponlarım
-        </button>
-        <button class="account-chip">
-          Adreslerim
-        </button>
-        <button class="account-chip">
-          Destek Taleplerim
-        </button>
+  function renderLoggedIn(user) {
+    document.getElementById("accountArea").innerHTML = `
+      <div class="info-card">
+        <h3>Hoş geldin, ${user.name}</h3>
+        <p>E‑posta: ${user.email}</p>
+        <p>Rol: ${user.role}</p>
+
+        <button onclick="logout()" class="btn danger">Çıkış Yap</button>
       </div>
-    </section>
+    `;
+  }
 
-    <section class="account-section">
-      <h2>Hesap</h2>
-      <ul class="account-list">
-        <li>Hesap Bilgilerim</li>
-        <li>Parola &amp; Güvenlik</li>
-        <li>Bildirim Ayarları</li>
-      </ul>
-    </section>
+  async function login() {
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
 
-    <section class="account-section">
-      <h2>Diğer</h2>
-      <ul class="account-list">
-        <li><a href="musteri_sorular.html">Sık Sorulan Sorular</a></li>
-        <li><a href="musteri_iade.html">İade &amp; Değişim</a></li>
-        <li><a href="musteri_kargo.html">Kargo &amp; Teslimat</a></li>
-      </ul>
-    </section>
+    const res = await fetch(API + "/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password })
+    });
 
-    <button class="btn-outline-full" id="btn-logout">
-      Çıkış Yap
-    </button>
-  </main>
+    const data = await res.json();
 
-  <nav class="app-tabbar">
-    <a href="index.html" class="tab-item">
-      <span class="tab-icon">🏠</span>
-      <span class="tab-label">Anasayfa</span>
-    </a>
-    <a href="favoriler.html" class="tab-item">
-      <span class="tab-icon">⭐</span>
-      <span class="tab-label">Favoriler</span>
-    </a>
-    <a href="sepet.html" class="tab-item">
-      <span class="tab-icon">🛒</span>
-      <span class="tab-label">Sepet</span>
-    </a>
-    <a href="hesabim.html" class="tab-item active">
-      <span class="tab-icon">👤</span>
-      <span class="tab-label">Hesap</span>
-    </a>
-  </nav>
+    if (!res.ok) {
+      alert(data.message || "Giriş hatası");
+      return;
+    }
+
+    localStorage.setItem("token", data.accessToken);
+    localStorage.setItem("user", JSON.stringify(data.user));
+    location.reload();
+  }
+
+  function logout() {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    location.reload();
+  }
+
+  // İlk ekran yüklemesi
+  const token = localStorage.getItem("token");
+  const user = JSON.parse(localStorage.getItem("user") || "null");
+
+  if (!token || !user) renderLoggedOut();
+  else renderLoggedIn(user);
+</script>
+
 </body>
 </html>
