@@ -1,111 +1,54 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tedarikçi Paneli · InflowAI</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="style.css" />
-  <script src="supplier.js" defer></script>
+  <link rel="stylesheet" href="style.css">
 </head>
-<body data-page="supplier-panel">
+<body>
   <header class="page-header-simple">
-    <h1>InflowAI Tedarikçi Paneli</h1>
+    <h1>Tedarikçi Paneli</h1>
   </header>
 
-  <main class="page-main with-footer container-narrow">
-    <!-- Kullanıcı bilgisi -->
-    <section class="account-section">
-      <h2>Mağaza Bilgileri</h2>
-      <p class="info-text">
-        <strong id="sup-store-name">Mağaza adı</strong><br />
-        <span id="sup-user-email" class="small"></span>
-      </p>
-      <button id="sup-logout" class="btn-outline-full">Çıkış Yap</button>
-    </section>
+  <main class="page-main container-narrow">
+    <section class="info-card">
 
-    <!-- Yeni ürün formu -->
-    <section class="account-section">
       <h2>Yeni Ürün Ekle</h2>
 
-      <form id="sup-product-form" class="info-card">
-        <div class="form-row">
-          <label>Ürün Adı</label>
-          <input type="text" id="sup-prod-name" required />
-        </div>
-
-        <div class="form-row">
-          <label>Slug (URL)</label>
-          <input type="text" id="sup-prod-slug" required />
-        </div>
-
-        <div class="form-row">
-          <label>Fiyat (₺)</label>
-          <input type="number" step="0.01" id="sup-prod-price" required />
-        </div>
-
-        <div class="form-row">
-          <label>Stok</label>
-          <input type="number" id="sup-prod-stock" value="0" />
-        </div>
-
-        <div class="form-row">
-          <label>Görsel Yükle</label>
-          <input type="file" id="sup-prod-image-file" accept="image/*" />
-          <small class="info-text small">
-            Fotoğraf seçtikten sonra otomatik InflowAI sunucusuna yüklenecektir.
-          </small>
-          <div id="sup-prod-image-preview" style="margin-top:8px;"></div>
-        </div>
-
-        <div class="form-row">
-          <label>Açıklama</label>
-          <textarea id="sup-prod-description" rows="3"></textarea>
-        </div>
-
-        <div class="form-row">
-          <label>
-            <input type="checkbox" id="sup-prod-active" checked />
-            Ürün aktif olsun
-          </label>
-        </div>
-
-        <div class="form-actions">
-          <button type="submit" class="btn primary">Ürünü Kaydet</button>
-        </div>
-
-        <p id="sup-prod-message" class="form-message"></p>
-      </form>
-    </section>
-
-    <!-- Ürün listesi -->
-    <section class="account-section">
-      <h2>Ürünlerim</h2>
-      <div id="sup-products-list" class="listing-list">
-        <!-- supplier.js dolduracak -->
+      <div class="form-row">
+        <label>Ürün Adı</label>
+        <input type="text" id="pname" required />
       </div>
-      <p id="sup-products-empty" class="info-text small" hidden>
-        Henüz ürün eklemediniz.
-      </p>
+
+      <div class="form-row">
+        <label>Fiyat</label>
+        <input type="number" id="pprice" required />
+      </div>
+
+      <div class="form-row">
+        <label>Stok</label>
+        <input type="number" id="pstock" required />
+      </div>
+
+      <div class="form-row">
+        <label>Fotoğraf</label>
+        <input type="file" id="pimage" accept="image/*" />
+      </div>
+
+      <button id="addProduct" class="btn primary">Ürün Ekle</button>
+
+      <p id="panelMsg" class="form-message"></p>
+
     </section>
+
+    <section class="info-card">
+      <h2>Ürünlerim</h2>
+      <div id="myProducts"></div>
+    </section>
+
   </main>
 
-  <nav class="app-tabbar">
-    <a href="index.html" class="tab-item">
-      <span class="tab-icon">🏠</span>
-      <span class="tab-label">Anasayfa</span>
-    </a>
-    <a href="ilanlar.html" class="tab-item">
-      <span class="tab-icon">📄</span>
-      <span class="tab-label">İlanlar</span>
-    </a>
-    <a href="sepet.html" class="tab-item">
-      <span class="tab-icon">🛒</span>
-      <span class="tab-label">Sepet</span>
-    </a>
-    <a href="hesabim.html" class="tab-item">
-      <span class="tab-icon">👤</span>
-      <span class="tab-label">Hesap</span>
-    </a>
-  </nav>
+  <script src="supplier.js"></script>
 </body>
-    </html>
+</html>
