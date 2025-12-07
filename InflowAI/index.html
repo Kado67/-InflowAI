@@ -1,118 +1,94 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Inflow Market</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Inflow Market · Anasayfa</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-
-<body class="page-root">
-
-  <!-- ============================== -->
-  <!--          HEADER                -->
-  <!-- ============================== -->
-  <header class="main-header">
-    <div class="logo">Inflow<span>Market</span></div>
-
-    <div class="search">
-      <input type="text" id="searchInput" placeholder="Ürün ara..." />
-      <span class="search-icon">🔍</span>
-    </div>
-
-    <div class="header-right">
-      <a href="hesabim.html" class="header-icon-btn">
-        <span>👤</span> Hesabım
-      </a>
-      <a href="sepet.html" class="header-icon-btn">
-        <span>🛒</span> Sepet
-      </a>
-    </div>
-  </header>
-
-  <!-- ============================== -->
-  <!--        KATEGORİ BAR            -->
-  <!-- ============================== -->
-  <div class="category-strip">
-    <div class="category-pill active">Tümü</div>
-    <div class="category-pill">Elektronik</div>
-    <div class="category-pill">Moda</div>
-    <div class="category-pill">Ev & Yaşam</div>
-    <div class="category-pill">Saat & Takı</div>
-    <div class="category-pill">Market</div>
-    <div class="category-pill">Spor</div>
+<body>
+<header class="main-header">
+  <div class="logo">Inflow<span>Market</span></div>
+  <div class="search">
+    <input type="text" id="searchInput" placeholder="Ürün ara">
+    <span class="search-icon">🔍</span>
   </div>
+  <div class="header-right">
+    <a href="hesabim.html" class="header-icon-btn">
+      <span>👤</span> Hesabım
+    </a>
+    <a href="sepet.html" class="header-icon-btn">
+      <span>🛒</span> Sepet
+    </a>
+  </div>
+</header>
 
-  <!-- ============================== -->
-  <!--          ANA İÇERİK            -->
-  <!-- ============================== -->
-  <main class="page-main">
-    <div id="productGrid" class="product-grid">Yükleniyor...</div>
-  </main>
+<div class="category-strip" id="categoryStrip">
+  <div class="category-pill active">Tümü</div>
+</div>
 
-  <!-- ============================== -->
-  <!--             TABBAR            -->
-  <!-- ============================== -->
-  <nav class="app-tabbar">
-    <a href="index.html" class="active"><span>🏠</span>Anasayfa</a>
-    <a href="sepet.html"><span>🛒</span>Sepet</a>
-    <a href="hesabim.html"><span>👤</span>Hesabım</a>
-  </nav>
+<main class="page-main container-narrow">
+  <div id="productList" class="product-grid"></div>
+</main>
 
-  <script>
-    const API = "https://inflowai-api.onrender.com/api";
+<nav class="app-tabbar">
+  <a href="index.html" class="active"><span>🏠</span>Anasayfa</a>
+  <a href="sepet.html"><span>🛒</span>Sepet</a>
+  <a href="hesabim.html"><span>👤</span>Hesabım</a>
+</nav>
 
-    async function loadProducts() {
-      const grid = document.getElementById("productGrid");
-      grid.innerHTML = "Yükleniyor...";
+<script src="app.js"></script>
+<script>
+const API_URL = "https://inflowai-api.onrender.com/api";
 
-      const res = await fetch(API + "/products");
-      const data = await res.json();
+async function loadProducts() {
+  const box = document.getElementById("productList");
+  box.innerHTML = "Yükleniyor...";
 
-      if (!res.ok) {
-        grid.innerHTML = "Ürünler yüklenemedi.";
-        return;
-      }
+  const res = await fetch(API_URL + "/products");
+  const data = await res.json();
 
-      grid.innerHTML = "";
+  if (!res.ok) {
+    box.innerHTML = "Ürünler yüklenemedi.";
+    return;
+  }
 
-      data.products.forEach(p => {
-        grid.innerHTML += `
-          <div class="product-card">
-            <img src="${p.images?.[0] || ''}" alt="">
-            <div class="product-card-body">
-              <div class="product-name">${p.name}</div>
-              <div class="product-price">${p.price}₺</div>
-              <button class="btn primary add-to-cart-mini" onclick="addToCart('${p._id}')">
-                Sepete Ekle
-              </button>
-            </div>
-          </div>
-        `;
-      });
-    }
+  box.innerHTML = "";
+  data.products.forEach(p => {
+    box.innerHTML += `
+      <div class="product-card">
+        <button class="favorite-btn">♡</button>
+        <img src="${p.images?.[0] || ''}" alt="">
+        <div class="product-card-body">
+          <div class="product-name">${p.name}</div>
+          <div class="product-price">${p.price}₺</div>
+          <button class="btn primary add-to-cart-mini"
+            onclick="addToCart('${p._id}')">Sepete Ekle</button>
+        </div>
+      </div>`;
+  });
+}
 
-    async function addToCart(id) {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        window.location.href = "hesabim.html";
-        return;
-      }
+async function addToCart(id) {
+  if (!getToken()) {
+    alert("Sepete eklemek için giriş yapın.");
+    window.location.href = "hesabim.html";
+    return;
+  }
 
-      await fetch(API + "/cart/add", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + token
-        },
-        body: JSON.stringify({ productId: id, quantity: 1 })
-      });
+  await fetch(API_URL + "/cart/add", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + getToken()
+    },
+    body: JSON.stringify({ productId: id, quantity: 1 })
+  });
 
-      alert("Sepete eklendi!");
-    }
+  alert("Ürün sepete eklendi.");
+}
 
-    loadProducts();
-  </script>
-
+loadProducts();
+</script>
 </body>
 </html>
