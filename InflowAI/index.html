@@ -1,113 +1,77 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8" />
-  <title>InflowAI · Akıllı Alışveriş Platformu</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="style.css" />
-  <script src="app.js" defer></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Anasayfa · InflowAI</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-<body class="page-home">
-  <header class="topbar">
-    <div class="topbar-left">
-      <span class="logo-circle">IA</span>
-      <div class="brand">
-        <div class="brand-title">InflowAI</div>
-        <div class="brand-subtitle">Akıllı Alışveriş</div>
-      </div>
-    </div>
-    <button class="icon-btn" aria-label="Bildirimler">
-      🔔
-    </button>
-  </header>
+<body>
 
-  <main class="main-content with-tabbar">
-    <!-- Arama -->
-    <section class="search-section">
-      <div class="search-box">
-        <input
-          id="search-input"
-          type="search"
-          placeholder="Ürün, kategori veya mağaza ara"
-        />
-        <button id="search-btn">Ara</button>
-      </div>
-    </section>
+<header class="page-header-simple">
+  <h1>InflowAI Ürünler</h1>
+</header>
 
-    <!-- Banner -->
-    <section class="banner-section">
-      <div class="banner-card">
-        <div>
-          <h1>Bugünün Akıllı Fırsatları</h1>
-          <p>Yapay zekâ ile seçilmiş ürünler, avantajlı fiyatlarla.</p>
+<main class="page-main container-narrow">
+  <div id="productList">Yükleniyor...</div>
+</main>
+
+<nav class="app-tabbar">
+  <a href="index.html" class="tab-item active">🏠 Anasayfa</a>
+  <a href="sepet.html" class="tab-item">🛒 Sepet</a>
+  <a href="hesabim.html" class="tab-item">👤 Hesabım</a>
+</nav>
+
+<script>
+  const API = "https://inflowai-api.onrender.com/api";
+
+  async function loadProducts() {
+    const box = document.getElementById("productList");
+    box.innerHTML = "Yükleniyor...";
+
+    const res = await fetch(API + "/products");
+    const data = await res.json();
+
+    if (!res.ok) {
+      box.innerHTML = "Ürünler yüklenemedi.";
+      return;
+    }
+
+    box.innerHTML = "";
+
+    data.products.forEach(p => {
+      box.innerHTML += `
+        <div class="product-card">
+          <img src="${p.images?.[0] || ''}" class="product-img" />
+          <h3>${p.name}</h3>
+          <p>${p.price}₺</p>
+          <button onclick="addToCart('${p._id}')">Sepete Ekle</button>
         </div>
-        <span class="banner-pill">Yapay Zekâ Destekli</span>
-      </div>
-    </section>
+      `;
+    });
+  }
 
-    <!-- Kısa menü -->
-    <section class="quick-links">
-      <button class="chip" onclick="location.href='ilan_ver.html'">
-        + İlan Ver
-      </button>
-      <button class="chip" onclick="location.href='ilanlar.html'">
-        İlanları Gör
-      </button>
-      <button class="chip" onclick="location.href='vendor_register.html'">
-        Mağaza Aç
-      </button>
-    </section>
+  async function addToCart(id) {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Sepete eklemek için giriş yapmalısınız.");
+      window.location.href = "hesabim.html";
+      return;
+    }
 
-    <!-- Ürün listesi -->
-    <section class="products-section">
-      <div class="section-header">
-        <h2>Öne Çıkan Ürünler</h2>
-        <button class="link-btn" id="refresh-products">Yenile</button>
-      </div>
-      <div id="product-list" class="product-grid">
-        <!-- app.js dolduracak -->
-      </div>
-      <p id="product-list-message" class="muted-text small"></p>
-    </section>
+    await fetch(API + "/cart/add", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + token
+      },
+      body: JSON.stringify({ productId: id, quantity: 1 })
+    });
+    alert("Sepete eklendi!");
+  }
 
-    <!-- Footer bilgi -->
-    <footer class="footer">
-      <div class="footer-col">
-        <h3>InflowAI</h3>
-        <a href="musteri_sorular.html">Sık Sorulan Sorular</a>
-        <a href="kurumsal_tedarikci.html">Mağaza Aç</a>
-        <a href="kurumsal_isbirlikleri.html">Kurumsal İşbirlikleri</a>
-      </div>
-      <div class="footer-col">
-        <h3>Müşteri Hizmetleri</h3>
-        <a href="musteri_iade.html">İade &amp; Değişim</a>
-        <a href="musteri_kargo.html">Kargo &amp; Teslimat</a>
-      </div>
-      <div class="footer-col">
-        <h3>Kurumsal</h3>
-        <a href="kurumsal_reklam.html">Reklam &amp; Sponsor</a>
-      </div>
-    </footer>
-  </main>
+  loadProducts();
+</script>
 
-  <!-- Alt menü -->
-  <nav class="app-tabbar">
-    <a href="index.html" class="tab-item active">
-      <span class="tab-icon">🏠</span>
-      <span class="tab-label">Anasayfa</span>
-    </a>
-    <a href="favoriler.html" class="tab-item">
-      <span class="tab-icon">⭐</span>
-      <span class="tab-label">Favoriler</span>
-    </a>
-    <a href="sepet.html" class="tab-item">
-      <span class="tab-icon">🛒</span>
-      <span class="tab-label">Sepet</span>
-    </a>
-    <a href="hesabim.html" class="tab-item">
-      <span class="tab-icon">👤</span>
-      <span class="tab-label">Hesap</span>
-    </a>
-  </nav>
 </body>
 </html>
