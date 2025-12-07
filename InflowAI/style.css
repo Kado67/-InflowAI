@@ -1,13 +1,9 @@
 /* =========================================================
    Inflow Market - Genel Tema
-   (Trendyol çalışma mantığına benzer görünüm)
-   Bu dosyayı VERCEL'deki style.css'nin yerine TAMAMEN koy.
    ========================================================= */
 
-/* ---------- Temel değişkenler ---------- */
-
 :root {
-  --color-primary: #f27a1a;      /* ana turuncu */
+  --color-primary: #f27a1a;
   --color-primary-dark: #d96507;
   --color-bg: #f5f5f5;
   --color-card: #ffffff;
@@ -24,45 +20,22 @@
   --shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
-/* ---------- Genel gövde ---------- */
-
 *,
 *::before,
-*::after {
-  box-sizing: border-box;
-}
+*::after { box-sizing: border-box; }
 
 body {
   margin: 0;
   padding: 0;
   background: var(--color-bg);
   color: var(--color-text);
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-    sans-serif;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
-/* Linkler */
+a { color: var(--color-primary-dark); text-decoration: none; }
+a:hover { text-decoration: underline; }
 
-a {
-  color: var(--color-primary-dark);
-  text-decoration: none;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
-/* Sayfa ana layout (header + içerik + tabbar) */
-
-.page-root {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
-/* =========================================================
-   HEADER (Trendyol benzeri)
-   ========================================================= */
+/* HEADER */
 
 .main-header {
   background: #ffffff;
@@ -80,17 +53,11 @@ a:hover {
   font-weight: 800;
   font-size: 20px;
   color: var(--color-primary);
-  letter-spacing: 0.03em;
 }
 
-.main-header .logo span {
-  color: #111827;
-}
+.main-header .logo span { color: #111827; }
 
-.main-header .search {
-  flex: 1;
-  position: relative;
-}
+.main-header .search { flex: 1; position: relative; }
 
 .main-header .search input {
   width: 100%;
@@ -125,13 +92,9 @@ a:hover {
   color: var(--color-text);
 }
 
-.header-icon-btn span {
-  font-size: 10px;
-}
+.header-icon-btn span { font-size: 10px; }
 
-/* =========================================================
-   Kategori şeridi
-   ========================================================= */
+/* KATEGORİ ŞERİDİ */
 
 .category-strip {
   display: flex;
@@ -158,22 +121,7 @@ a:hover {
   background: #fff7ec;
 }
 
-/* =========================================================
-   Ana içerik konteynerleri
-   ========================================================= */
-
-.page-main {
-  flex: 1;
-  padding: 12px;
-  padding-bottom: 70px; /* tabbar için */
-}
-
-.container-narrow {
-  max-width: 460px;
-  margin: 0 auto;
-}
-
-/* Basit sayfa başlığı (örn. Hesabım, Sepet vs.) */
+/* SAYFA CONTAINER */
 
 .page-header-simple {
   background: #1f2937;
@@ -184,9 +132,17 @@ a:hover {
   font-weight: 600;
 }
 
-/* =========================================================
-   Kartlar & formlar
-   ========================================================= */
+.page-main {
+  padding: 12px;
+  padding-bottom: 70px;
+}
+
+.container-narrow {
+  max-width: 460px;
+  margin: 0 auto;
+}
+
+/* KARTLAR & FORMLAR */
 
 .info-card {
   background: var(--color-card);
@@ -196,24 +152,13 @@ a:hover {
   box-shadow: var(--shadow-soft);
 }
 
-.info-card h2,
-.info-card h3 {
-  margin-top: 0;
-}
-
-/* Form satırları */
-
-.form-row {
-  margin-bottom: 12px;
-}
-
+.form-row { margin-bottom: 12px; }
 .form-row label {
   display: block;
   font-size: 13px;
   font-weight: 600;
   margin-bottom: 4px;
 }
-
 .form-row input,
 .form-row select,
 .form-row textarea {
@@ -223,17 +168,7 @@ a:hover {
   border: 1px solid var(--color-border);
   font-size: 14px;
 }
-
-.form-row textarea {
-  min-height: 90px;
-  resize: vertical;
-}
-
-.form-actions {
-  margin-top: 10px;
-}
-
-/* Form mesajı */
+.form-row textarea { min-height: 90px; resize: vertical; }
 
 .form-message {
   margin-top: 10px;
@@ -241,15 +176,12 @@ a:hover {
   color: var(--color-muted);
 }
 
-/* =========================================================
-   Butonlar
-   ========================================================= */
+/* BUTONLAR */
 
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
   padding: 11px 14px;
   border-radius: var(--radius-md);
   border: none;
@@ -257,61 +189,34 @@ a:hover {
   font-size: 14px;
   font-weight: 600;
   width: 100%;
-  transition: background 0.15s ease, transform 0.05s ease,
-    box-shadow 0.1s ease;
+  transition: background 0.15s ease, transform 0.05s ease, box-shadow 0.1s ease;
 }
 
-.btn:active {
-  transform: translateY(1px);
-  box-shadow: none;
-}
+.btn:active { transform: translateY(1px); box-shadow: none; }
 
 .btn.primary {
   background: var(--color-primary);
   color: white;
   box-shadow: var(--shadow-soft);
 }
+.btn.primary:hover { background: var(--color-primary-dark); }
 
-.btn.primary:hover {
-  background: var(--color-primary-dark);
-}
+.btn.secondary { background: #e5e7eb; color: #111827; }
+.btn.danger { background: var(--color-danger); color: #fff; }
+.btn.sm { padding: 7px 10px; font-size: 13px; width: auto; }
 
-.btn.secondary {
-  background: #e5e7eb;
-  color: #111827;
-}
-
-.btn.danger {
-  background: var(--color-danger);
-  color: #ffffff;
-}
-
-.btn.sm {
-  padding: 7px 10px;
-  font-size: 13px;
-  width: auto;
-}
-
-/* =========================================================
-   ÜRÜN GRID + KARTLAR (Anasayfa & listeler)
-   ========================================================= */
+/* ÜRÜN GRID / KARTLAR */
 
 .product-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
 }
-
-/* tablet / desktop’ta 3–4 sütun */
 @media (min-width: 640px) {
-  .product-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
+  .product-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 @media (min-width: 1024px) {
-  .product-grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
+  .product-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 }
 
 .product-card {
@@ -348,63 +253,16 @@ a:hover {
   overflow: hidden;
 }
 
-.product-price {
-  font-weight: 700;
-  font-size: 15px;
-  color: #111827;
-}
+.product-price { font-weight: 700; font-size: 15px; }
+.product-meta  { font-size: 11px; color: var(--color-muted); }
 
-.product-old-price {
-  font-size: 11px;
-  color: var(--color-muted);
-  text-decoration: line-through;
-}
-
-.product-meta {
-  font-size: 11px;
-  color: var(--color-muted);
-}
-
-/* Sepete ekle mini buton */
-
-.product-card .add-to-cart-mini {
+.add-to-cart-mini {
   margin-top: 6px;
   padding: 6px;
   font-size: 12px;
 }
 
-/* İndirim etiketi */
-
-.discount-badge {
-  position: absolute;
-  top: 6px;
-  left: 6px;
-  background: #16a34a;
-  color: white;
-  font-size: 11px;
-  padding: 3px 6px;
-  border-radius: 999px;
-}
-
-/* Favori ikon alanı */
-
-.favorite-btn {
-  position: absolute;
-  top: 6px;
-  right: 6px;
-  width: 24px;
-  height: 24px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.9);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-}
-
-/* =========================================================
-   SEPET SAYFASI
-   ========================================================= */
+/* SEPET */
 
 .cart-box {
   background: #ffffff;
@@ -419,10 +277,7 @@ a:hover {
   padding: 8px 0;
   border-bottom: 1px solid var(--color-border);
 }
-
-.cart-item:last-child {
-  border-bottom: none;
-}
+.cart-item:last-child { border-bottom: none; }
 
 .cart-thumb {
   width: 64px;
@@ -431,26 +286,11 @@ a:hover {
   background: #e5e7eb;
   overflow: hidden;
 }
+.cart-thumb img { width: 100%; height: 100%; object-fit: cover; }
 
-.cart-thumb img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.cart-info {
-  flex: 1;
-  font-size: 13px;
-}
-
-.cart-price {
-  font-weight: 700;
-}
-
-.cart-qty {
-  font-size: 12px;
-  color: var(--color-muted);
-}
+.cart-info { flex: 1; font-size: 13px; }
+.cart-price { font-weight: 700; }
+.cart-qty   { font-size: 12px; color: var(--color-muted); }
 
 .cart-summary {
   margin-top: 12px;
@@ -461,9 +301,7 @@ a:hover {
   font-weight: 600;
 }
 
-/* =========================================================
-   HESABIM / LOGIN BLOKLARI
-   ========================================================= */
+/* HESABIM */
 
 .account-card {
   background: #ffffff;
@@ -478,7 +316,6 @@ a:hover {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
 }
-
 .account-actions a {
   display: block;
   padding: 10px 12px;
@@ -489,9 +326,7 @@ a:hover {
   color: #111827;
 }
 
-/* =========================================================
-   TEDARİKÇİ PANELİ
-   ========================================================= */
+/* TEDARİKÇİ PANELİ */
 
 .product-row {
   display: grid;
@@ -501,7 +336,6 @@ a:hover {
   padding: 8px 0;
   border-bottom: 1px solid var(--color-border);
 }
-
 .product-row img {
   width: 64px;
   height: 64px;
@@ -510,15 +344,11 @@ a:hover {
   background: #e5e7eb;
 }
 
-/* =========================================================
-   ALT MENÜ / TABBAR (mobil)
-   ========================================================= */
+/* ALT MENÜ / TABBAR */
 
 .app-tabbar {
   position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  bottom: 0; left: 0; right: 0;
   background: #ffffff;
   border-top: 1px solid var(--color-border);
   display: flex;
@@ -545,21 +375,10 @@ a:hover {
   font-weight: 600;
 }
 
-/* =========================================================
-   RESPONSIVE İYİLEŞTİRMELER
-   ========================================================= */
+/* RESPONSIVE */
 
 @media (min-width: 768px) {
-  .page-main {
-    padding-bottom: 0;
-  }
-
-  .app-tabbar {
-    position: static;
-    border-top: none;
-  }
-
-  .container-narrow {
-    max-width: 720px;
-  }
-                  }
+  .page-main { padding-bottom: 0; }
+  .app-tabbar { position: static; border-top: none; }
+  .container-narrow { max-width: 720px; }
+   }
