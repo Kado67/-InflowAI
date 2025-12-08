@@ -41,11 +41,12 @@
 
 <script src="app.js"></script>
 <script>
-  const API_URL   = "https://inflowai-api.onrender.com/api";
+  const API_URL    = "https://inflowai-api.onrender.com/api";
   const productBox = document.getElementById("productList");
   const catStrip   = document.getElementById("categoryStrip");
 
-  let currentCategory = "tum";
+  // Artık kategori SLUG değil, ObjectId tutuyoruz
+  let currentCategoryId = "all";
 
   // KATEGORİLERİ YÜKLE
   async function loadCategories() {
@@ -53,26 +54,23 @@
       const res  = await fetch(API_URL + "/categories");
       const data = await res.json();
 
-      let html = `<div class="category-pill active" data-slug="tum">Tümü</div>`;
+      // Her durumda Tümü var
+      let html = `<div class="category-pill active" data-id="all">Tümü</div>`;
 
-      if (res.ok && data.categories?.length) {
+      // Backend gerçekten kategori döndürüyorsa
+      if (res.ok && data && data.categories && data.categories.length) {
         data.categories.forEach(c => {
-          html += `<div class="category-pill" data-slug="${c.slug}">${c.name}</div>`;
+          // VALUE = _id  🔥
+          html += `<div class="category-pill" data-id="${c._id}">${c.name}</div>`;
         });
-      } else {
-        // API boşsa örnek kategoriler
-        html += `
-          <div class="category-pill" data-slug="elektronik">Elektronik</div>
-          <div class="category-pill" data-slug="moda">Moda</div>
-          <div class="category-pill" data-slug="ev-yasam">Ev & Yaşam</div>
-        `;
       }
 
       catStrip.innerHTML = html;
 
       [...catStrip.querySelectorAll(".category-pill")].forEach(el => {
         el.addEventListener("click", () => {
-          currentCategory = el.getAttribute("data-slug");
+          const id = el.getAttribute("data-id") || "all";
+          currentCategoryId = id;
 
           catStrip.querySelectorAll(".category-pill")
                   .forEach(p => p.classList.remove("active"));
@@ -84,7 +82,7 @@
     } catch (e) {
       console.error("Kategori hatası", e);
       catStrip.innerHTML =
-        '<div class="category-pill active" data-slug="tum">Tümü</div>';
+        '<div class="category-pill active" data-id="all">Tümü</div>';
     }
   }
 
@@ -93,8 +91,8 @@
     productBox.innerHTML = "Yükleniyor...";
 
     const query =
-      currentCategory && currentCategory !== "tum"
-        ? `?category=${encodeURIComponent(currentCategory)}`
+      currentCategoryId && currentCategoryId !== "all"
+        ? `?category=${encodeURIComponent(currentCategoryId)}`
         : "";
 
     let res, data;
@@ -107,7 +105,6 @@
       return;
     }
 
-    // Backend ne dönerse dönsün: array / {products} / {data}
     const products = Array.isArray(data)
       ? data
       : (data.products || data.data || []);
