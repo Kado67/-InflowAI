@@ -1,3 +1,44 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Inflow Market · Anasayfa</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="main-header">
+  <div class="logo">Inflow<span>Market</span></div>
+  <div class="search">
+    <input type="text" id="searchInput" placeholder="Ürün ara">
+    <span class="search-icon">🔍</span>
+  </div>
+  <div class="header-right">
+    <a href="hesabim.html" class="header-icon-btn">
+      <span>👤</span> Hesabım
+    </a>
+    <a href="sepet.html" class="header-icon-btn">
+      <span>🛒</span> Sepet
+    </a>
+  </div>
+</header>
+
+<!-- KATEGORİ ŞERİDİ -->
+<div class="category-strip" id="categoryStrip">
+  <!-- JS dolduracak -->
+</div>
+
+<main class="page-main container-narrow">
+  <div id="productList" class="product-grid">Yükleniyor...</div>
+</main>
+
+<nav class="app-tabbar">
+  <a href="index.html" class="active"><span>🏠</span>Anasayfa</a>
+  <a href="sepet.html"><span>🛒</span>Sepet</a>
+  <a href="hesabim.html"><span>👤</span>Hesabım</a>
+</nav>
+
 <script src="app.js"></script>
 <script>
   const API_URL   = "https://inflowai-api.onrender.com/api";
@@ -66,7 +107,7 @@
       return;
     }
 
-    // ➜ Backend ne dönerse dönsün: array / {products} / {data}
+    // Backend ne dönerse dönsün: array / {products} / {data}
     const products = Array.isArray(data)
       ? data
       : (data.products || data.data || []);
@@ -125,4 +166,6 @@
 
   // ilk yükleme
   loadCategories().then(loadProducts);
-              </script>
+</script>
+</body>
+</html>
