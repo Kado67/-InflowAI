@@ -12,22 +12,38 @@
 <main class="page-main container-narrow">
   <section class="info-card">
     <h3>Yeni Ürün Ekle</h3>
+
     <div class="form-row">
       <label>Ürün Adı</label>
       <input id="pname">
     </div>
+
     <div class="form-row">
       <label>Fiyat</label>
       <input id="pprice" type="number">
     </div>
+
     <div class="form-row">
       <label>Stok</label>
       <input id="pstock" type="number">
     </div>
+
+    <div class="form-row">
+      <label>Kategori</label>
+      <select id="pcategory">
+        <option value="">Seçiniz</option>
+      </select>
+      <div style="font-size:11px;color:#6b7280;margin-top:4px;">
+        Kategori listesi /api/categories üzerinden yüklenir. Eğer kategori eklemediyseniz
+        burada bazı hazır kategoriler gösterilir.
+      </div>
+    </div>
+
     <div class="form-row">
       <label>Fotoğraf</label>
       <input id="pimage" type="file" accept="image/*">
     </div>
+
     <button id="addProduct" class="btn primary">Ürün Ekle</button>
     <p id="panelMsg" class="form-message"></p>
   </section>
