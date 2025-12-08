@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
 <header class="main-header">
   <div class="logo">Inflow<span>Market</span></div>
   <div class="search">
@@ -23,12 +24,13 @@
   </div>
 </header>
 
+<!-- KATEGORİ ŞERİDİ -->
 <div class="category-strip" id="categoryStrip">
-  <div class="category-pill active">Tümü</div>
+  <!-- JS dolduracak -->
 </div>
 
 <main class="page-main container-narrow">
-  <div id="productList" class="product-grid"></div>
+  <div id="productList" class="product-grid">Yükleniyor...</div>
 </main>
 
 <nav class="app-tabbar">
@@ -39,56 +41,122 @@
 
 <script src="app.js"></script>
 <script>
-const API_URL = "https://inflowai-api.onrender.com/api";
+  const API_URL = "https://inflowai-api.onrender.com/api";
+  const productBox = document.getElementById("productList");
+  const catStrip   = document.getElementById("categoryStrip");
 
-async function loadProducts() {
-  const box = document.getElementById("productList");
-  box.innerHTML = "Yükleniyor...";
+  let currentCategory = "tum";
 
-  const res = await fetch(API_URL + "/products");
-  const data = await res.json();
+  // KATEGORİLERİ YÜKLE
+  async function loadCategories() {
+    try {
+      const res  = await fetch(API_URL + "/categories");
+      const data = await res.json();
 
-  if (!res.ok) {
-    box.innerHTML = "Ürünler yüklenemedi.";
-    return;
+      let html = `<div class="category-pill active" data-slug="tum">Tümü</div>`;
+
+      if (res.ok && data.categories?.length) {
+        data.categories.forEach(c => {
+          html += `<div class="category-pill" data-slug="${c.slug}">${c.name}</div>`;
+        });
+      } else {
+        // API boşsa, birkaç örnek kategori göster
+        html += `
+          <div class="category-pill" data-slug="elektronik">Elektronik</div>
+          <div class="category-pill" data-slug="moda">Moda</div>
+          <div class="category-pill" data-slug="ev-yasam">Ev & Yaşam</div>
+        `;
+      }
+
+      catStrip.innerHTML = html;
+
+      // tıklama
+      [...catStrip.querySelectorAll(".category-pill")].forEach(el => {
+        el.addEventListener("click", () => {
+          const slug = el.getAttribute("data-slug");
+          currentCategory = slug;
+
+          catStrip.querySelectorAll(".category-pill")
+                  .forEach(p => p.classList.remove("active"));
+          el.classList.add("active");
+
+          loadProducts();
+        });
+      });
+    } catch (e) {
+      console.error("Kategori hatası", e);
+      catStrip.innerHTML =
+        '<div class="category-pill active" data-slug="tum">Tümü</div>';
+    }
   }
 
-  box.innerHTML = "";
-  data.products.forEach(p => {
-    box.innerHTML += `
-      <div class="product-card">
-        <button class="favorite-btn">♡</button>
-        <img src="${p.images?.[0] || ''}" alt="">
-        <div class="product-card-body">
-          <div class="product-name">${p.name}</div>
-          <div class="product-price">${p.price}₺</div>
+  // ÜRÜNLERİ YÜKLE
+  async function loadProducts() {
+    productBox.innerHTML = "Yükleniyor...";
+
+    const query =
+      currentCategory && currentCategory !== "tum"
+        ? `?category=${encodeURIComponent(currentCategory)}`
+        : "";
+
+    const res  = await fetch(API_URL + "/products" + query);
+    const data = await res.json();
+
+    if (!res.ok) {
+      productBox.innerHTML = "Ürünler yüklenemedi.";
+      return;
+    }
+
+    if (!data.products.length) {
+      productBox.innerHTML = "Bu kategoride ürün bulunamadı.";
+      return;
+    }
+
+    productBox.innerHTML = "";
+    data.products.forEach(p => {
+      productBox.innerHTML += `
+        <div class="product-card">
+          <button class="favorite-btn">♡</button>
+
+          <div onclick="goDetail('${p._id}')" style="cursor:pointer;">
+            <img src="${p.images?.[0] || ''}" alt="">
+            <div class="product-card-body">
+              <div class="product-name">${p.name}</div>
+              <div class="product-price">${p.price}₺</div>
+            </div>
+          </div>
+
           <button class="btn primary add-to-cart-mini"
             onclick="addToCart('${p._id}')">Sepete Ekle</button>
-        </div>
-      </div>`;
-  });
-}
-
-async function addToCart(id) {
-  if (!getToken()) {
-    alert("Sepete eklemek için giriş yapın.");
-    window.location.href = "hesabim.html";
-    return;
+        </div>`;
+    });
   }
 
-  await fetch(API_URL + "/cart/add", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: "Bearer " + getToken()
-    },
-    body: JSON.stringify({ productId: id, quantity: 1 })
-  });
+  function goDetail(id) {
+    window.location.href = "product_detail.html?id=" + id;
+  }
 
-  alert("Ürün sepete eklendi.");
-}
+  async function addToCart(id) {
+    if (!getToken()) {
+      // alert yok, direkt Hesabım sayfası + mesaj
+      window.location.href = "hesabim.html?msg=login-required";
+      return;
+    }
 
-loadProducts();
+    await fetch(API_URL + "/cart/add", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + getToken()
+      },
+      body: JSON.stringify({ productId: id, quantity: 1 })
+    });
+
+    alert("Ürün sepete eklendi.");
+  }
+
+  // ilk yükleme
+  loadCategories().then(loadProducts);
 </script>
 </body>
 </html>
