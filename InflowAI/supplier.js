@@ -12,7 +12,7 @@ async function loadCategoriesForSupplier() {
   const select = document.getElementById("pcategory");
   if (!select) return;
 
-  // Varsayılan "Seçiniz" kalsın
+  // Varsayılan "Seçiniz"
   let optionsHtml = `<option value="">Seçiniz</option>`;
 
   try {
@@ -21,30 +21,14 @@ async function loadCategoriesForSupplier() {
 
     if (res.ok && data && data.categories && data.categories.length) {
       data.categories.forEach((c) => {
-        optionsHtml += `<option value="${c.slug}">${c.name}</option>`;
-      });
-    } else {
-      // Eğer kategori API boşsa, bazı hazır kategoriler göster
-      const fallback = [
-        { slug: "elektronik", name: "Elektronik" },
-        { slug: "moda",       name: "Moda" },
-        { slug: "ev-yasam",   name: "Ev & Yaşam" },
-      ];
-      fallback.forEach((c) => {
-        optionsHtml += `<option value="${c.slug}">${c.name}</option>`;
+        // VALUE = ObjectId
+        optionsHtml += `<option value="${c._id}">${c.name}</option>`;
       });
     }
+    // Kategori yoksa ekstra seçenek yok → ürünler kategorisiz kaydedilir
   } catch (e) {
     console.error("Kategori listesi alınamadı:", e);
-    // Hata durumunda da fallback kategori göster
-    const fallback = [
-      { slug: "elektronik", name: "Elektronik" },
-      { slug: "moda",       name: "Moda" },
-      { slug: "ev-yasam",   name: "Ev & Yaşam" },
-    ];
-    fallback.forEach((c) => {
-      optionsHtml += `<option value="${c.slug}">${c.name}</option>`;
-    });
+    // Hata varsa yine sadece "Seçiniz" kalsın
   }
 
   select.innerHTML = optionsHtml;
@@ -52,12 +36,12 @@ async function loadCategoriesForSupplier() {
 
 // ÜRÜN EKLE
 document.getElementById("addProduct").onclick = async () => {
-  const name     = document.getElementById("pname").value;
-  const price    = document.getElementById("pprice").value;
-  const stock    = document.getElementById("pstock").value;
-  const category = document.getElementById("pcategory").value || "tum";
+  const name      = document.getElementById("pname").value;
+  const price     = document.getElementById("pprice").value;
+  const stock     = document.getElementById("pstock").value;
+  const categoryId = document.getElementById("pcategory").value; // ObjectId veya ""
   const imageFile = document.getElementById("pimage").files[0];
-  const msg      = document.getElementById("panelMsg");
+  const msg       = document.getElementById("panelMsg");
 
   if (!name || !price || !stock) {
     msg.textContent = "Lütfen ürün adı, fiyat ve stok alanlarını doldurun.";
@@ -86,19 +70,25 @@ document.getElementById("addProduct").onclick = async () => {
   }
 
   try {
+    const payload = {
+      name,
+      price,
+      stock,
+      images: imageUrl ? [imageUrl] : [],
+    };
+
+    // Yalnızca gerçekten seçilmiş kategori ID'si varsa gönder
+    if (categoryId) {
+      payload.category = categoryId; // ObjectId string
+    }
+
     const res = await fetch(API_URL + "/supplier/products", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: "Bearer " + supplierToken,
       },
-      body: JSON.stringify({
-        name,
-        price,
-        stock,
-        category,           // 🔥 kategori burada API'ye gidiyor
-        images: imageUrl ? [imageUrl] : [],
-      }),
+      body: JSON.stringify(payload),
     });
 
     const data = await res.json();
@@ -112,7 +102,6 @@ document.getElementById("addProduct").onclick = async () => {
     msg.textContent = "Ürün eklendi.";
     msg.style.color = "#16a34a";
 
-    // formu temizle
     document.getElementById("pname").value = "";
     document.getElementById("pprice").value = "";
     document.getElementById("pstock").value = "";
