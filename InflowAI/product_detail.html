@@ -35,30 +35,52 @@
   async function loadDetail() {
     box.innerHTML = "Yükleniyor...";
 
-    const res = await fetch(API + "/products/" + id);
-    const data = await res.json();
+    try {
+      const res  = await fetch(API + "/products/" + id);
+      const data = await res.json();
 
-    if (!res.ok) {
-      box.textContent = data.message || "Ürün bulunamadı.";
-      return;
+      if (!res.ok) {
+        box.textContent = data.message || "Ürün bulunamadı.";
+        return;
+      }
+
+      const p = data.product || data;
+
+      box.innerHTML = `
+        <div style="text-align:center;">
+          <img src="${p.images?.[0] || ''}" alt="" style="width:100%; max-width:320px; border-radius:12px; margin-bottom:10px;">
+        </div>
+        <h2 style="margin-bottom:6px;">${p.name}</h2>
+        <div style="font-size:18px; font-weight:700; margin-bottom:4px;">${p.price}₺</div>
+        <div style="font-size:13px; color:#6b7280; margin-bottom:6px;">
+          Stok: ${p.stock ?? "-"}
+        </div>
+        <div style="font-size:12px; color:#6b7280; margin-bottom:12px;">
+          Kategori: ${p.category || "-"}
+        </div>
+        <button class="btn primary" onclick="addToCart('${p._id}')">Sepete Ekle</button>
+
+        ${
+          p.description
+            ? `<div style="margin-top:14px; font-size:14px;">${p.description}</div>`
+            : ""
+        }
+
+        <hr style="margin:18px 0; border:none; border-top:1px solid #e5e7eb;">
+
+        <h3 style="margin-bottom:8px;">Yorumlar</h3>
+        <div id="reviewsList" style="font-size:13px; margin-bottom:14px;">
+          Yorumlar yükleniyor...
+        </div>
+
+        <div id="reviewFormWrap"></div>
+      `;
+
+      loadReviews(p._id);
+    } catch (e) {
+      console.error(e);
+      box.textContent = "Sunucuya bağlanırken hata oluştu.";
     }
-
-    const p = data.product || data;
-
-    box.innerHTML = `
-      <div style="text-align:center;">
-        <img src="${p.images?.[0] || ''}" style="width:100%; max-width:330px; border-radius:12px; margin-bottom:10px;">
-      </div>
-      <h2>${p.name}</h2>
-      <div style="font-size:18px; font-weight:700;">${p.price}₺</div>
-      <div style="font-size:13px; color:#6b7280; margin-bottom:10px;">
-        Stok: ${p.stock}
-      </div>
-
-      <button class="btn primary" onclick="addToCart('${p._id}')">Sepete Ekle</button>
-
-      ${p.description ? `<div style="margin-top:12px;">${p.description}</div>` : ""}
-    `;
   }
 
   async function addToCart(pid) {
@@ -71,12 +93,141 @@
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + getToken()
+        Authorization: "Bearer " + getToken(),
       },
-      body: JSON.stringify({ productId: pid, quantity: 1 })
+      body: JSON.stringify({ productId: pid, quantity: 1 }),
     });
 
     alert("Ürün sepete eklendi.");
+  }
+
+  // 🔥 YORUM LİSTELE
+  async function loadReviews(productId) {
+    const listEl = document.getElementById("reviewsList");
+    const formWrap = document.getElementById("reviewFormWrap");
+
+    // ÖNCE LİSTEYİ ÇEK
+    try {
+      const res  = await fetch(`${API}/reviews/product/${productId}`);
+      const data = await res.json();
+
+      if (!res.ok) {
+        listEl.textContent = data.message || "Yorumlar yüklenemedi.";
+      } else {
+        const reviews = data.reviews || data;
+
+        if (!reviews.length) {
+          listEl.textContent = "Bu ürün için henüz yorum yapılmamış.";
+        } else {
+          let html = "";
+          reviews.forEach((r) => {
+            const stars = "★".repeat(r.rating || 0) + "☆".repeat(5 - (r.rating || 0));
+            const created = r.createdAt
+              ? new Date(r.createdAt).toLocaleDateString("tr-TR")
+              : "";
+            html += `
+              <div style="padding:8px 0; border-bottom:1px solid #e5e7eb;">
+                <div style="font-size:12px; color:#f59e0b;">${stars}</div>
+                <div style="margin-top:2px;">${r.comment || ""}</div>
+                <div style="font-size:11px; color:#6b7280; margin-top:2px;">
+                  ${r.user?.name || "Anonim"} · ${created}
+                </div>
+              </div>
+            `;
+          });
+          listEl.innerHTML = html;
+        }
+      }
+    } catch (e) {
+      console.error(e);
+      listEl.textContent = "Yorumlar alınırken hata oluştu.";
+    }
+
+    // SONRA FORMU HAZIRLA
+    if (!getToken()) {
+      formWrap.innerHTML = `
+        <div class="info-card" style="padding:10px 12px;">
+          Yorum yazmak için önce
+          <a href="hesabim.html">giriş yapın</a>.
+        </div>`;
+      return;
+    }
+
+    formWrap.innerHTML = `
+      <div class="info-card" style="padding:12px 14px;">
+        <h4 style="margin-top:0; margin-bottom:8px;">Yorum Yaz</h4>
+        <div class="form-row">
+          <label>Puan</label>
+          <select id="reviewRating">
+            <option value="5">5 - Harika</option>
+            <option value="4">4 - İyi</option>
+            <option value="3">3 - Orta</option>
+            <option value="2">2 - Kötü</option>
+            <option value="1">1 - Çok kötü</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label>Yorumunuz</label>
+          <textarea id="reviewComment" placeholder="Ürünle ilgili deneyiminizi yazın..."></textarea>
+        </div>
+        <button class="btn primary" type="button" onclick="submitReview('${productId}')">
+          Yorum Gönder
+        </button>
+        <p id="reviewMsg" class="form-message"></p>
+      </div>
+    `;
+  }
+
+  // 🔥 YORUM GÖNDER
+  async function submitReview(productId) {
+    const ratingEl  = document.getElementById("reviewRating");
+    const commentEl = document.getElementById("reviewComment");
+    const msgEl     = document.getElementById("reviewMsg");
+
+    const rating  = parseInt(ratingEl.value || "5", 10);
+    const comment = commentEl.value.trim();
+
+    if (!comment) {
+      msgEl.textContent = "Lütfen bir yorum yazın.";
+      msgEl.style.color = "#b91c1c";
+      return;
+    }
+
+    msgEl.textContent = "Gönderiliyor...";
+
+    try {
+      const res = await fetch(`${API}/reviews`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + getToken(),
+        },
+        body: JSON.stringify({
+          productId,
+          rating,
+          comment,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        msgEl.textContent = data.message || "Yorum kaydedilemedi.";
+        msgEl.style.color = "#b91c1c";
+        return;
+      }
+
+      msgEl.textContent = "Yorumunuz kaydedildi.";
+      msgEl.style.color = "#16a34a";
+      commentEl.value = "";
+
+      // Listeyi yeniden yükle
+      loadReviews(productId);
+    } catch (e) {
+      console.error(e);
+      msgEl.textContent = "Sunucuya bağlanırken hata oluştu.";
+      msgEl.style.color = "#b91c1c";
+    }
   }
 </script>
 </body>
