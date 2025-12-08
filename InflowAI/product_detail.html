@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Ürün Detayı · Inflow Market</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="page-header-simple">Ürün Detayı</header>
+
+<main class="page-main container-narrow">
+  <div id="detailBox" class="info-card">Yükleniyor...</div>
+</main>
+
+<nav class="app-tabbar">
+  <a href="index.html"><span>🏠</span>Anasayfa</a>
+  <a href="sepet.html"><span>🛒</span>Sepet</a>
+  <a href="hesabim.html"><span>👤</span>Hesabım</a>
+</nav>
+
+<script src="app.js"></script>
+<script>
+  const API = "https://inflowai-api.onrender.com/api";
+  const params = new URLSearchParams(location.search);
+  const id = params.get("id");
+  const box = document.getElementById("detailBox");
+
+  if (!id) {
+    box.textContent = "Geçersiz ürün bağlantısı.";
+  } else {
+    loadDetail();
+  }
+
+  async function loadDetail() {
+    box.innerHTML = "Yükleniyor...";
+
+    const res = await fetch(API + "/products/" + id);
+    const data = await res.json();
+
+    if (!res.ok) {
+      box.textContent = data.message || "Ürün bulunamadı.";
+      return;
+    }
+
+    const p = data.product || data;
+
+    box.innerHTML = `
+      <div style="text-align:center;">
+        <img src="${p.images?.[0] || ''}" style="width:100%; max-width:330px; border-radius:12px; margin-bottom:10px;">
+      </div>
+      <h2>${p.name}</h2>
+      <div style="font-size:18px; font-weight:700;">${p.price}₺</div>
+      <div style="font-size:13px; color:#6b7280; margin-bottom:10px;">
+        Stok: ${p.stock}
+      </div>
+
+      <button class="btn primary" onclick="addToCart('${p._id}')">Sepete Ekle</button>
+
+      ${p.description ? `<div style="margin-top:12px;">${p.description}</div>` : ""}
+    `;
+  }
+
+  async function addToCart(pid) {
+    if (!getToken()) {
+      window.location.href = "hesabim.html?msg=login-required";
+      return;
+    }
+
+    await fetch(API + "/cart/add", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + getToken()
+      },
+      body: JSON.stringify({ productId: pid, quantity: 1 })
+    });
+
+    alert("Ürün sepete eklendi.");
+  }
+</script>
+</body>
+</html>
