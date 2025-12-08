@@ -1,1 +1,73 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Siparişlerim · Inflow Market</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="page-header-simple">Siparişlerim</header>
 
+<main class="page-main container-narrow">
+  <div id="ordersBox" class="info-card">Yükleniyor...</div>
+</main>
+
+<nav class="app-tabbar">
+  <a href="index.html"><span>🏠</span>Anasayfa</a>
+  <a href="sepet.html"><span>🛒</span>Sepet</a>
+  <a href="hesabim.html"><span>👤</span>Hesabım</a>
+</nav>
+
+<script src="app.js"></script>
+<script>
+  const API_URL = "https://inflowai-api.onrender.com/api";
+  const box = document.getElementById("ordersBox");
+
+  requireLogin();
+
+  async function loadOrders() {
+    box.innerHTML = "Yükleniyor...";
+
+    const res = await fetch(API_URL + "/orders/mine", {
+      headers: { Authorization: "Bearer " + getToken() }
+    });
+    const data = await res.json();
+
+    if (!res.ok) {
+      box.textContent = data.message || "Siparişler getirilemedi.";
+      return;
+    }
+
+    const orders = data.orders || data;
+    if (!orders.length) {
+      box.textContent = "Henüz bir siparişiniz yok.";
+      return;
+    }
+
+    let html = "";
+    orders.forEach(o => {
+      const t = new Date(o.createdAt).toLocaleString("tr-TR");
+      html += `
+        <div style="border-bottom:1px solid #e5e7eb; padding:10px 0;">
+          <div style="font-size:13px; color:#6b7280;">ID: ${o._id}</div>
+          <div style="font-size:15px; font-weight:600;">Toplam: ${o.totalAmount}₺</div>
+          <div style="font-size:12px; color:#6b7280;">
+            Tarih: ${t}<br>
+            Ödeme: ${o.paymentStatus}<br>
+            Durum: ${o.orderStatus}
+          </div>
+          <div style="margin-top:6px;">
+            ${o.items.map(i => `• ${i.name} x${i.quantity} – ${i.price}₺`).join("<br>")}
+          </div>
+        </div>
+      `;
+    });
+
+    box.innerHTML = html;
+  }
+
+  loadOrders();
+</script>
+</body>
+</html>
