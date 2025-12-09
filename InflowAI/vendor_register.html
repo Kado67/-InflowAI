@@ -35,7 +35,7 @@
       <label>Şifre</label>
       <input id="password" type="password" required>
     </div>
-    <button class="btn primary" type="submit">Başvuruyu Gönder</button>
+    <button class="btn primary" type="submit" id="vendorBtn">Başvuruyu Gönder</button>
     <p id="vendorMsg" class="form-message"></p>
   </form>
 </main>
@@ -43,38 +43,48 @@
 <script>
 const API_URL = "https://inflowai-api.onrender.com/api";
 
-document.getElementById("vendorForm").addEventListener("submit", async e => {
+document.getElementById("vendorForm").addEventListener("submit", async (e) => {
   e.preventDefault();
   const msg = document.getElementById("vendorMsg");
+  const btn = document.getElementById("vendorBtn");
 
   const body = {
-    name: document.getElementById("storeName").value,
-    storeName: document.getElementById("storeName").value,
+    storeName:   document.getElementById("storeName").value,
     contactName: document.getElementById("contactName").value,
-    email: document.getElementById("email").value,
-    password: document.getElementById("password").value,
-    phone: document.getElementById("phone").value,
-    website: document.getElementById("website").value,
-    role: "supplier"
+    email:       document.getElementById("email").value,
+    phone:       document.getElementById("phone").value,
+    website:     document.getElementById("website").value || null,
+    password:    document.getElementById("password").value
   };
 
   msg.textContent = "Gönderiliyor...";
+  msg.style.color = "";
+  btn.disabled = true;
 
-  const res = await fetch(API_URL + "/auth/register", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body)
-  });
-  const data = await res.json();
+  try {
+    const res  = await fetch(API_URL + "/suppliers/register", {   // 🔥 BURASI
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body)
+    });
 
-  if (!res.ok) {
-    msg.textContent = data.message || "Başvuru gönderilemedi.";
+    const data = await res.json();
+
+    if (!res.ok) {
+      msg.textContent = data.message || "Başvuru gönderilemedi.";
+      msg.style.color = "#b91c1c";
+      btn.disabled = false;
+      return;
+    }
+
+    msg.textContent = "Başvurunuz alındı, mağazanız admin onayına gönderildi.";
+    msg.style.color = "#16a34a";
+  } catch (err) {
+    console.error(err);
+    msg.textContent = "Sunucuya bağlanırken bir hata oluştu.";
     msg.style.color = "#b91c1c";
-    return;
+    btn.disabled = false;
   }
-
-  msg.textContent = "Başvurunuz alınmıştır, mağazanız admin onayına gönderildi.";
-  msg.style.color = "#16a34a";
 });
 </script>
 </body>
