@@ -50,35 +50,47 @@
     const msg = document.getElementById("regMsg");
 
     const body = {
-      name: document.getElementById("name").value,
-      email: document.getElementById("email").value,
-      phone: document.getElementById("phone").value,
+      name:     document.getElementById("name").value,
+      email:    document.getElementById("email").value,
+      phone:    document.getElementById("phone").value,
       password: document.getElementById("password").value
-      // role göndermezsek backend zaten role:"user", status:"active" yapıyor
+      // role göndermezsek backend zaten user için varsayılan role atayabilir
     };
 
     msg.textContent = "Kaydınız oluşturuluyor...";
+    msg.style.color = "";
 
-    const res = await fetch(API + "/auth/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body)
-    });
+    try {
+      const res  = await fetch(API + "/users/register", {   // 🔥 BURASI DEĞİŞTİ
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body)
+      });
 
-    const data = await res.json();
+      let data = {};
+      try {
+        data = await res.json();
+      } catch (err) {
+        // JSON olmayan cevap gelirse
+      }
 
-    if (!res.ok) {
-      msg.textContent = data.message || "Kayıt sırasında bir hata oluştu.";
+      if (!res.ok) {
+        msg.textContent = data.message || "Kayıt sırasında bir hata oluştu.";
+        msg.style.color = "#b91c1c";
+        return;
+      }
+
+      msg.textContent = "Üyeliğiniz oluşturuldu! Giriş sayfasına yönlendiriliyorsunuz...";
+      msg.style.color = "#16a34a";
+
+      setTimeout(() => {
+        window.location.href = "hesabim.html";
+      }, 1500);
+    } catch (err) {
+      console.error(err);
+      msg.textContent = "Sunucuya bağlanırken bir hata oluştu.";
       msg.style.color = "#b91c1c";
-      return;
     }
-
-    msg.textContent = "Üyeliğiniz oluşturuldu! Giriş sayfasına yönlendiriliyorsunuz...";
-    msg.style.color = "#16a34a";
-
-    setTimeout(() => {
-      window.location.href = "hesabim.html";
-    }, 1500);
   });
 </script>
 </body>
